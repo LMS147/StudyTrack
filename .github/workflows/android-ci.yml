@@ -22,12 +22,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Show Android SDK info
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "platforms:"; ls "$ANDROID_HOME/platforms" 2>/dev/null || true
-          echo "build-tools:"; ls "$ANDROID_HOME/build-tools" 2>/dev/null || true
-
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -45,35 +39,43 @@ jobs:
           ./gradlew assembleDebug --stacktrace 2>&1 | tee build-output.log
           status=$?
           if [ $status -ne 0 ]; then
-            tail -n 40 build-output.log | sed 's/%/%25/g' | tr '\n' '\r' | sed 's/\r/%0A/g' | head -c 3800 > /tmp/msg.txt || true
-            echo "::error::Gradle build failed. Log tail:%0A$(cat /tmp/msg.txt)"
+            echo "=== BUILD FAILED (exit $status) ==="
+            FIRST_ERR=$(grep -m1 -E "^e: |What went wrong|FAILURE: Build failed" build-output.log || true)
+            echo "::error::${FIRST_ERR:-Gradle build failed — see .build/ci-failure.log committed to this branch}"
           fi
           exit $status
 
-      - name: Report failure context
+      - name: Save failure log for inspection
         if: failure()
         run: |
+          mkdir -p .build
           {
-            echo "ANDROID_HOME=$ANDROID_HOME"
+            echo "=== gradle exit context ==="
             java -version 2>&1
-            echo "platforms:"; ls "$ANDROID_HOME/platforms" 2>/dev/null
-          } > /tmp/ctx.txt || true
-          sed 's/%/%25/g' /tmp/ctx.txt | tr '\n' '\r' | sed 's/\r/%0A/g' | head -c 3000 > /tmp/ctxmsg.txt || true
-          echo "::error::Failure context:%0A$(cat /tmp/ctxmsg.txt)"
+            echo "ANDROID_HOME=$ANDROID_HOME"
+            echo
+            tail -n 400 build-output.log
+          } > .build/ci-failure.log
+          git config user.name "studytrack-ci"
+          git config user.email "ci@studytrack.local"
+          git add .build/ci-failure.log
+          git commit -m "ci: save build failure log [skip ci]"
+          git push
 
       # One-time: CI generates the wrapper scripts + jar and commits them back,
       # so the repo is fully buildable with ./gradlew locally afterwards.
       - name: Commit Gradle wrapper (first successful build only)
         if: success() && github.ref == 'refs/heads/arena/01a0b968-studytrack'
         run: |
-          CHANGED=$(git status --porcelain gradlew gradlew.bat gradle)
+          rm -f .build/ci-failure.log
+          CHANGED=$(git status --porcelain gradlew gradlew.bat gradle .build)
           if [ -n "$CHANGED" ]; then
             git config user.name "studytrack-ci"
             git config user.email "ci@studytrack.local"
-            git add gradlew gradlew.bat gradle
-            git commit -m "chore: generate Gradle wrapper from CI"
+            git add gradlew gradlew.bat gradle .build
+            git commit -m "chore: generate Gradle wrapper from CI (drop failure log if any)"
             git push
-            echo "Wrapper committed."
+            echo "Committed."
           else
-            echo "Wrapper already present, nothing to commit."
+            echo "Nothing to commit."
           fi
