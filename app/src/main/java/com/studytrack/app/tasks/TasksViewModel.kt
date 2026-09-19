@@ -20,11 +20,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/** Status filter row on the Tasks screen: everything, open only, or done only. */
+enum class TaskStatusFilter { ALL, ACTIVE, COMPLETED }
+
 data class TasksUiState(
     val loading: Boolean = true,
     val items: List<TaskListItem> = emptyList(),
     val typeFilter: TaskType? = null,
     val priorityFilter: Priority? = null,
+    val statusFilter: TaskStatusFilter = TaskStatusFilter.ALL,
     val totalCount: Int = 0,
     val error: String? = null,
 ) {
@@ -42,8 +46,12 @@ class TasksViewModel(
     private val subjectRepository: SubjectRepository,
 ) : ViewModel() {
 
-    /** Both filter rows in one flow: combine() is typed up to five sources. */
-    private data class Filters(val type: TaskType? = null, val priority: Priority? = null)
+    /** All three filter rows in one flow: combine() is typed up to five sources. */
+    private data class Filters(
+        val type: TaskType? = null,
+        val priority: Priority? = null,
+        val status: TaskStatusFilter = TaskStatusFilter.ALL,
+    )
 
     private val filters = MutableStateFlow(Filters())
     private val refreshing = MutableStateFlow(false)
@@ -60,11 +68,26 @@ class TasksViewModel(
         val filtered = tasks
             .filter { activeFilters.type == null || it.taskType == activeFilters.type }
             .filter { activeFilters.priority == null || it.priority == activeFilters.priority }
-            // Open tasks first, then by due date (undated last).
-            .sortedWith(
-                compareBy<Task> { it.completed }
-                    .thenBy { it.dueDate ?: LATE_SORT_KEY }
-            )
+            .filter {
+                when (activeFilters.status) {
+                    TaskStatusFilter.ALL -> true
+                    TaskStatusFilter.ACTIVE -> !it.completed
+                    TaskStatusFilter.COMPLETED -> it.completed
+                }
+            }
+            // The Completed view reads as a history, so it shows the most
+            // recently finished work first; everywhere else open tasks come
+            // first, then by due date (undated last).
+            .let { visible ->
+                if (activeFilters.status == TaskStatusFilter.COMPLETED) {
+                    visible.sortedByDescending { it.completedAt.orEmpty() }
+                } else {
+                    visible.sortedWith(
+                        compareBy<Task> { it.completed }
+                            .thenBy { it.dueDate ?: LATE_SORT_KEY }
+                    )
+                }
+            }
         TasksUiState(
             loading = isRefreshing && tasks.isEmpty(),
             items = filtered.map { task ->
@@ -72,6 +95,7 @@ class TasksViewModel(
             },
             typeFilter = activeFilters.type,
             priorityFilter = activeFilters.priority,
+            statusFilter = activeFilters.status,
             totalCount = tasks.size,
             error = error,
         )
@@ -97,6 +121,10 @@ class TasksViewModel(
 
     fun setPriorityFilter(priority: Priority?) {
         filters.update { it.copy(priority = priority) }
+    }
+
+    fun setStatusFilter(status: TaskStatusFilter) {
+        filters.update { it.copy(status = status) }
     }
 
     fun toggleComplete(taskId: String, completed: Boolean) {

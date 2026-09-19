@@ -90,6 +90,16 @@ class TasksFragment : Fragment() {
             )
         }
 
+        binding.statusChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            viewModel.setStatusFilter(
+                when (checkedIds.firstOrNull()) {
+                    R.id.statusChipToDo -> TaskStatusFilter.ACTIVE
+                    R.id.statusChipCompleted -> TaskStatusFilter.COMPLETED
+                    else -> TaskStatusFilter.ALL
+                }
+            )
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collect { state -> renderState(state) }
