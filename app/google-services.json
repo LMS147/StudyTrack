@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "000000000000",
     "project_id": "studytrack-placeholder",
-    "storage_bucket": "studytrack-placeholder.appspot.com"
+    "project_number": "000000000000"
   },
   "client": [
     {
       "client_info": {
-        "mobile_sdk_app_id": "1:000000000000:android:0000000000000000000000",
+        "mobilesdk_app_id": "1:000000000000:android:f1bf012572b04063",
+        "client_id": "android:com.studytrack.app",
+        "client_type": 1,
         "android_client_info": {
           "package_name": "com.studytrack.app"
         }
@@ -25,5 +26,6 @@
       }
     }
   ],
-  "configuration_version": "1"
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
 }
