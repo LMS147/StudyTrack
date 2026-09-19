@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">8223111233-c74qlr75s0kaunl6751pgf4aktb27rdm.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">8223111233</string>
+    <string name="google_api_key" translatable="false">AIzaSyA9xv5x687okdjGZXQsXprsRWysFaAsEuc</string>
+    <string name="google_app_id" translatable="false">1:8223111233:android:a1e37902042727eedb2ec0</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyA9xv5x687okdjGZXQsXprsRWysFaAsEuc</string>
+    <string name="google_storage_bucket" translatable="false">studytrack-88a28.firebasestorage.app</string>
+    <string name="project_id" translatable="false">studytrack-88a28</string>
+</resources>
