@@ -52,14 +52,6 @@ class SettingsRepository(context: Context) {
             prefs.edit().putString(KEY_DARK_MODE, value).apply()
         }
 
-    private companion object {
-        const val KEY_TASK_REMINDERS = "task_reminders_enabled"
-        const val KEY_STREAK_REMINDERS = "streak_reminders_enabled"
-        const val KEY_SHOW_AI_CARD = "show_ai_card_on_dashboard"
-        const val KEY_DEFAULT_AI_PRIORITY = "default_ai_priority"
-        const val KEY_DARK_MODE = "dark_mode"
-    }
-
     companion object {
         /** Follow the phone's system theme (first-launch default). */
         const val DARK_MODE_SYSTEM = "system"
@@ -69,5 +61,11 @@ class SettingsRepository(context: Context) {
 
         /** Force dark, regardless of the system theme. */
         const val DARK_MODE_DARK = "dark"
+
+        private const val KEY_TASK_REMINDERS = "task_reminders_enabled"
+        private const val KEY_STREAK_REMINDERS = "streak_reminders_enabled"
+        private const val KEY_SHOW_AI_CARD = "show_ai_card_on_dashboard"
+        private const val KEY_DEFAULT_AI_PRIORITY = "default_ai_priority"
+        private const val KEY_DARK_MODE = "dark_mode"
     }
 }
