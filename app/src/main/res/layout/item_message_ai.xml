@@ -8,13 +8,16 @@
     android:paddingHorizontal="@dimen/spacing_md"
     android:paddingVertical="6dp">
 
+    <!-- Bot avatar: purple circle with the assistant glyph -->
     <ImageView
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/bg_avatar_ai"
         android:contentDescription="@string/cd_ai_icon"
+        android:padding="6dp"
         android:src="@drawable/ic_ai"
-        app:tint="@color/brand_secondary" />
+        app:tint="@color/white" />
 
     <TextView
         android:id="@+id/messageText"

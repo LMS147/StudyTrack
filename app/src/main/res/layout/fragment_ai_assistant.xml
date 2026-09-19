@@ -1,31 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:orientation="vertical">
 
+    <!-- Title + "online" status line -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:paddingHorizontal="@dimen/spacing_md"
-        android:paddingVertical="@dimen/spacing_sm">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:contentDescription="@string/cd_ai_icon"
-            android:src="@drawable/ic_ai"
-            app:tint="@color/brand_secondary" />
+        android:paddingTop="@dimen/spacing_md"
+        android:paddingBottom="@dimen/spacing_sm">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_sm"
             android:text="@string/ai_title"
-            android:textAppearance="?attr/textAppearanceTitleLarge" />
+            android:textAppearance="?attr/textAppearanceHeadlineSmall"
+            android:textColor="@color/text_primary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/bg_online_dot" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="@string/ai_subtitle"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="@color/text_secondary" />
+        </LinearLayout>
     </LinearLayout>
 
     <FrameLayout
@@ -38,10 +55,43 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingTop="@dimen/spacing_sm"
             android:paddingBottom="@dimen/spacing_md"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="2"
+            tools:listitem="@layout/item_message_ai" />
     </FrameLayout>
+
+    <!-- Quick prompts: one tap sends the question -->
+    <HorizontalScrollView
+        android:id="@+id/suggestionsScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/spacing_md"
+        android:paddingBottom="@dimen/spacing_xs"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="@dimen/spacing_sm"
+            app:singleLine="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/suggestionDueWeek"
+                style="@style/Widget.Material3.Chip.Assist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ai_suggestion_due_this_week" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/suggestionPrioritise"
+                style="@style/Widget.Material3.Chip.Assist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ai_suggestion_prioritise" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -76,6 +126,7 @@
             android:layout_marginStart="@dimen/spacing_sm"
             android:contentDescription="@string/cd_send_message"
             android:src="@drawable/ic_send"
+            app:backgroundTint="@color/brand_primary"
             app:fabCustomSize="44dp"
             app:maxImageSize="20dp"
             app:tint="@color/white" />

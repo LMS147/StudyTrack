@@ -177,7 +177,10 @@
 
     <!-- AI assistant -->
     <string name="ai_title">AI Assistant</string>
-    <string name="ai_hint">Ask me to plan, schedule or break down tasks…</string>
+    <string name="ai_hint">Ask me anything academic…</string>
+    <string name="ai_subtitle">StudyTrack AI · Powered by NLP</string>
+    <string name="ai_suggestion_due_this_week">What tasks are due this week?</string>
+    <string name="ai_suggestion_prioritise">Help me prioritise my tasks</string>
     <string name="cd_send_message">Send message</string>
     <string name="ai_thinking">AI is thinking…</string>
     <string name="ai_welcome_message">Hi! I can help you plan and manage your studies. Try “I have a math assignment due next Friday” or “Create a study plan for my chemistry exam”.</string>

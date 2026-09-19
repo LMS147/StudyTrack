@@ -58,6 +58,14 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
         (binding.chatList.layoutManager as LinearLayoutManager).stackFromEnd = true
 
         binding.sendButton.setOnClickListener { sendCurrentInput() }
+
+        // Quick prompts send their text straight into the chat.
+        binding.suggestionDueWeek.setOnClickListener {
+            sendText(getString(R.string.ai_suggestion_due_this_week))
+        }
+        binding.suggestionPrioritise.setOnClickListener {
+            sendText(getString(R.string.ai_suggestion_prioritise))
+        }
         binding.messageInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 sendCurrentInput()
@@ -71,6 +79,10 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.messages.collect { items ->
+                        // The quick prompts are a starting point: once the
+                        // conversation has begun they stop taking up space.
+                        binding.suggestionsScroll.isVisible =
+                            items.none { it is ChatItem.UserMessage }
                         adapter.submitList(items) {
                             if (items.isNotEmpty()) {
                                 binding.chatList.scrollToPosition(items.lastIndex)
@@ -105,6 +117,12 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
             initialPrompt = args.initialPrompt,
             contextTaskId = args.contextTaskId,
         )
+    }
+
+    private fun sendText(text: String) {
+        hideKeyboard()
+        viewModel.sendMessage(text)
+        binding.messageInput.setText("")
     }
 
     private fun sendCurrentInput() {
