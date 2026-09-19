@@ -10,43 +10,48 @@ Downloading https://services.gradle.org/distributions/gradle-8.7-bin.zip
 > Task :app:preDebugBuild UP-TO-DATE
 > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
 > Task :app:checkKotlinGradlePluginConfigurationErrors
-> Task :app:dataBindingMergeDependencyArtifactsDebug
 > Task :app:generateDebugResValues
+> Task :app:dataBindingMergeDependencyArtifactsDebug
 > Task :app:generateDebugResources
 > Task :app:processDebugGoogleServices
 > Task :app:packageDebugResources
-> Task :app:mergeDebugResources
 > Task :app:generateDebugBuildConfig
 > Task :app:parseDebugLocalResources
 > Task :app:generateSafeArgsDebug
+> Task :app:mergeDebugResources
 > Task :app:dataBindingGenBaseClassesDebug
-> Task :app:checkDebugAarMetadata
 > Task :app:mapDebugSourceSetPaths
+> Task :app:checkDebugAarMetadata
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :app:javaPreCompileDebug
-> Task :app:processDebugManifestForPackage
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
-> Task :app:processDebugResources
-> Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugStartupProfile
-
-> Task :app:compileDebugKotlin
-e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/subjects/SubjectsFragment.kt:87:9 'when' expression must be exhaustive, add necessary 'is Success' branch or 'else' branch instead
-e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/subjects/SubjectsFragment.kt:101:23 Function invocation 'Success(...)' expected
-e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/subjects/SubjectsFragment.kt:101:23 Not enough information to infer type variable T
-e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/subjects/SubjectsFragment.kt:101:23 No value passed for parameter 'data'
-
+> Task :app:processDebugManifestForPackage
+> Task :app:checkDebugDuplicateClasses
+> Task :app:processDebugResources
 > Task :app:mergeExtDexDebug
+> Task :app:mergeDebugJniLibFolders
+> Task :app:mergeLibDexDebug
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+
 > Task :app:compileDebugKotlin FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1789819453767.json
+e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/tasks/AddEditTaskFragment.kt:175:79 Unresolved reference: CLOCK_12
+e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/tasks/TaskAdapter.kt:4:25 Unresolved reference: ColorStateList
+e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/tasks/TaskAdapter.kt:73:55 Unresolved reference: ColorStateList
+e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/tasks/TaskAdapter.kt:93:17 Unresolved reference: ColorStateList
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1789819738912.json
 
 FAILURE: Build failed with an exception.
 
@@ -255,5 +260,5 @@ Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilat
 	... 2 more
 
 
-BUILD FAILED in 1m 7s
-28 actionable tasks: 28 executed
+BUILD FAILED in 1m 19s
+33 actionable tasks: 33 executed
