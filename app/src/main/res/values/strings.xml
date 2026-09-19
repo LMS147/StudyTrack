@@ -158,6 +158,9 @@
     <string name="suggestion_add_failed">Couldn’t add the task. Please try again.</string>
     <string name="chat_added_confirmation">Added to your calendar for %1$s</string>
     <string name="chat_added_with_subtasks">Added to your calendar for %1$s — plus %2$d subtask(s)</string>
+    <string name="ai_empty_reply">I couldn\'t come up with anything for that — could you rephrase or add a bit more detail?</string>
+    <string name="chat_added_via_editor">Added via the task editor ✓</string>
+    <string name="label_due_short">Due</string>
 
     <!-- Profile -->
     <string name="profile_title">Profile</string>

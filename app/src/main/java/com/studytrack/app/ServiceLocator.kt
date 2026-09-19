@@ -7,6 +7,7 @@ import com.studytrack.app.data.repository.AiRepository
 import com.studytrack.app.data.repository.AuthRepository
 import com.studytrack.app.data.repository.CalendarRepository
 import com.studytrack.app.data.repository.ProgressRepository
+import com.studytrack.app.data.repository.SettingsRepository
 import com.studytrack.app.data.repository.SubjectRepository
 import com.studytrack.app.data.repository.TaskRepository
 
@@ -31,6 +32,10 @@ object ServiceLocator {
     val progressRepository: ProgressRepository by lazy { ProgressRepository(apiService) }
 
     val aiRepository: AiRepository by lazy { AiRepository(apiService) }
+
+    val settingsRepository: SettingsRepository by lazy {
+        SettingsRepository(appContext)
+    }
 
     fun init(context: Context) {
         appContext = context.applicationContext

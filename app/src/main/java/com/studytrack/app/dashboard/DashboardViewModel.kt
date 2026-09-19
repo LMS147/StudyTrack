@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.studytrack.app.ServiceLocator
 import com.studytrack.app.data.model.Task
 import com.studytrack.app.data.repository.AuthRepository
+import com.studytrack.app.data.repository.SettingsRepository
 import com.studytrack.app.data.repository.SubjectRepository
 import com.studytrack.app.data.repository.TaskRepository
 import com.studytrack.app.util.ApiResult
@@ -45,6 +46,7 @@ class DashboardViewModel(
     private val taskRepository: TaskRepository,
     private val subjectRepository: SubjectRepository,
     private val authRepository: AuthRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val refreshing = MutableStateFlow(false)
@@ -80,7 +82,7 @@ class DashboardViewModel(
                 .sortedBy { it.dueDate }
                 .take(8),
             subjectNames = subjects.associate { it.subjectId to it.subjectName },
-            showAiCard = true, // wired to Settings in the Profile build step
+            showAiCard = settingsRepository.showAiCardOnDashboard,
             error = error,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DashboardUiState())
@@ -116,6 +118,7 @@ class DashboardViewModel(
                     ServiceLocator.taskRepository,
                     ServiceLocator.subjectRepository,
                     ServiceLocator.authRepository,
+                    ServiceLocator.settingsRepository,
                 )
             }
         }

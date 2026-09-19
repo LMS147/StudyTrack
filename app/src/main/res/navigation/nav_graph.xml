@@ -99,6 +99,10 @@
         android:name="com.studytrack.app.ai.AiAssistantFragment"
         android:label="@string/ai_title">
 
+        <action
+            android:id="@+id/action_aiAssistantFragment_to_addEditTaskFragment"
+            app:destination="@id/addEditTaskFragment" />
+
         <!-- Optional deep-entry context: an initial prompt (e.g. from Task
              Details AI shortcuts) and the task the prompt is about. -->
         <argument
