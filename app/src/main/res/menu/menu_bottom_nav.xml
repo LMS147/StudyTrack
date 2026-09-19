@@ -21,10 +21,11 @@
         android:icon="@drawable/ic_progress"
         android:title="@string/nav_progress" />
 
-    <item
-        android:id="@+id/aiAssistantFragment"
-        android:icon="@drawable/ic_ai"
-        android:title="@string/nav_ai" />
+    <!-- NOTE: BottomNavigationView supports at most 5 items (it throws at
+         inflation time otherwise). The AI Assistant is intentionally NOT a
+         tab — it's reached via the Dashboard's AI card and Task Details'
+         AI shortcuts, and MainActivity keeps the bar visible while on the
+         AI screen. -->
 
     <item
         android:id="@+id/profileFragment"

@@ -14,6 +14,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
+    /**
+     * Destinations on which the bottom bar is visible. Note the AI assistant
+     * is NOT a bottom-nav item (BottomNavigationView allows at most 5) — it
+     * is reached via the Dashboard's AI card and Task Details' AI shortcuts.
+     * It stays in this set so the bar remains visible while chatting, with
+     * the originating tab still selected.
+     */
     private val topLevelDestinations = setOf(
         R.id.dashboardFragment,
         R.id.subjectsFragment,
