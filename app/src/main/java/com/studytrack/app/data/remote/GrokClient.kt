@@ -13,8 +13,10 @@ import retrofit2.http.POST
 import java.util.concurrent.TimeUnit
 
 /**
- * Minimal OpenAI-compatible chat-completions client (xAI Grok by default;
- * any compatible provider works via grok.baseUrl in local.properties).
+ * Minimal OpenAI-compatible chat-completions client. Works with any provider
+ * that follows the OpenAI SDK convention: a base URL that already includes
+ * the version segment (e.g. https://api.groq.com/openai/v1/ or
+ * https://api.x.ai/v1/) plus a "chat/completions" path.
  *
  * Deliberately separate from [RetrofitClient]: no Firebase auth interceptor
  * or token authenticator — this client only attaches the LLM API key.
@@ -48,7 +50,7 @@ data class GrokChatResponse(
 
 interface GrokApiService {
 
-    @POST("v1/chat/completions")
+    @POST("chat/completions")
     suspend fun chatCompletions(@Body request: GrokChatRequest): Response<GrokChatResponse>
 }
 

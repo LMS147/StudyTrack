@@ -46,7 +46,7 @@ android {
         buildConfigField(
             "String",
             "GROK_BASE_URL",
-            "\"${localProperty("grok.baseUrl", "https://api.x.ai/")}\""
+            "\"${localProperty("grok.baseUrl", "https://api.x.ai/v1/")}\""
         )
     }
 
