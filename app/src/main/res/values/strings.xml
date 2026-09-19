@@ -141,6 +141,8 @@
     <string name="ai_shortcut_explain">Explain this task</string>
 
     <!-- Calendar -->
+    <string name="title_calendar">Calendar</string>
+    <string name="calendar_today_label">Today</string>
     <string name="tasks_on_date">Tasks on %1$s</string>
     <string name="empty_day">No tasks on this day</string>
     <string name="cd_previous_month">Previous month</string>

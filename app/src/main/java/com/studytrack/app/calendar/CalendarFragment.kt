@@ -19,7 +19,6 @@ import com.studytrack.app.R
 import com.studytrack.app.data.model.Priority
 import com.studytrack.app.data.model.Task
 import com.studytrack.app.databinding.FragmentCalendarBinding
-import com.studytrack.app.tasks.TaskAdapter
 import com.studytrack.app.tasks.TaskListItem
 import com.studytrack.app.util.DateTimeUtils
 import java.time.DayOfWeek
@@ -43,7 +42,7 @@ class CalendarFragment : Fragment() {
     private val viewModel: CalendarViewModel by viewModels { CalendarViewModel.FACTORY }
 
     private lateinit var gridAdapter: MonthGridAdapter
-    private lateinit var taskAdapter: TaskAdapter
+    private lateinit var taskAdapter: CalendarTaskAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,16 +60,13 @@ class CalendarFragment : Fragment() {
         binding.monthGrid.adapter = gridAdapter
         binding.monthGrid.layoutManager = GridLayoutManager(requireContext(), DAYS_PER_WEEK)
 
-        taskAdapter = TaskAdapter(
+        taskAdapter = CalendarTaskAdapter(
             onTaskClick = { task ->
                 findNavController().navigate(
                     CalendarFragmentDirections.actionCalendarFragmentToTaskDetailsFragment(
                         task.taskId
                     )
                 )
-            },
-            onToggleComplete = { task ->
-                viewModel.toggleComplete(task.taskId, !task.completed)
             },
         )
         binding.dayTaskList.adapter = taskAdapter
@@ -126,12 +122,20 @@ class CalendarFragment : Fragment() {
         gridAdapter.submitList(buildCells(state))
 
         val selected = state.selectedDate
-        binding.selectedDateTitle.text = getString(
-            R.string.tasks_on_date,
-            DateTimeUtils.fullDate(DateTimeUtils.formatIso(selected, java.time.LocalTime.MIDNIGHT)),
-        )
-
         val tasks = state.selectedDateTasks
+
+        // "TODAY · 1 TASK" / "20 SEP · 3 TASKS" — the design's section label.
+        val dayLabel = if (selected == LocalDate.now()) {
+            getString(R.string.calendar_today_label)
+        } else {
+            DateTimeUtils.shortDate(DateTimeUtils.isoDate(selected))
+        }
+        binding.selectedDateTitle.text = resources.getQuantityString(
+            R.plurals.calendar_task_count,
+            tasks.size,
+            dayLabel,
+            tasks.size,
+        )
         binding.emptyDay.isVisible = tasks.isEmpty() && !state.loading
         binding.loadingProgress.isVisible = state.loading && tasks.isEmpty()
 

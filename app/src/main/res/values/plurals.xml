@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Calendar section label: "TODAY · 1 TASK" / "20 SEP · 3 TASKS" -->
+    <plurals name="calendar_task_count">
+        <item quantity="one">%1$s · %2$d task</item>
+        <item quantity="other">%1$s · %2$d tasks</item>
+    </plurals>
+</resources>
