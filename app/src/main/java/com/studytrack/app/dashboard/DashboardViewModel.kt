@@ -13,6 +13,7 @@ import com.studytrack.app.data.repository.SubjectRepository
 import com.studytrack.app.data.repository.TaskRepository
 import com.studytrack.app.util.ApiResult
 import com.studytrack.app.util.DateTimeUtils
+import com.studytrack.app.util.Levels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -40,11 +41,11 @@ data class DashboardUiState(
 
     val overdueCount: Int get() = overdue.size
 
-    /** Scholar level: one level per [XP_PER_LEVEL] points, starting at 1. */
-    val level: Int get() = points / XP_PER_LEVEL + 1
+    /** Scholar level — shared curve with the Progress screen ([Levels]). */
+    val level: Int get() = Levels.levelFor(points)
 
     /** XP earned inside the current level — what the banner's bar fills to. */
-    val xpInLevel: Int get() = points % XP_PER_LEVEL
+    val xpInLevel: Int get() = Levels.xpInLevel(points)
 
     val initials: String
         get() = userName.trim()
@@ -55,10 +56,6 @@ data class DashboardUiState(
             .joinToString("")
             .ifBlank { "?" }
 
-    companion object {
-        /** Points needed to advance one level (matches the design's 500). */
-        const val XP_PER_LEVEL = 500
-    }
 }
 
 /**

@@ -38,6 +38,10 @@
     <color name="success_container">#14301F</color>
     <color name="overdue_red">#FF6B81</color>
 
+    <!-- Level/XP banner gradient (Home + Progress) -->
+    <color name="level_gradient_start">#7C3AED</color>
+    <color name="level_gradient_end">#4C3FBF</color>
+
     <!-- AI accents -->
     <color name="ai_gradient_start">#7C3AED</color>
     <color name="ai_gradient_end">#5B4BD6</color>

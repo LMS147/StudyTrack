@@ -150,6 +150,22 @@
     <string name="action_today">Today</string>
 
     <!-- Progress -->
+    <string name="title_progress">Progress</string>
+    <string name="progress_xp_format">%1$d XP</string>
+    <string name="progress_level_format">Level %1$d Scholar</string>
+    <string name="progress_xp_until_format">%1$d XP until Level %2$d</string>
+    <string name="stat_completed">Completed</string>
+    <string name="stat_pending">Pending</string>
+    <string name="stat_percent_done">% Done</string>
+    <string name="section_by_category">BY CATEGORY</string>
+    <string name="section_badges">BADGES</string>
+    <string name="empty_progress_categories">Add tasks to see how you are doing per category.</string>
+    <string name="badge_first_task">First Task</string>
+    <string name="badge_speed_runner">Speed Runner</string>
+    <string name="badge_bookworm">Bookworm</string>
+    <string name="badge_high_achiever">High Achiever</string>
+    <string name="badge_on_target">On Target</string>
+    <string name="badge_scholar_elite">Scholar Elite</string>
     <string name="overall_completion">Overall completion</string>
     <string name="progress_completed_of">%1$d of %2$d tasks completed</string>
     <string name="stat_points">Points</string>

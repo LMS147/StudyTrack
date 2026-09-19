@@ -190,7 +190,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_md"
-                android:background="@drawable/bg_ai_gradient"
+                android:background="@drawable/bg_level_banner"
                 android:orientation="vertical"
                 android:padding="@dimen/spacing_md">
 

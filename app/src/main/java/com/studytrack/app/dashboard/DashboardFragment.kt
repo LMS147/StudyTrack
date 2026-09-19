@@ -16,6 +16,7 @@ import com.studytrack.app.R
 import com.studytrack.app.databinding.FragmentDashboardBinding
 import com.studytrack.app.tasks.TaskListItem
 import com.studytrack.app.util.DateTimeUtils
+import com.studytrack.app.util.Levels
 import com.studytrack.app.util.toast
 import kotlinx.coroutines.launch
 
@@ -92,10 +93,10 @@ class DashboardFragment : Fragment() {
         binding.levelXpText.text = getString(
             R.string.home_level_xp_format,
             state.xpInLevel,
-            DashboardUiState.XP_PER_LEVEL,
+            Levels.XP_PER_LEVEL,
             state.level + 1,
         )
-        binding.levelProgress.max = DashboardUiState.XP_PER_LEVEL
+        binding.levelProgress.max = Levels.XP_PER_LEVEL
         binding.levelProgress.setProgressCompat(state.xpInLevel, true)
 
         adapter.submitList(buildItems(state))

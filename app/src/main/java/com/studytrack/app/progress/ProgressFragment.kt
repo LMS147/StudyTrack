@@ -10,12 +10,18 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.studytrack.app.R
 import com.studytrack.app.databinding.FragmentProgressBinding
+import com.studytrack.app.util.Levels
 import com.studytrack.app.util.toast
 import kotlinx.coroutines.launch
 
+/**
+ * Progress tab: XP/level banner, completion stats, per-category bars and the
+ * badge grid — everything derived from the task and subject caches.
+ */
 class ProgressFragment : Fragment() {
 
     private var _binding: FragmentProgressBinding? = null
@@ -23,7 +29,8 @@ class ProgressFragment : Fragment() {
 
     private val viewModel: ProgressViewModel by viewModels { ProgressViewModel.FACTORY }
 
-    private lateinit var adapter: SubjectProgressAdapter
+    private lateinit var categoryAdapter: CategoryProgressAdapter
+    private lateinit var badgeAdapter: BadgeAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,9 +44,13 @@ class ProgressFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = SubjectProgressAdapter()
-        binding.subjectProgressList.adapter = adapter
-        binding.subjectProgressList.layoutManager = LinearLayoutManager(requireContext())
+        categoryAdapter = CategoryProgressAdapter()
+        binding.categoryProgressList.adapter = categoryAdapter
+        binding.categoryProgressList.layoutManager = LinearLayoutManager(requireContext())
+
+        badgeAdapter = BadgeAdapter()
+        binding.badgeGrid.adapter = badgeAdapter
+        binding.badgeGrid.layoutManager = GridLayoutManager(requireContext(), BADGE_COLUMNS)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -51,19 +62,24 @@ class ProgressFragment : Fragment() {
     private fun renderState(state: ProgressUiState) {
         binding.loadingProgress.isVisible = state.loading
 
-        binding.overallRing.setProgress(state.overallPercent, true)
-        binding.overallPercentText.text =
-            getString(R.string.percent_format, state.overallPercent)
-        binding.overallSummaryText.text = getString(
-            R.string.progress_completed_of, state.completedTasks, state.totalTasks
+        binding.xpValue.text = getString(R.string.progress_xp_format, state.points)
+        binding.levelValue.text = getString(R.string.progress_level_format, state.level)
+        binding.levelProgress.max = Levels.XP_PER_LEVEL
+        binding.levelProgress.setProgressCompat(state.xpInLevel, true)
+        binding.xpUntilNextLevel.text = getString(
+            R.string.progress_xp_until_format,
+            Levels.XP_PER_LEVEL - state.xpInLevel,
+            state.level + 1,
         )
 
-        binding.statPointsValue.text = state.totalPoints.toString()
         binding.statCompletedValue.text = state.completedTasks.toString()
-        binding.statStreakValue.text = state.currentStreak.toString()
+        binding.statPendingValue.text = state.pendingTasks.toString()
+        binding.statPercentValue.text = getString(R.string.percent_format, state.overallPercent)
 
-        adapter.submitList(state.subjectProgress)
-        binding.emptySubjects.isVisible = state.subjectProgress.isEmpty()
+        categoryAdapter.submitList(state.categoryProgress)
+        binding.emptyCategories.isVisible = state.categoryProgress.isEmpty()
+
+        badgeAdapter.submitList(state.badges)
 
         if (state.error != null && !state.loading) {
             toast(state.error)
@@ -73,5 +89,9 @@ class ProgressFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private companion object {
+        const val BADGE_COLUMNS = 3
     }
 }
