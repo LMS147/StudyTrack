@@ -26,6 +26,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
+          # Cache restored a stale generateDebugBuildConfig output once
+          # (newly added buildConfigField invisible to compileDebugKotlin).
+          # A compile gate must be deterministic — always build from scratch.
+          cache-disabled: true
 
       - name: Ensure Gradle wrapper scripts exist
         run: |
