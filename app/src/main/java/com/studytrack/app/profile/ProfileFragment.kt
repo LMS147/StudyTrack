@@ -14,6 +14,7 @@ import com.studytrack.app.BuildConfig
 import com.studytrack.app.R
 import com.studytrack.app.data.remote.RetrofitClient
 import com.studytrack.app.databinding.FragmentProfileBinding
+import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
@@ -56,8 +57,8 @@ class ProfileFragment : Fragment() {
             if (!updatingUi) viewModel.setShowAiCard(checked)
         }
 
-        binding.aiPriorityGroup.setOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (updatingUi || !isChecked) return@setOnButtonCheckedListener
+        binding.aiPriorityGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (updatingUi || !isChecked) return@addOnButtonCheckedListener
             val raw = when (checkedId) {
                 R.id.aiPriorityLow -> "Low"
                 R.id.aiPriorityMedium -> "Medium"

@@ -90,7 +90,7 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
         savedStateHandle?.getLiveData<String>(NavResultKeys.AI_SUGGESTION_CREATED)
             ?.observe(viewLifecycleOwner) { suggestionItemId ->
                 viewModel.markAcceptedFromEditor(suggestionItemId)
-                savedStateHandle.remove(NavResultKeys.AI_SUGGESTION_CREATED)
+                savedStateHandle.remove<Any>(NavResultKeys.AI_SUGGESTION_CREATED)
             }
 
         viewModel.start(
