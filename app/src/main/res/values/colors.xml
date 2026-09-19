@@ -1,0 +1,37 @@
+<resources>
+    <!-- Brand -->
+    <color name="brand_primary">#4F46E5</color>
+    <color name="brand_primary_dark">#4338CA</color>
+    <color name="brand_on_primary">#FFFFFF</color>
+    <color name="brand_container">#E0E7FF</color>
+    <color name="brand_on_container">#3730A3</color>
+    <color name="brand_secondary">#7C3AED</color>
+
+    <!-- Surfaces & text -->
+    <color name="background">#F6F7FB</color>
+    <color name="surface_bubble_ai">#EEF1FA</color>
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="white">#FFFFFF</color>
+    <color name="divider">#E5E7EB</color>
+
+    <!-- Priority -->
+    <color name="priority_high">#EF4444</color>
+    <color name="priority_medium">#F59E0B</color>
+    <color name="priority_low">#3B82F6</color>
+    <color name="priority_high_container">#FEE2E2</color>
+    <color name="priority_medium_container">#FEF3C7</color>
+    <color name="priority_low_container">#DBEAFE</color>
+
+    <!-- Status -->
+    <color name="success">#16A34A</color>
+    <color name="success_container">#DCFCE7</color>
+    <color name="overdue_red">#DC2626</color>
+
+    <!-- AI -->
+    <color name="ai_gradient_start">#7C3AED</color>
+    <color name="ai_gradient_end">#4F46E5</color>
+
+    <!-- Launcher -->
+    <color name="ic_launcher_background">#4F46E5</color>
+</resources>

@@ -1,0 +1,204 @@
+#!/usr/bin/env python3
+"""
+Static consistency checker for the StudyTrack Android app.
+
+The dev sandbox cannot run Gradle (no JDK/Android SDK, blocked package hosts),
+so this script catches the most common Android build failures before pushing:
+
+  1. XML well-formedness for every resource + manifest
+  2. Every resource reference in Kotlin (R.string.foo, R.id.bar, ...) resolves
+  3. Every @string/@color/@drawable/... reference inside XML resolves
+  4. ViewBinding usage: for each Fragment, every `binding.foo` property must
+     exist as an id in the layout file that matches the binding class name
+  5. Bottom-nav menu ids are navigation destinations in nav_graph.xml
+  6. Kotlin `package` declarations match the file's directory
+  7. Project-internal imports (com.studytrack.app.*) resolve to declared packages
+
+Exit code 1 on any failure.
+"""
+import re
+import sys
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+RES = ROOT / "app/src/main/res"
+SRC = ROOT / "app/src/main/java/com/studytrack/app"
+
+failures = []
+def fail(msg):
+    failures.append(msg)
+
+# ---------------------------------------------------------------- gather resources
+def collect(res_type):
+    d = RES / res_type
+    if not d.exists():
+        return set()
+    return {p.stem for p in d.glob("*.xml")}
+
+resources = {
+    "string": set(), "color": set(), "dimen": set(), "style": set(),
+    "drawable": collect("drawable") | collect("mipmap-anydpi-v26"),
+    "mipmap": collect("mipmap-anydpi-v26"),
+    "layout": collect("layout"),
+    "menu": collect("menu"),
+    "navigation": collect("navigation"),
+    "id": set(),
+}
+
+# parse values files for string/color/dimen/style
+for vf in (RES / "values").glob("*.xml"):
+    try:
+        tree = ET.parse(vf)
+    except ET.ParseError as e:
+        fail(f"XML parse error in {vf}: {e}")
+        continue
+    for el in tree.getroot():
+        if el.tag in ("string", "color", "dimen", "style"):
+            name = el.get("name")
+            if name:
+                resources[el.tag].add(name)
+
+# every @+id declared in layouts & menus
+for lf in (RES / "layout").glob("*.xml"):
+    try:
+        content = lf.read_text()
+    except OSError as e:
+        fail(f"Cannot read {lf}: {e}")
+        continue
+    try:
+        ET.fromstring(content)
+    except ET.ParseError as e:
+        fail(f"XML parse error in {lf}: {e}")
+    resources["id"] |= set(re.findall(r"@_\+id/(\w+)", content)) or set(re.findall(r"@\\+id/(\w+)", content)) or set(re.findall(r"\+id/(\w+)", content))
+
+for mf in (RES / "menu").glob("*.xml") if (RES / "menu").exists() else []:
+    content = mf.read_text()
+    try:
+        ET.fromstring(content)
+    except ET.ParseError as e:
+        fail(f"XML parse error in {mf}: {e}")
+    resources["id"] |= set(re.findall(r"\+id/(\w+)", content))
+
+# navigation destination ids
+nav_dest_ids = set()
+if (RES / "navigation").exists():
+    for nf in (RES / "navigation").glob("*.xml"):
+        try:
+            tree = ET.parse(nf)
+        except ET.ParseError as e:
+            fail(f"XML parse error in {nf}: {e}")
+            continue
+        for el in tree.getroot().iter():
+            if el.tag.endswith("fragment") or el.tag.endswith("activity") or el.tag.endswith("dialog"):
+                did = el.get("{http://schemas.android.com/apk/res/android}id", "")
+                m = re.search(r"id/(\w+)", did)
+                if m:
+                    nav_dest_ids.add(m.group(1))
+
+# manifest well-formed
+manifest = ROOT / "app/src/main/AndroidManifest.xml"
+try:
+    ET.parse(manifest)
+except ET.ParseError as e:
+    fail(f"XML parse error in AndroidManifest.xml: {e}")
+
+# ---------------------------------------------------------------- check XML references
+ref_re = re.compile(r"@(string|color|dimen|drawable|mipmap|layout|menu|navigation|style)/([\w.]+)")
+for xml_file in RES.rglob("*.xml"):
+    content = xml_file.read_text()
+    try:
+        ET.fromstring(content)
+    except ET.ParseError as e:
+        fail(f"XML parse error in {xml_file}: {e}")
+        continue
+    for kind, name in ref_re.findall(content):
+        if kind == "dimen" and name.startswith("?attr"):
+            continue
+        if name not in resources.get(kind, set()):
+            fail(f"{xml_file.relative_to(ROOT)}: unresolved @{'@' if False else ''}{kind}/{name}")
+
+# ---------------------------------------------------------------- check Kotlin references
+kt_files = sorted(SRC.rglob("*.kt"))
+r_ref_re = re.compile(r"\bR\.(string|color|dimen|drawable|mipmap|layout|menu|navigation|style|id)\.(\w+)")
+
+layout_ids = {}  # layout file -> set of ids
+for lf in (RES / "layout").glob("*.xml"):
+    content = lf.read_text()
+    layout_ids[lf.stem] = set(re.findall(r"\+id/(\w+)", content))
+
+def snake_to_camel(s):
+    parts = s.split("_")
+    return parts[0] + "".join(p.capitalize() for p in parts[1:])
+
+binding_class_re = re.compile(r"Fragment(\w+)Binding")
+binding_prop_re = re.compile(r"(?<!data)binding\.(\w+)\b")  # not "databinding."
+
+kotlin_packages = {}  # package name -> exists
+package_files = set()
+for kt in kt_files:
+    text = kt.read_text()
+    m = re.search(r"^package\s+([\w.]+)", text, re.M)
+    if not m:
+        fail(f"{kt.relative_to(ROOT)}: missing package declaration")
+        continue
+    pkg = m.group(1)
+    relative_dir = str(kt.parent.relative_to(SRC))
+    expected_pkg = "com.studytrack.app" + (("." + relative_dir.replace("/", ".")) if relative_dir != "." else "")
+    if pkg != expected_pkg:
+        fail(f"{kt.relative_to(ROOT)}: package '{pkg}' does not match directory '{expected_pkg}'")
+    package_files.add((pkg, kt.stem))
+
+declared_pkgs = {p for p, _ in package_files}
+
+for kt in kt_files:
+    text = kt.read_text()
+    rel = kt.relative_to(ROOT)
+    for kind, name in r_ref_re.findall(text):
+        if name not in resources.get(kind, set()):
+            fail(f"{rel}: unresolved R.{kind}.{name}")
+    for imp in re.findall(r"^import\s+(com\.studytrack\.app\.[\w.]+)", text, re.M):
+        if imp in ("com.studytrack.app",):
+            continue
+        # generated sources: ViewBinding classes + safe-args Directions/Args
+        if imp.startswith("com.studytrack.app.databinding"):
+            continue
+        if imp.endswith("Directions") or imp.endswith("Args"):
+            continue
+        pkg = imp.rsplit(".", 1)[0]
+        leaf = imp.rsplit(".", 1)[1]
+        if leaf.isupper() or leaf[0].isupper():  # class import
+            if (pkg, leaf) not in package_files:
+                fail(f"{rel}: import '{imp}' does not match any project file")
+        else:  # wildcard-ish or function import: package must exist
+            if pkg not in declared_pkgs and not any(p.startswith(imp + ".") for p in declared_pkgs):
+                fail(f"{rel}: import '{imp}' package not found in project")
+
+    # ViewBinding property check per fragment file
+    bm = re.search(r"private var _binding:\s*Fragment(\w+)Binding", text)
+    if bm:
+        layout_name = "fragment_" + re.sub(r"(?<!^)(?=[A-Z])", "_", bm.group(1)).lower()
+        if layout_name not in layout_ids:
+            fail(f"{rel}: no layout '{layout_name}' for binding Fragment{bm.group(1)}Binding")
+        else:
+            valid_props = layout_ids[layout_name] | {"root"}
+            for prop in binding_prop_re.findall(text):
+                if prop not in {snake_to_camel(i) for i in valid_props}:
+                    fail(f"{rel}: binding.{prop} has no matching id in {layout_name}.xml")
+
+# ---------------------------------------------------------------- bottom nav vs nav graph
+menu = RES / "menu/menu_bottom_nav.xml"
+if menu.exists() and nav_dest_ids:
+    content = menu.read_text()
+    for mid in re.findall(r"\+id/(\w+)", content):
+        if mid not in nav_dest_ids:
+            fail(f"menu_bottom_nav.xml: id '{mid}' is not a navigation destination")
+
+# ---------------------------------------------------------------- report
+if failures:
+    print(f"FAILED: {len(failures)} problem(s)")
+    for f in failures:
+        print("  -", f)
+    sys.exit(1)
+print(f"OK: {len(kt_files)} Kotlin files, {len(layout_ids)} layouts, "
+      f"{len(resources['string'])} strings, {len(resources['drawable'])} drawables — all references resolve")

@@ -1,0 +1,187 @@
+<resources>
+    <string name="app_name">StudyTrack</string>
+
+    <!-- Common -->
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_back">Back</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="error_network">Network error — check your connection and try again.</string>
+    <string name="error_required">This field is required</string>
+
+    <!-- Auth -->
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Sign in to keep your studies on track</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="action_log_in">Log in</string>
+    <string name="action_go_to_register">New here? Create an account</string>
+    <string name="error_email_invalid">Enter a valid email address</string>
+    <string name="error_password_required">Enter your password</string>
+    <string name="error_password_short">Password must be at least 6 characters</string>
+    <string name="register_title">Create your account</string>
+    <string name="register_subtitle">Start tracking your studies today</string>
+    <string name="hint_name">Full name</string>
+    <string name="hint_confirm_password">Confirm password</string>
+    <string name="action_create_account">Create account</string>
+    <string name="action_go_to_login">Already have an account? Log in</string>
+    <string name="error_name_required">Enter your name</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_subjects">Subjects</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_progress">Progress</string>
+    <string name="nav_ai">AI</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_today">Today</string>
+    <string name="ai_card_title">AI Study Assistant</string>
+    <string name="ai_card_subtitle">Plan tasks, break down assignments and study smarter</string>
+    <string name="dashboard_progress_today">Today\'s progress</string>
+    <string name="dashboard_progress_summary">%1$d of %2$d tasks done</string>
+    <string name="section_due_today">Due today</string>
+    <string name="section_overdue">Overdue</string>
+    <string name="section_upcoming">Upcoming deadlines</string>
+    <string name="empty_due_today">Nothing due today — enjoy! 🎉</string>
+    <string name="empty_overdue">No overdue tasks. Nice work!</string>
+    <string name="empty_upcoming">No upcoming deadlines yet.</string>
+    <string name="cd_add_task">Add task</string>
+    <string name="greeting_morning">Good morning, %1$s</string>
+    <string name="greeting_afternoon">Good afternoon, %1$s</string>
+    <string name="greeting_evening">Good evening, %1$s</string>
+    <string name="greeting_night">Burning the midnight oil, %1$s?</string>
+
+    <!-- Subjects -->
+    <string name="action_add_subject">Add subject</string>
+    <string name="empty_subjects">No subjects yet.\nTap + to add your first subject.</string>
+    <string name="subject_progress_label">%1$d of %2$d completed</string>
+    <string name="subject_task_count">%1$d tasks</string>
+    <string name="dialog_subject_new_title">New subject</string>
+    <string name="dialog_subject_edit_title">Edit subject</string>
+    <string name="hint_subject_name">Subject name</string>
+    <string name="hint_subject_description">Description (optional)</string>
+    <string name="error_subject_name_required">Give this subject a name</string>
+    <string name="delete_subject_confirm_title">Delete subject?</string>
+    <string name="delete_subject_confirm_message">This cannot be undone. Tasks linked to this subject may lose their subject.</string>
+    <string name="cd_subject_options">Subject options</string>
+    <string name="no_description">No description</string>
+
+    <!-- Tasks -->
+    <string name="title_add_task">New task</string>
+    <string name="title_edit_task">Edit task</string>
+    <string name="hint_task_title">Title</string>
+    <string name="hint_task_description">Description (optional)</string>
+    <string name="label_subject">Subject</string>
+    <string name="label_no_subject">No subject</string>
+    <string name="label_task_type">Task type</string>
+    <string name="label_due_date">Due date</string>
+    <string name="label_due_time">Due time</string>
+    <string name="label_priority">Priority</string>
+    <string name="label_reminder">Set a reminder</string>
+    <string name="label_reminder_date">Reminder date</string>
+    <string name="label_reminder_time">Reminder time</string>
+    <string name="priority_low">Low</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_high">High</string>
+    <string name="task_type_assignment">Assignment</string>
+    <string name="task_type_test">Test</string>
+    <string name="task_type_exam">Exam</string>
+    <string name="task_type_project">Project</string>
+    <string name="task_type_presentation">Presentation</string>
+    <string name="task_type_study">Study</string>
+    <string name="action_save_task">Save task</string>
+    <string name="action_update_task">Update task</string>
+    <string name="error_title_required">Give this task a title</string>
+    <string name="error_due_date_required">Pick a due date</string>
+    <string name="select_due_date">Select due date</string>
+    <string name="select_reminder_date">Select reminder date</string>
+    <string name="select_time">Select time</string>
+    <string name="no_time_set">No time set</string>
+    <string name="task_saved">Task saved</string>
+    <string name="cd_task_completed_toggle">Toggle completed</string>
+    <string name="overdue_badge">Overdue</string>
+
+    <!-- Task details -->
+    <string name="title_task_details">Task details</string>
+    <string name="action_mark_complete">Mark complete</string>
+    <string name="action_mark_incomplete">Mark uncomplete</string>
+    <string name="action_delete_task">Delete task</string>
+    <string name="delete_task_confirm_title">Delete task?</string>
+    <string name="delete_task_confirm_message">This cannot be undone.</string>
+    <string name="task_deleted">Task deleted</string>
+    <string name="label_completed_on">Completed %1$s</string>
+    <string name="label_points">Points</string>
+    <string name="ai_shortcuts_title">AI shortcuts</string>
+    <string name="ai_shortcut_break_down">Break into subtasks</string>
+    <string name="ai_shortcut_study_plan">Create study plan</string>
+    <string name="ai_shortcut_explain">Explain this task</string>
+
+    <!-- Calendar -->
+    <string name="tasks_on_date">Tasks on %1$s</string>
+    <string name="empty_day">No tasks on this day</string>
+    <string name="cd_previous_month">Previous month</string>
+    <string name="cd_next_month">Next month</string>
+    <string name="action_today">Today</string>
+
+    <!-- Progress -->
+    <string name="overall_completion">Overall completion</string>
+    <string name="progress_completed_of">%1$d of %2$d tasks completed</string>
+    <string name="stat_points">Points</string>
+    <string name="stat_completed_tasks">Completed tasks</string>
+    <string name="stat_streak">Day streak</string>
+    <string name="progress_by_subject">Progress by subject</string>
+    <string name="empty_progress_subjects">Add subjects and tasks to see progress here.</string>
+    <string name="percent_format">%1$d%%</string>
+
+    <!-- AI assistant -->
+    <string name="ai_title">AI Assistant</string>
+    <string name="ai_hint">Ask me to plan, schedule or break down tasks…</string>
+    <string name="cd_send_message">Send message</string>
+    <string name="ai_thinking">AI is thinking…</string>
+    <string name="ai_welcome_message">Hi! I can help you plan and manage your studies. Try “I have a math assignment due next Friday” or “Create a study plan for my chemistry exam”.</string>
+    <string name="ai_error">Sorry — I couldn’t reach the AI service. Please try again.</string>
+    <string name="suggestion_accept">Accept</string>
+    <string name="suggestion_edit">Edit</string>
+    <string name="suggestion_reject">Reject</string>
+    <string name="suggestion_accepted">Added to your calendar ✓</string>
+    <string name="suggestion_rejected">Rejected</string>
+    <string name="suggestion_needs_date">This suggestion needs a due date before you can accept it.</string>
+    <string name="suggestion_set_date">Set date</string>
+    <string name="suggestion_subtasks_count">%1$d subtasks</string>
+    <string name="suggestion_add_failed">Couldn’t add the task. Please try again.</string>
+    <string name="chat_added_confirmation">Added to your calendar for %1$s</string>
+    <string name="chat_added_with_subtasks">Added to your calendar for %1$s — plus %2$d subtask(s)</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="section_account">Account</string>
+    <string name="section_notifications">Notifications</string>
+    <string name="section_ai_preferences">AI preferences</string>
+    <string name="section_about">About</string>
+    <string name="pref_task_reminders">Task reminders</string>
+    <string name="pref_task_reminders_summary">Remind me when tasks are due</string>
+    <string name="pref_streak_reminders">Streak reminders</string>
+    <string name="pref_streak_reminders_summary">A daily nudge to keep my streak alive</string>
+    <string name="pref_ai_dashboard_card">AI card on dashboard</string>
+    <string name="pref_ai_dashboard_card_summary">Show the AI assistant shortcut on the dashboard</string>
+    <string name="pref_ai_default_priority">Default priority for AI-created tasks</string>
+    <string name="action_logout">Log out</string>
+    <string name="logout_confirm_title">Log out?</string>
+    <string name="logout_confirm_message">You can log back in at any time.</string>
+    <string name="logged_out">You’ve been logged out</string>
+    <string name="label_version">Version</string>
+    <string name="label_api_endpoint">API endpoint</string>
+    <string name="not_signed_in">Not signed in</string>
+    <string name="cd_profile_avatar">Profile avatar</string>
+
+    <!-- Misc content descriptions -->
+    <string name="cd_app_logo">StudyTrack</string>
+    <string name="cd_more_options">More options</string>
+    <string name="cd_ai_icon">AI assistant</string>
+</resources>

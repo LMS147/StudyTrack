@@ -1,0 +1,57 @@
+name: Android CI
+
+on:
+  push:
+    branches: [main, "arena/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Assemble debug APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Ensure Gradle wrapper scripts exist
+        run: |
+          if [ ! -f ./gradlew ]; then
+            gradle wrapper --gradle-version 8.7
+          fi
+
+      - name: Assemble debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      # One-time: CI generates the wrapper scripts + jar and commits them back,
+      # so the repo is fully buildable with ./gradlew locally afterwards.
+      - name: Commit Gradle wrapper (first successful build only)
+        if: success() && github.ref == 'refs/heads/arena/01a0b968-studytrack'
+        run: |
+          CHANGED=$(git status --porcelain gradlew gradlew.bat gradle)
+          if [ -n "$CHANGED" ]; then
+            git config user.name "studytrack-ci"
+            git config user.email "ci@studytrack.local"
+            git add gradlew gradlew.bat gradle
+            git commit -m "chore: generate Gradle wrapper from CI"
+            git push
+            echo "Wrapper committed."
+          else
+            echo "Wrapper already present, nothing to commit."
+          fi
