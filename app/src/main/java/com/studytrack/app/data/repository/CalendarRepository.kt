@@ -9,16 +9,29 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
+ * Calendar data surface. Two implementations:
+ * - [RemoteCalendarRepository]: GET /api/calendar (when api.baseUrl is set)
+ * - [LocalCalendarRepository]: derives the month grid from the local task
+ *   store (local mode, no backend)
+ */
+interface CalendarRepository {
+
+    val calendarTasks: StateFlow<List<Task>>
+
+    suspend fun refresh(): ApiResult<List<Task>>
+}
+
+/**
  * Calendar data comes from GET /api/calendar, which returns the same Task
  * models (grouped client-side by dueDate). Kept as its own cache so the
  * calendar screen never has to mutate or be mutated by the task-editor flows.
  */
-class CalendarRepository(private val api: ApiService) {
+class RemoteCalendarRepository(private val api: ApiService) : CalendarRepository {
 
     private val _calendarTasks = MutableStateFlow<List<Task>>(emptyList())
-    val calendarTasks: StateFlow<List<Task>> = _calendarTasks.asStateFlow()
+    override val calendarTasks: StateFlow<List<Task>> = _calendarTasks.asStateFlow()
 
-    suspend fun refresh(): ApiResult<List<Task>> = safeApiCall {
+    override suspend fun refresh(): ApiResult<List<Task>> = safeApiCall {
         api.getCalendarTasks().also { _calendarTasks.value = it }
     }
 }

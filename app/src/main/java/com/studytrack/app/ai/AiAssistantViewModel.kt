@@ -208,8 +208,16 @@ class AiAssistantViewModel(
         val dueIso = item.effectiveDueDate ?: return // UI disables Accept without a date
         updateSuggestion(itemId) { it.copy(status = SuggestionStatus.ACCEPTING) }
 
+        // The AI names a subject rather than referencing an id; attach the
+        // task to the matching subject when one exists (local mode benefit:
+        // the task lands under the right subject automatically).
+        val resolvedSubjectId = item.suggestion.subjectId
+            ?: resolveSubjectIdByName(item.suggestion.subjectName)
+
         viewModelScope.launch {
-            val result = taskRepository.create(item.suggestion.toPayload())
+            val result = taskRepository.create(
+                item.suggestion.toPayload(fallbackSubjectId = resolvedSubjectId)
+            )
             when (result) {
                 is ApiResult.Success -> {
                     var createdSubtasks = 0
@@ -217,7 +225,10 @@ class AiAssistantViewModel(
                         // Subtasks without their own resolved date inherit the
                         // parent's due date (deterministic, documented rule).
                         val subResult = taskRepository.create(
-                            subtask.toPayload(fallbackDueDate = dueIso)
+                            subtask.toPayload(
+                                fallbackDueDate = dueIso,
+                                fallbackSubjectId = resolvedSubjectId,
+                            )
                         )
                         if (subResult is ApiResult.Success) createdSubtasks++
                     }
@@ -273,11 +284,14 @@ class AiAssistantViewModel(
 
     // --------------------------------------------------------------- internals
 
-    private fun TaskSuggestion.toPayload(fallbackDueDate: String? = null): TaskPayload =
+    private fun TaskSuggestion.toPayload(
+        fallbackDueDate: String? = null,
+        fallbackSubjectId: String? = null,
+    ): TaskPayload =
         TaskPayload(
             title = title,
             description = description,
-            subjectId = subjectId,
+            subjectId = subjectId ?: fallbackSubjectId,
             taskType = TaskType.fromRaw(taskType),
             priority = Priority.fromRaw(priority),
             dueDate = dueDate ?: fallbackDueDate,
@@ -302,6 +316,13 @@ class AiAssistantViewModel(
                 if (item is ChatItem.Suggestion && item.itemId == itemId) transform(item) else item
             }
         }
+    }
+
+    private fun resolveSubjectIdByName(name: String?): String? {
+        if (name.isNullOrBlank()) return null
+        return subjectRepository.subjects.value.firstOrNull {
+            it.subjectName.equals(name, ignoreCase = true)
+        }?.subjectId
     }
 
     private fun nextId(prefix: String): String = "$prefix-${idCounter++}"

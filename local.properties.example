@@ -5,6 +5,13 @@
 # that line and add the properties below.
 
 # ---------------------------------------------------------------------------
+# StudyTrack REST API backend. Leave api.baseUrl BLANK (the default) to run
+# the app in LOCAL MODE: subjects, tasks, calendar and progress are stored
+# on-device (SharedPreferences) and no backend is contacted. Set it to your
+# deployed API (trailing slash required) to switch everything to the backend.
+#api.baseUrl=https://api.your-studytrack-backend.com/
+
+# ---------------------------------------------------------------------------
 # AI brain for the assistant chat — any OpenAI-compatible provider.
 # (Property names say "grok" for historical reasons; Groq, xAI, OpenRouter…
 # all work.) When grok.apiKey is blank the app calls the StudyTrack backend's

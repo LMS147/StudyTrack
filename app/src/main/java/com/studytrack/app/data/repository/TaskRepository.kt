@@ -13,36 +13,57 @@ import kotlinx.coroutines.flow.asStateFlow
 import retrofit2.HttpException
 
 /**
- * Task CRUD against the REST API. Also the single write path used by the AI
- * chat to create accepted suggestions — the chat never talks to the backend
- * directly except through the AI endpoint.
+ * Task CRUD surface. Two implementations:
+ * - [RemoteTaskRepository]: the REST API (when api.baseUrl is configured)
+ * - [LocalTaskRepository]: on-device storage (local mode, no backend)
+ *
+ * Also the single write path used by the AI chat to create accepted
+ * suggestions.
  */
-class TaskRepository(private val api: ApiService) {
+interface TaskRepository {
+
+    val tasks: StateFlow<List<Task>>
+
+    suspend fun refresh(): ApiResult<List<Task>>
+
+    suspend fun getTask(taskId: String): ApiResult<Task>
+
+    suspend fun create(payload: TaskPayload): ApiResult<Task>
+
+    suspend fun update(taskId: String, payload: TaskPayload): ApiResult<Task>
+
+    suspend fun delete(taskId: String): ApiResult<Unit>
+
+    suspend fun setCompleted(taskId: String, completed: Boolean): ApiResult<Task>
+}
+
+/** Task CRUD against the REST API. */
+class RemoteTaskRepository(private val api: ApiService) : TaskRepository {
 
     private val _tasks = MutableStateFlow<List<Task>>(emptyList())
-    val tasks: StateFlow<List<Task>> = _tasks.asStateFlow()
+    override val tasks: StateFlow<List<Task>> = _tasks.asStateFlow()
 
-    suspend fun refresh(): ApiResult<List<Task>> = safeApiCall {
+    override suspend fun refresh(): ApiResult<List<Task>> = safeApiCall {
         api.getTasks().also { _tasks.value = it }
     }
 
-    suspend fun getTask(taskId: String): ApiResult<Task> = safeApiCall {
+    override suspend fun getTask(taskId: String): ApiResult<Task> = safeApiCall {
         api.getTask(taskId)
     }
 
-    suspend fun create(payload: TaskPayload): ApiResult<Task> = safeApiCall {
+    override suspend fun create(payload: TaskPayload): ApiResult<Task> = safeApiCall {
         val created = api.createTask(payload)
         refreshCacheBestEffort()
         created
     }
 
-    suspend fun update(taskId: String, payload: TaskPayload): ApiResult<Task> = safeApiCall {
+    override suspend fun update(taskId: String, payload: TaskPayload): ApiResult<Task> = safeApiCall {
         val updated = api.updateTask(taskId, payload)
         refreshCacheBestEffort()
         updated
     }
 
-    suspend fun delete(taskId: String): ApiResult<Unit> = safeApiCall {
+    override suspend fun delete(taskId: String): ApiResult<Unit> = safeApiCall {
         val response = api.deleteTask(taskId)
         if (!response.isSuccessful) throw HttpException(response)
         refreshCacheBestEffort()
@@ -50,7 +71,7 @@ class TaskRepository(private val api: ApiService) {
     }
 
     /** PATCH /api/tasks/{id}/complete — toggles completion state. */
-    suspend fun setCompleted(taskId: String, completed: Boolean): ApiResult<Task> = safeApiCall {
+    override suspend fun setCompleted(taskId: String, completed: Boolean): ApiResult<Task> = safeApiCall {
         val updated = api.setTaskCompleted(taskId, CompleteTaskPayload(completed))
         refreshCacheBestEffort()
         updated

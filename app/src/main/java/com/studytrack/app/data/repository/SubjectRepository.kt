@@ -12,35 +12,57 @@ import kotlinx.coroutines.flow.asStateFlow
 import retrofit2.HttpException
 
 /**
+ * Subject CRUD surface. Two implementations:
+ * - [RemoteSubjectRepository]: the REST API (when api.baseUrl is configured)
+ * - [LocalSubjectRepository]: on-device storage (local mode, no backend)
+ *
+ * [com.studytrack.app.ServiceLocator] picks one at startup.
+ */
+interface SubjectRepository {
+
+    val subjects: StateFlow<List<Subject>>
+
+    suspend fun refresh(): ApiResult<List<Subject>>
+
+    suspend fun getSubject(subjectId: String): ApiResult<Subject>
+
+    suspend fun create(payload: SubjectPayload): ApiResult<Subject>
+
+    suspend fun update(subjectId: String, payload: SubjectPayload): ApiResult<Subject>
+
+    suspend fun delete(subjectId: String): ApiResult<Unit>
+}
+
+/**
  * Subject CRUD against the REST API, with an in-memory cache exposed as a
  * [StateFlow] so any screen (and the AI chat) can observe the current list.
  */
-class SubjectRepository(private val api: ApiService) {
+class RemoteSubjectRepository(private val api: ApiService) : SubjectRepository {
 
     private val _subjects = MutableStateFlow<List<Subject>>(emptyList())
-    val subjects: StateFlow<List<Subject>> = _subjects.asStateFlow()
+    override val subjects: StateFlow<List<Subject>> = _subjects.asStateFlow()
 
-    suspend fun refresh(): ApiResult<List<Subject>> = safeApiCall {
+    override suspend fun refresh(): ApiResult<List<Subject>> = safeApiCall {
         api.getSubjects().also { _subjects.value = it }
     }
 
-    suspend fun getSubject(subjectId: String): ApiResult<Subject> = safeApiCall {
+    override suspend fun getSubject(subjectId: String): ApiResult<Subject> = safeApiCall {
         api.getSubject(subjectId)
     }
 
-    suspend fun create(payload: SubjectPayload): ApiResult<Subject> = safeApiCall {
+    override suspend fun create(payload: SubjectPayload): ApiResult<Subject> = safeApiCall {
         val created = api.createSubject(payload)
         refreshCacheBestEffort()
         created
     }
 
-    suspend fun update(subjectId: String, payload: SubjectPayload): ApiResult<Subject> = safeApiCall {
+    override suspend fun update(subjectId: String, payload: SubjectPayload): ApiResult<Subject> = safeApiCall {
         val updated = api.updateSubject(subjectId, payload)
         refreshCacheBestEffort()
         updated
     }
 
-    suspend fun delete(subjectId: String): ApiResult<Unit> = safeApiCall {
+    override suspend fun delete(subjectId: String): ApiResult<Unit> = safeApiCall {
         val response = api.deleteSubject(subjectId)
         if (!response.isSuccessful) throw HttpException(response)
         refreshCacheBestEffort()
