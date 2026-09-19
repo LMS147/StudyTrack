@@ -26,8 +26,8 @@ Downloading https://services.gradle.org/distributions/gradle-8.7-bin.zip
 > Task :app:extractDeepLinksDebug
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
-> Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebug
+> Task :app:processDebugManifestForPackage
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
@@ -38,18 +38,15 @@ Downloading https://services.gradle.org/distributions/gradle-8.7-bin.zip
 > Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugStartupProfile
 
-> Task :app:compileDebugKotlin FAILED
-e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/MainActivity.kt:48:15 Unresolved reference: startDestination
-e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/data/remote/AuthInterceptor.kt:3:32 Unresolved reference: TokenManager
-e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/data/remote/AuthInterceptor.kt:19:21 Unresolved reference: TokenManager
-e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/data/remote/TokenAuthenticator.kt:3:32 Unresolved reference: TokenManager
-e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/data/remote/TokenAuthenticator.kt:18:26 Unresolved reference: TokenManager
-e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/data/repository/AuthRepository.kt:8:33 Unresolved reference: FirebaseNetworkException
-e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/data/repository/AuthRepository.kt:63:8 Unresolved reference: FirebaseNetworkException
-e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/util/TokenManager.kt:34:1 Unclosed comment
+> Task :app:compileDebugKotlin
+e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/subjects/SubjectsFragment.kt:87:9 'when' expression must be exhaustive, add necessary 'is Success' branch or 'else' branch instead
+e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/subjects/SubjectsFragment.kt:101:23 Function invocation 'Success(...)' expected
+e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/subjects/SubjectsFragment.kt:101:23 Not enough information to infer type variable T
+e: file:///home/runner/work/StudyTrack/StudyTrack/app/src/main/java/com/studytrack/app/subjects/SubjectsFragment.kt:101:23 No value passed for parameter 'data'
 
 > Task :app:mergeExtDexDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1789819229317.json
+> Task :app:compileDebugKotlin FAILED
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1789819453767.json
 
 FAILURE: Build failed with an exception.
 
@@ -258,5 +255,5 @@ Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilat
 	... 2 more
 
 
-BUILD FAILED in 1m 5s
+BUILD FAILED in 1m 7s
 28 actionable tasks: 28 executed
