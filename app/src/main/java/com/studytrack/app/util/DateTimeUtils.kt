@@ -32,6 +32,9 @@ object DateTimeUtils {
     /** Device-local date in yyyy-MM-dd, sent to the AI endpoint as context. */
     fun todayIsoDate(): String = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
 
+    /** Any date as yyyy-MM-dd (e.g. the calendar quick-add default due date). */
+    fun isoDate(date: LocalDate): String = date.format(DateTimeFormatter.ISO_LOCAL_DATE)
+
     /** IANA id of the device timezone, sent to the AI endpoint as context. */
     fun timezoneId(): String = ZoneId.systemDefault().id
 
@@ -97,6 +100,9 @@ object DateTimeUtils {
         parseDateTime(raw)?.format(timeFormatter) ?: ""
 
     fun monthYear(month: YearMonth): String = month.format(monthYearFormatter)
+
+    /** "Saturday, 19 September" — the dashboard date line. */
+    fun todayLabel(): String = LocalDate.now().format(fullDateFormatter)
 
     /**
      * Relative label for due dates: "Today" / "Tomorrow" / "In N days" /

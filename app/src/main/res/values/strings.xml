@@ -56,6 +56,7 @@
     <string name="greeting_afternoon">Good afternoon, %1$s</string>
     <string name="greeting_evening">Good evening, %1$s</string>
     <string name="greeting_night">Burning the midnight oil, %1$s?</string>
+    <string name="greeting_fallback_name">there</string>
 
     <!-- Subjects -->
     <string name="action_add_subject">Add subject</string>

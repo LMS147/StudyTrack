@@ -75,6 +75,9 @@ class AddEditTaskFragment : Fragment() {
 
         binding.backButton.setOnClickListener { findNavController().popBackStack() }
 
+        // Pre-fill a default due date (e.g. the selected calendar day).
+        args.defaultDueDate?.let { DateTimeUtils.parseDate(it)?.let { date -> dueDate = date } }
+
         setupSubjectDropdown(args.defaultSubjectId)
         setupTaskTypeDropdown()
         setupPickers()
@@ -172,7 +175,7 @@ class AddEditTaskFragment : Fragment() {
         val current = (if (isDue) dueTime else reminderTime) ?: LocalTime.of(17, 0)
         val is24Hour = DateFormat.is24HourFormat(requireContext())
         val picker = MaterialTimePicker.Builder()
-            .setTimeFormat(if (is24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12)
+            .setTimeFormat(if (is24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
             .setHour(current.hour)
             .setMinute(current.minute)
             .setTitleText(getString(R.string.select_time))
