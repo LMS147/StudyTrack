@@ -33,6 +33,14 @@ data class TaskAssistanceRequest(
     val today: String? = null,
     /** IANA timezone of the device, e.g. "Africa/Johannesburg". */
     val timezone: String? = null,
+    /**
+     * Names of the student's existing subjects. Sent so the AI attributes a
+     * suggestion to a subject that actually exists (the app matches the
+     * returned subjectName back to a real Subject). Without this the model
+     * guesses a name like "Maths" for a subject actually called "Mathematics",
+     * the match fails, and the accepted task lands under no subject at all.
+     */
+    val subjects: List<String> = emptyList(),
     val taskContext: AiTaskContext? = null,
 )
 

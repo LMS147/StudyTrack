@@ -101,6 +101,7 @@ Request:
                            { "role": "assistant", "content": "..." } ],
   "today": "2026-09-19",
   "timezone": "Africa/Johannesburg",
+  "subjects": ["Mathematics", "Physical Sciences"],
   "taskContext": { "taskId": "...", "title": "...", "dueDate": "..." }
 }
 ```
@@ -135,6 +136,16 @@ date**. The client never guesses dates.
 
 `conversationHistory` contains only text turns (user/assistant), never
 suggestion cards or system confirmations.
+
+`subjects` is the student's current subject list, sent so the model can
+attribute a suggestion to a subject that actually exists: it should echo one of
+these names exactly in `suggestion.subjectName` when a suggestion belongs to it,
+and only invent a new name when the request is clearly about an unrelated
+subject. The client matches `subjectName` back to a real subject
+(normalised exact match, then prefix match); when nothing matches, the
+suggestion card asks the user to pick the subject, and the client files the task
+there rather than dropping it into an unattributed state. Clients may omit
+`subjects` (older builds do); backends must treat it as optional.
 
 ## Error shape
 

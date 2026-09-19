@@ -156,6 +156,11 @@
     <string name="suggestion_set_date">Set date</string>
     <string name="suggestion_subtasks_count">%1$d subtasks</string>
     <string name="suggestion_add_failed">Couldn’t add the task. Please try again.</string>
+    <string name="suggestion_subject_none">No subject — tap to choose</string>
+    <string name="suggestion_subject_none_option">No subject</string>
+    <string name="suggestion_choose_subject">Attach to subject</string>
+    <string name="suggestion_new_subject">New subject…</string>
+    <string name="chat_added_subject_suffix"> — filed under %1$s</string>
     <string name="chat_added_confirmation">Added to your calendar for %1$s</string>
     <string name="chat_added_with_subtasks">Added to your calendar for %1$s — plus %2$d subtask(s)</string>
     <string name="ai_empty_reply">I couldn\'t come up with anything for that — could you rephrase or add a bit more detail?</string>

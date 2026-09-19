@@ -87,6 +87,11 @@ class GrokAiRepository(
     private fun systemPrompt(request: TaskAssistanceRequest): String = buildString {
         append("You are StudyTrack's AI study assistant, running inside an Android app.\n")
         append("Current date: ${request.today ?: "unknown"} (timezone ${request.timezone ?: "unknown"}).\n")
+        if (request.subjects.isNotEmpty()) {
+            append("The student's existing subjects are: ")
+            append(request.subjects.joinToString(", "))
+            append(".\n")
+        }
         request.taskContext?.let { ctx ->
             append("The student is asking about this existing task:")
             append(" id=${ctx.taskId ?: "?"}")
@@ -120,8 +125,11 @@ Field rules:
   the app will ask the student to pick one. NEVER guess or invent a date.
 - subtasks: only for kind "breakdown"/"study_plan"; same field rules, never
   nested deeper than one level.
-- subjectId: always null (the app resolves subjects itself). subjectName: a
-  short name if obvious from the conversation, else null.
+- subjectId: always null (the app resolves subjects itself). subjectName: when
+  the suggestion clearly belongs to one of the student's existing subjects
+  listed above, repeat that subject's name EXACTLY as written there (the app
+  matches it back to the real subject); use a different name only when it is
+  clearly a new subject; null when you cannot tell.
 - The output must be valid JSON: double quotes, no trailing commas, no
   comments, no unescaped newlines inside strings.
     """.trimIndent()

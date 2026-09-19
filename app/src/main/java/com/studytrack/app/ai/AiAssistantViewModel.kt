@@ -9,6 +9,8 @@ import com.studytrack.app.ServiceLocator
 import com.studytrack.app.data.model.AiTaskContext
 import com.studytrack.app.data.model.ChatTurn
 import com.studytrack.app.data.model.Priority
+import com.studytrack.app.data.model.Subject
+import com.studytrack.app.data.model.SubjectPayload
 import com.studytrack.app.data.model.TaskPayload
 import com.studytrack.app.data.model.TaskSuggestion
 import com.studytrack.app.data.model.TaskType
@@ -55,6 +57,13 @@ class AiAssistantViewModel(
     private val _awaitingReply = MutableStateFlow(false)
     val awaitingReply: StateFlow<Boolean> = _awaitingReply.asStateFlow()
 
+    /**
+     * The student's subjects — suggestion cards are matched against this list
+     * (and the picker dialog is built from it) so an accepted task always has
+     * somewhere to live on the Subjects screen.
+     */
+    val subjects: StateFlow<List<Subject>> = subjectRepository.subjects
+
     private var taskContext: AiTaskContext? = null
 
     private var started = false
@@ -65,11 +74,14 @@ class AiAssistantViewModel(
     private var addedViaEditorText: String = ""
     private var confirmationTemplate: String = ""
     private var confirmationWithSubtasksTemplate: String = ""
+    private var confirmationSubjectSuffix: String = ""
 
     /**
      * @param welcomeText        greeting bubble shown at the start of the chat
      * @param emptyReplyText     fallback when the API returns neither text nor suggestions
      * @param addedViaEditorText confirmation when a suggestion was created via the task editor
+     * @param confirmationSubjectSuffix appended to the confirmation so the user can
+     *                           see *which* subject the accepted task was filed under
      * @param initialPrompt      optional prompt to auto-send (from Task Details shortcuts)
      * @param contextTaskId      optional task the conversation is about
      */
@@ -79,6 +91,7 @@ class AiAssistantViewModel(
         addedViaEditorText: String,
         confirmationTemplate: String,
         confirmationWithSubtasksTemplate: String,
+        confirmationSubjectSuffix: String,
         initialPrompt: String?,
         contextTaskId: String?,
     ) {
@@ -89,6 +102,7 @@ class AiAssistantViewModel(
         this.addedViaEditorText = addedViaEditorText
         this.confirmationTemplate = confirmationTemplate
         this.confirmationWithSubtasksTemplate = confirmationWithSubtasksTemplate
+        this.confirmationSubjectSuffix = confirmationSubjectSuffix
 
         if (_messages.value.isEmpty()) {
             _messages.value = listOf(ChatItem.AiText(nextId("ai"), welcomeText))
@@ -150,6 +164,7 @@ class AiAssistantViewModel(
                 conversationHistory = history,
                 today = DateTimeUtils.todayIsoDate(),
                 timezone = DateTimeUtils.timezoneId(),
+                subjects = subjectRepository.subjects.value.map { it.subjectName },
                 taskContext = taskContext,
             )
 
@@ -169,10 +184,25 @@ class AiAssistantViewModel(
                         } else {
                             raw
                         }
+                        // Match the AI's subject (id first, then name) against the
+                        // student's real subjects so the accepted task lands on the
+                        // Subjects screen instead of floating under no subject.
+                        val matched = subjectRepository.subjects.value
+                            .firstOrNull { it.subjectId == suggestion.subjectId }
+                            ?: suggestion.subjectName
+                                ?.let { name -> resolveSubjectIdByName(name) }
+                                ?.let { id ->
+                                    subjectRepository.subjects.value
+                                        .firstOrNull { it.subjectId == id }
+                                }
                         append(
                             ChatItem.Suggestion(
                                 itemId = "sug-${suggestion.suggestionId}",
                                 suggestion = suggestion,
+                                resolvedSubjectId = matched?.subjectId ?: suggestion.subjectId,
+                                resolvedSubjectName = matched?.subjectName
+                                    ?: suggestion.subjectName
+                                        ?.takeIf { !suggestion.subjectId.isNullOrBlank() },
                             )
                         )
                     }
@@ -194,6 +224,36 @@ class AiAssistantViewModel(
         }
     }
 
+    /** User attached a suggestion to a subject on the card (null = detach). */
+    fun setSuggestionSubject(itemId: String, subjectId: String?, subjectName: String?) {
+        updateSuggestion(itemId) { item ->
+            item.copy(userPickedSubjectId = subjectId, userPickedSubjectName = subjectName)
+        }
+    }
+
+    /**
+     * Creates a new subject (the AI's suggested name, usually edited by the
+     * user) and files the suggestion under it. This is what makes "accept
+     * straight into a subject" work even before any subject exists.
+     */
+    fun createSubjectForSuggestion(itemId: String, name: String) {
+        val trimmed = name.trim()
+        if (trimmed.isEmpty()) return
+        viewModelScope.launch {
+            when (val result = subjectRepository.create(SubjectPayload(trimmed, null))) {
+                is ApiResult.Success -> setSuggestionSubject(
+                    itemId,
+                    result.data.subjectId,
+                    result.data.subjectName,
+                )
+                // Local mode's create only fails on storage trouble; surface the
+                // repository's own message rather than inventing a second one.
+                is ApiResult.Error -> append(ChatItem.AiText(nextId("sys"), result.message))
+                ApiResult.Loading -> Unit
+            }
+        }
+    }
+
     /**
      * Accept: creates the task (and its subtasks) via the Tasks repository,
      * then posts a confirmation into the chat with the resolved date so the
@@ -206,17 +266,21 @@ class AiAssistantViewModel(
         if (item.status != SuggestionStatus.PENDING) return
 
         val dueIso = item.effectiveDueDate ?: return // UI disables Accept without a date
-        updateSuggestion(itemId) { it.copy(status = SuggestionStatus.ACCEPTING) }
 
-        // The AI names a subject rather than referencing an id; attach the
-        // task to the matching subject when one exists (local mode benefit:
-        // the task lands under the right subject automatically).
-        val resolvedSubjectId = item.suggestion.subjectId
-            ?: resolveSubjectIdByName(item.suggestion.subjectName)
+        // Where the task will live: the subject the user picked on the card,
+        // the subject matched against the student's real subjects when the card
+        // was created, or the student's only subject as a last resort — an
+        // accepted task should never end up invisible for want of a match.
+        val subjectId = item.effectiveSubjectId ?: subjectFallbackFor(item)
+        val subjectName = subjectId?.let { id ->
+            subjectRepository.subjects.value.firstOrNull { it.subjectId == id }?.subjectName
+        }
+
+        updateSuggestion(itemId) { it.copy(status = SuggestionStatus.ACCEPTING) }
 
         viewModelScope.launch {
             val result = taskRepository.create(
-                item.suggestion.toPayload(fallbackSubjectId = resolvedSubjectId)
+                item.suggestion.toPayload(fallbackSubjectId = subjectId)
             )
             when (result) {
                 is ApiResult.Success -> {
@@ -227,14 +291,14 @@ class AiAssistantViewModel(
                         val subResult = taskRepository.create(
                             subtask.toPayload(
                                 fallbackDueDate = dueIso,
-                                fallbackSubjectId = resolvedSubjectId,
+                                fallbackSubjectId = subjectId,
                             )
                         )
                         if (subResult is ApiResult.Success) createdSubtasks++
                     }
                     updateSuggestion(itemId) { it.copy(status = SuggestionStatus.ACCEPTED) }
 
-                    val confirmation = if (createdSubtasks == 0) {
+                    val base = if (createdSubtasks == 0) {
                         String.format(confirmationTemplate, DateTimeUtils.fullDate(dueIso))
                     } else {
                         String.format(
@@ -242,6 +306,13 @@ class AiAssistantViewModel(
                             DateTimeUtils.fullDate(dueIso),
                             createdSubtasks,
                         )
+                    }
+                    // Tell the user which subject it landed under, so "did that
+                    // actually save?" never needs a trip to another screen.
+                    val confirmation = if (subjectName.isNullOrBlank()) {
+                        base
+                    } else {
+                        base + String.format(confirmationSubjectSuffix, subjectName)
                     }
                     append(ChatItem.AiText(nextId("sys"), confirmation))
                 }
@@ -318,11 +389,56 @@ class AiAssistantViewModel(
         }
     }
 
+    /**
+     * The AI names a subject in free text ("Maths") while the student may have
+     * saved it differently ("Mathematics"), so match leniently but
+     * deterministically: normalised exact match first, then a prefix match in
+     * either direction. Null when nothing matches — the card then invites the
+     * user to choose or create the subject, instead of guessing.
+     */
     private fun resolveSubjectIdByName(name: String?): String? {
         if (name.isNullOrBlank()) return null
-        return subjectRepository.subjects.value.firstOrNull {
-            it.subjectName.equals(name, ignoreCase = true)
-        }?.subjectId
+        val subjects = subjectRepository.subjects.value
+        if (subjects.isEmpty()) return null
+        val wanted = normalizeSubjectName(name)
+        if (wanted.isEmpty()) return null
+
+        subjects.firstOrNull { normalizeSubjectName(it.subjectName) == wanted }
+            ?.let { return it.subjectId }
+
+        subjects.firstOrNull { subject ->
+            val candidate = normalizeSubjectName(subject.subjectName)
+            candidate.isNotEmpty() &&
+                (candidate.startsWith(wanted) || wanted.startsWith(candidate))
+        }?.let { return it.subjectId }
+
+        return null
+    }
+
+    /**
+     * Lower-cases, keeps letters/digits only and drops a trailing plural "s",
+     * so "Maths" collapses to "math" — a prefix of "mathematic" (Mathematics).
+     */
+    private fun normalizeSubjectName(raw: String): String =
+        raw.lowercase()
+            .filter { it.isLetterOrDigit() }
+            .removeSuffix("s")
+
+    /**
+     * Last-resort subject for an accepted suggestion that matched nothing:
+     * the student's only subject, when there is exactly one — but only if the
+     * AI didn't name a different one. Naming "Chemistry" while the only
+     * existing subject is "Mathematics" means the task belongs to a subject
+     * that doesn't exist yet, and the card already invites creating it; filing
+     * it under Mathematics instead would be worse than leaving it unattached.
+     */
+    private fun subjectFallbackFor(item: ChatItem.Suggestion): String? {
+        val aiNamedASubject = !item.suggestion.subjectName.isNullOrBlank()
+        return if (aiNamedASubject) {
+            null
+        } else {
+            subjectRepository.subjects.value.singleOrNull()?.subjectId
+        }
     }
 
     private fun nextId(prefix: String): String = "$prefix-${idCounter++}"

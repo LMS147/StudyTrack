@@ -32,6 +32,7 @@ class ChatAdapter(
         fun onEditSuggestion(item: ChatItem.Suggestion)
         fun onRejectSuggestion(item: ChatItem.Suggestion)
         fun onPickSuggestionDate(item: ChatItem.Suggestion)
+        fun onPickSuggestionSubject(item: ChatItem.Suggestion)
     }
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
@@ -117,9 +118,28 @@ class ChatAdapter(
                 ContextCompat.getColorStateList(context, containerColor)
             binding.priorityChip.setTextColor(ContextCompat.getColor(context, foregroundColor))
 
-            val subjectLabel = suggestion.subjectName ?: suggestion.subjectId
-            binding.subjectChip.isVisible = !subjectLabel.isNullOrBlank()
-            binding.subjectChip.text = subjectLabel.orEmpty()
+            // Subject chip: always present and tappable. It shows the subject
+            // the task will land under, or invites the user to pick one — an
+            // accepted suggestion must never end up invisible on Subjects.
+            val subjectLabel = item.displaySubjectName
+            val subjectResolved = !subjectLabel.isNullOrBlank()
+            binding.subjectChip.text = subjectLabel
+                ?: context.getString(R.string.suggestion_subject_none)
+            binding.subjectChip.backgroundTintList = ContextCompat.getColorStateList(
+                context,
+                if (subjectResolved) R.color.brand_container else R.color.divider,
+            )
+            binding.subjectChip.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    if (subjectResolved) R.color.brand_on_container else R.color.text_secondary,
+                )
+            )
+            binding.subjectChip.setOnClickListener {
+                if (item.status == SuggestionStatus.PENDING) {
+                    listener.onPickSuggestionSubject(item)
+                }
+            }
 
             // Date: resolved value or an editable "Set date" field.
             val dueDate = item.effectiveDueDate

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,6 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.studytrack.app.R
 import com.studytrack.app.data.model.TaskSuggestion
 import com.studytrack.app.data.remote.RetrofitClient
@@ -99,6 +101,7 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
             addedViaEditorText = getString(R.string.chat_added_via_editor),
             confirmationTemplate = getString(R.string.chat_added_confirmation),
             confirmationWithSubtasksTemplate = getString(R.string.chat_added_with_subtasks),
+            confirmationSubjectSuffix = getString(R.string.chat_added_subject_suffix),
             initialPrompt = args.initialPrompt,
             contextTaskId = args.contextTaskId,
         )
@@ -124,8 +127,13 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
     }
 
     override fun onEditSuggestion(item: ChatItem.Suggestion) {
-        // Carry the effective date (backend-resolved or user-picked) into the editor.
-        val prefill = item.suggestion.copy(dueDate = item.effectiveDueDate)
+        // Carry the effective date (backend-resolved or user-picked) and the
+        // resolved subject into the editor, so editing doesn't lose the
+        // subject the suggestion was matched to.
+        val prefill = item.suggestion.copy(
+            dueDate = item.effectiveDueDate,
+            subjectId = item.effectiveSubjectId,
+        )
         val prefillJson = try {
             RetrofitClient.json.encodeToString(TaskSuggestion.serializer(), prefill)
         } catch (e: Exception) {
@@ -156,8 +164,71 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
         picker.show(childFragmentManager, "suggestion_date")
     }
 
+    override fun onPickSuggestionSubject(item: ChatItem.Suggestion) {
+        val subjects = viewModel.subjects.value
+        val options = mutableListOf<String>()
+        val optionIds = mutableListOf<String?>()
+
+        // Offer "No subject" only when one is currently attached, so the user
+        // can undo a match.
+        if (item.effectiveSubjectId != null) {
+            options += getString(R.string.suggestion_subject_none_option)
+            optionIds += null
+        }
+        subjects.forEach { subject ->
+            options += subject.subjectName
+            optionIds += subject.subjectId
+        }
+        options += getString(R.string.suggestion_new_subject)
+        optionIds += CREATE_NEW_SUBJECT
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.suggestion_choose_subject)
+            .setItems(options.toTypedArray()) { _, which ->
+                val chosenId = optionIds[which]
+                when (chosenId) {
+                    null -> viewModel.setSuggestionSubject(item.itemId, null, null)
+                    CREATE_NEW_SUBJECT -> promptNewSubject(item)
+                    else -> viewModel.setSuggestionSubject(
+                        item.itemId,
+                        chosenId,
+                        subjects.firstOrNull { it.subjectId == chosenId }?.subjectName,
+                    )
+                }
+            }
+            .show()
+    }
+
+    /**
+     * "New subject…" — opens a one-field dialog pre-filled with the name the AI
+     * suggested (e.g. "Mathematics"), creating the subject and filing the task
+     * under it in one step.
+     */
+    private fun promptNewSubject(item: ChatItem.Suggestion) {
+        val input = EditText(requireContext()).apply {
+            hint = getString(R.string.hint_subject_name)
+            setText(item.suggestion.subjectName.orEmpty())
+            setSelection(text.length)
+            val pad = (16 * resources.displayMetrics.density).toInt()
+            setPadding(pad, pad / 2, pad, pad / 2)
+        }
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.suggestion_new_subject)
+            .setView(input)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                viewModel.createSubjectForSuggestion(item.itemId, input.text.toString())
+            }
+            .show()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private companion object {
+        /** Sentinel option id for "New subject…" (real ids are UUIDs). */
+        const val CREATE_NEW_SUBJECT = "__create_new_subject__"
     }
 }
