@@ -140,6 +140,8 @@ binding_class_re = re.compile(r"Fragment(\w+)Binding")
 binding_prop_re = re.compile(r"(?<!data)binding\.(\w+)\b")  # not "databinding."
 
 kotlin_packages = {}  # package name -> exists
+type_decl_re = re.compile(r"^(?:@\w+(?:\([^)]*\))?\s+)*(?:public\s+|internal\s+|private\s+)?(?:sealed\s+|abstract\s+|open\s+|data\s+|value\s+|enum\s+|fun\s+)*(?:class|interface|object)\s+(\w+)", re.M)
+
 package_files = set()
 for kt in kt_files:
     text = kt.read_text()
@@ -152,7 +154,10 @@ for kt in kt_files:
     expected_pkg = "com.studytrack.app" + (("." + relative_dir.replace("/", ".")) if relative_dir != "." else "")
     if pkg != expected_pkg:
         fail(f"{kt.relative_to(ROOT)}: package '{pkg}' does not match directory '{expected_pkg}'")
+    # a Kotlin file may declare several top-level types
     package_files.add((pkg, kt.stem))
+    for type_name in type_decl_re.findall(text):
+        package_files.add((pkg, type_name))
 
 declared_pkgs = {p for p, _ in package_files}
 
@@ -166,7 +171,7 @@ for kt in kt_files:
         if imp in ("com.studytrack.app",):
             continue
         # generated sources: ViewBinding classes + safe-args Directions/Args
-        if imp.startswith("com.studytrack.app.databinding") or imp == "com.studytrack.app.R":
+        if imp.startswith("com.studytrack.app.databinding") or imp in ("com.studytrack.app.R", "com.studytrack.app.BuildConfig"):
             continue
         if imp.endswith("Directions") or imp.endswith("Args"):
             continue
@@ -190,6 +195,39 @@ for kt in kt_files:
             for prop in binding_prop_re.findall(text):
                 if prop not in {snake_to_camel(i) for i in valid_props}:
                     fail(f"{rel}: binding.{prop} has no matching id in {layout_name}.xml")
+
+# ---------------------------------------------------------------- nav graph attribute lint
+APP = "{http://schemas.android.com/apk/res-auto}"
+ANDROID = "{http://schemas.android.com/apk/res/android}"
+VALID_ACTION_ATTRS = {
+    ANDROID + "id",
+    APP + "destination", APP + "popUpTo", APP + "popUpToInclusive", APP + "popUpToSaveState",
+    APP + "launchSingleTop", APP + "enterAnim", APP + "exitAnim", APP + "popEnterAnim", APP + "popExitAnim",
+}
+VALID_FRAGMENT_ATTRS = {
+    ANDROID + "id", ANDROID + "name", ANDROID + "label",
+    APP + "layout", APP + "toolbarColor",
+}
+VALID_ARG_ATTRS = {
+    ANDROID + "name", ANDROID + "defaultValue",
+    APP + "argType", APP + "nullable",
+}
+if (RES / "navigation").exists():
+    for nf in (RES / "navigation").glob("*.xml"):
+        try:
+            tree = ET.parse(nf)
+        except ET.ParseError:
+            continue
+        for el in tree.getroot().iter():
+            tag = el.tag.split("}")[-1]
+            allowed = {"action": VALID_ACTION_ATTRS, "fragment": VALID_FRAGMENT_ATTRS,
+                       "argument": VALID_ARG_ATTRS}.get(tag)
+            if not allowed:
+                continue
+            for attr in el.keys():
+                if attr not in allowed:
+                    fail(f"{nf.name}: unexpected attribute '{attr}' on <{tag}> "
+                         f"(typo? e.g. popUpToInclusive, not inclusive)")
 
 # ---------------------------------------------------------------- bottom nav vs nav graph
 menu = RES / "menu/menu_bottom_nav.xml"

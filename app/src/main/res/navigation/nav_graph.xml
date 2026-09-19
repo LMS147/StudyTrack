@@ -193,13 +193,13 @@
         app:destination="@id/loginFragment"
         app:launchSingleTop="true"
         app:popUpTo="@id/nav_graph"
-        app:inclusive="true" />
+        app:popUpToInclusive="true" />
 
     <action
         android:id="@+id/action_global_dashboardFragment"
         app:destination="@id/dashboardFragment"
         app:launchSingleTop="true"
         app:popUpTo="@id/nav_graph"
-        app:inclusive="true" />
+        app:popUpToInclusive="true" />
 
 </navigation>
