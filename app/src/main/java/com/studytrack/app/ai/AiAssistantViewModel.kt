@@ -12,7 +12,7 @@ import com.studytrack.app.data.model.Priority
 import com.studytrack.app.data.model.TaskPayload
 import com.studytrack.app.data.model.TaskSuggestion
 import com.studytrack.app.data.model.TaskType
-import com.studytrack.app.data.repository.AiRepository
+import com.studytrack.app.data.repository.AiBrain
 import com.studytrack.app.data.repository.SettingsRepository
 import com.studytrack.app.data.repository.SubjectRepository
 import com.studytrack.app.data.repository.TaskRepository
@@ -29,10 +29,12 @@ import java.util.UUID
 /**
  * AI Assistant chat state machine.
  *
- * Every user message goes to POST /api/ai/task-assistance together with the
- * conversation history and the device date/timezone so the BACKEND can resolve
- * relative dates ("next Friday") into ISO-8601 — the preferred approach (see
- * docs/API_CONTRACT.md). When the backend returns a suggestion whose dueDate
+ * Every user message goes to the configured [AiBrain] together with the
+ * conversation history and the device date/timezone so relative dates
+ * ("next Friday") can be resolved into ISO-8601 — by the backend's
+ * /api/ai/task-assistance endpoint when deployed, or by the direct
+ * Grok/xAI brain when a key is configured in local.properties (see
+ * docs/API_CONTRACT.md and docs/ARCHITECTURE_DECISIONS.md §13). When the backend returns a suggestion whose dueDate
  * is null (couldn't confidently resolve), the card shows an editable date
  * field and the client refuses to accept until the user picks one: it never
  * guesses dates.
@@ -41,7 +43,7 @@ import java.util.UUID
  * repository — the chat has no other write path to the backend.
  */
 class AiAssistantViewModel(
-    private val aiRepository: AiRepository,
+    private val aiBrain: AiBrain,
     private val taskRepository: TaskRepository,
     private val subjectRepository: SubjectRepository,
     private val settingsRepository: SettingsRepository,
@@ -151,7 +153,7 @@ class AiAssistantViewModel(
                 taskContext = taskContext,
             )
 
-            when (val result = aiRepository.taskAssistance(request)) {
+            when (val result = aiBrain.taskAssistance(request)) {
                 is ApiResult.Success -> {
                     removeTypingIndicator()
                     val response = result.data
@@ -310,7 +312,7 @@ class AiAssistantViewModel(
         val FACTORY: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 AiAssistantViewModel(
-                    ServiceLocator.aiRepository,
+                    ServiceLocator.aiBrain,
                     ServiceLocator.taskRepository,
                     ServiceLocator.subjectRepository,
                     ServiceLocator.settingsRepository,

@@ -1,9 +1,13 @@
 package com.studytrack.app
 
 import android.content.Context
+import com.studytrack.app.BuildConfig
 import com.studytrack.app.data.remote.ApiService
+import com.studytrack.app.data.remote.GrokClient
 import com.studytrack.app.data.remote.RetrofitClient
+import com.studytrack.app.data.repository.AiBrain
 import com.studytrack.app.data.repository.AiRepository
+import com.studytrack.app.data.repository.GrokAiRepository
 import com.studytrack.app.data.repository.AuthRepository
 import com.studytrack.app.data.repository.CalendarRepository
 import com.studytrack.app.data.repository.ProgressRepository
@@ -31,7 +35,18 @@ object ServiceLocator {
 
     val progressRepository: ProgressRepository by lazy { ProgressRepository(apiService) }
 
-    val aiRepository: AiRepository by lazy { AiRepository(apiService) }
+    /**
+     * The assistant's brain. If a Grok/xAI key is configured in
+     * local.properties (BuildConfig.GROK_API_KEY), chat directly with the LLM;
+     * otherwise use the StudyTrack backend endpoint.
+     */
+    val aiBrain: AiBrain by lazy {
+        if (BuildConfig.GROK_API_KEY.isNotBlank()) {
+            GrokAiRepository(GrokClient.apiService(BuildConfig.GROK_API_KEY))
+        } else {
+            AiRepository(apiService)
+        }
+    }
 
     val settingsRepository: SettingsRepository by lazy {
         SettingsRepository(appContext)

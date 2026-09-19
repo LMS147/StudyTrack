@@ -85,6 +85,11 @@ the screen stays consistent with the Tasks tab.
 
 ## AI Assistant
 
+> **Direct-LLM alternative:** the client can also run the assistant against an
+> OpenAI-compatible LLM API (xAI Grok by default) without this backend — set
+> `grok.apiKey` in `local.properties` (see `local.properties.example`). In that
+> mode the app enforces the same contract below via the system prompt.
+
 `POST /api/ai/task-assistance`
 
 Request:

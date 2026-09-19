@@ -1,0 +1,32 @@
+# StudyTrack local configuration
+#
+# Copy this file to `local.properties` (which is gitignored) and fill in your
+# own values. Android Studio also writes sdk.dir into local.properties — keep
+# that line and add the properties below.
+
+# ---------------------------------------------------------------------------
+# AI brain for the assistant chat — any OpenAI-compatible provider.
+# (Property names say "grok" for historical reasons; Groq, xAI, OpenRouter…
+# all work.) When grok.apiKey is blank the app calls the StudyTrack backend's
+# /api/ai/task-assistance instead (requires BASE_URL to be configured).
+#
+# Groq example (https://console.groq.com → API Keys):
+#   grok.apiKey=gsk_your_key_here
+#   grok.baseUrl=https://api.groq.com/openai/v1/
+#   grok.model=openai/gpt-oss-120b
+#
+# Current Groq models (llama-3.3-70b / llama-3.1-8b were retired Aug 2026):
+#   openai/gpt-oss-120b   — best quality
+#   openai/gpt-oss-20b    — cheapest & fastest
+#
+# xAI Groq... er, Grok example (https://console.x.ai → API Keys):
+#   grok.apiKey=xai_your_key_here
+#   grok.baseUrl=https://api.x.ai/v1/
+#   grok.model=grok-4
+#
+# NOTE: the base URL must include the version segment (…/v1/) — the app
+# appends "chat/completions" to it.
+# ---------------------------------------------------------------------------
+grok.apiKey=
+#grok.baseUrl=https://api.groq.com/openai/v1/
+#grok.model=openai/gpt-oss-120b

@@ -121,3 +121,22 @@ parses case-insensitively and falls back to `Study`/`Medium` (or the user's
 configured default priority, which the Profile screen can set).
 **Why:** LLM output must never crash the client; silent coercion is acceptable
 for a suggestion the user reviews before accepting.
+
+## 13. Direct LLM mode ("Grok brain")
+
+`AiBrain` has two implementations: `AiRepository` (backend
+`/api/ai/task-assistance`, preferred — key and prompt logic stay server-side)
+and `GrokAiRepository`, which calls an OpenAI-compatible chat-completions
+endpoint (xAI Grok by default) directly from the app.
+
+**Why:** lets the assistant work during development / personal use with no
+deployed backend. **Contract preservation:** the same brain contract (§6 /
+API_CONTRACT.md) is enforced client-side via the system prompt — JSON reply +
+structured suggestions, relative dates resolved against the device's
+today/timezone, null dueDate when unsure — and defensive parsing degrades
+non-JSON model output to a plain text bubble instead of crashing.
+**Consequences:** the LLM key ships inside the APK and is extractable —
+acceptable for personal builds only, which is why it lives in gitignored
+`local.properties` → `BuildConfig`, never in source control. Accepting or
+editing suggestions still goes through the Tasks repository, so task
+persistence still requires the StudyTrack backend.

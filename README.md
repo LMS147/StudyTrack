@@ -46,6 +46,25 @@ every push.
 Firebase project, replace it with the real file from the Firebase console
 (Authentication → Sign-in method → Email/Password must be enabled).
 
+### AI brain (optional — works without a backend)
+
+The assistant chat runs directly against any OpenAI-compatible LLM API
+(**Groq** or xAI Grok) so it works during development with no StudyTrack
+backend deployed. Copy `local.properties.example` to `local.properties`
+(it's gitignored) and set:
+
+```properties
+grok.apiKey=gsk-your-groq-key-here
+grok.baseUrl=https://api.groq.com/openai/v1/
+grok.model=openai/gpt-oss-120b
+```
+
+Get a Groq key at [console.groq.com](https://console.groq.com) (API Keys).
+`openai/gpt-oss-120b` is the quality pick, `openai/gpt-oss-20b` the cheap
+one; for xAI use `grok.baseUrl=https://api.x.ai/v1/` + `grok.model=grok-4`.
+Note the key is baked into your personal builds — fine for your own use,
+never publish such a build.
+
 ### API endpoint
 
 `RetrofitClient.BASE_URL` (in
