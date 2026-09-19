@@ -95,7 +95,8 @@ class ProgressViewModel(
             val progressResult = progressRepository.getProgress()
             val tasksResult = taskRepository.refresh()
             val subjectsResult = subjectRepository.refresh()
-            progress.value = (progressResult as? ApiResult.Success)?.data
+            progress.value =
+                if (progressResult is ApiResult.Success) progressResult.data else null
             errorMessage.value = when {
                 progressResult is ApiResult.Error -> progressResult.message
                 tasksResult is ApiResult.Error -> tasksResult.message
