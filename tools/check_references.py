@@ -80,7 +80,7 @@ for mf in (RES / "menu").glob("*.xml") if (RES / "menu").exists() else []:
         fail(f"XML parse error in {mf}: {e}")
     resources["id"] |= set(re.findall(r"\+id/(\w+)", content))
 
-# navigation destination ids
+# navigation destination + action ids (they generate R.id entries too)
 nav_dest_ids = set()
 if (RES / "navigation").exists():
     for nf in (RES / "navigation").glob("*.xml"):
@@ -90,11 +90,16 @@ if (RES / "navigation").exists():
             fail(f"XML parse error in {nf}: {e}")
             continue
         for el in tree.getroot().iter():
+            rid = el.get("{http://schemas.android.com/apk/res/android}id", "")
+            m = re.search(r"id/(\w+)", rid)
+            if not m:
+                continue
+            name = m.group(1)
             if el.tag.endswith("fragment") or el.tag.endswith("activity") or el.tag.endswith("dialog"):
-                did = el.get("{http://schemas.android.com/apk/res/android}id", "")
-                m = re.search(r"id/(\w+)", did)
-                if m:
-                    nav_dest_ids.add(m.group(1))
+                nav_dest_ids.add(name)
+                resources["id"].add(name)  # destinations are R.id targets
+            elif el.tag.endswith("action") or el.tag.endswith("navigation"):
+                resources["id"].add(name)  # actions & the graph itself
 
 # manifest well-formed
 manifest = ROOT / "app/src/main/AndroidManifest.xml"

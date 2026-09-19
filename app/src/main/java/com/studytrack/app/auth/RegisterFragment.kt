@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.studytrack.app.R
 import com.studytrack.app.databinding.FragmentRegisterBinding
 import com.studytrack.app.util.ApiResult
@@ -47,8 +48,9 @@ class RegisterFragment : Fragment() {
             }
         }
 
-        // Note: navigation back to Login is wired in Step 3 once the
-        // navigation graph exists.
+        binding.loginLink.setOnClickListener {
+            findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToLoginFragment())
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
