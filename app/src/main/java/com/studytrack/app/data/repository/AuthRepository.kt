@@ -50,6 +50,30 @@ class AuthRepository(
         ApiResult.Error(friendlyAuthError(e), e)
     }
 
+    /** Updates the Firebase display name (used by Profile's personal info). */
+    suspend fun updateDisplayName(name: String): ApiResult<Unit> = try {
+        val profileUpdate = UserProfileChangeRequest.Builder().setDisplayName(name).build()
+        auth.currentUser?.updateProfile(profileUpdate)?.await()
+        ApiResult.Success(Unit)
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        ApiResult.Error(friendlyAuthError(e), e)
+    }
+
+    /**
+     * Emails a Firebase password-reset link. The app never handles the
+     * password itself — Firebase owns that flow end to end.
+     */
+    suspend fun sendPasswordReset(email: String): ApiResult<Unit> = try {
+        auth.sendPasswordResetEmail(email).await()
+        ApiResult.Success(Unit)
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        ApiResult.Error(friendlyAuthError(e), e)
+    }
+
     fun signOut() {
         auth.signOut()
     }
