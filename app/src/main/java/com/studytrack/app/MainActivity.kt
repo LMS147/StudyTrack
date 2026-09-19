@@ -45,9 +45,10 @@ class MainActivity : AppCompatActivity() {
         // The graph is set programmatically (not via app:navGraph) so it is
         // inflated only once with the right entry point.
         val graph = navController.navInflater.inflate(R.navigation.nav_graph)
-        graph.startDestination =
+        graph.setStartDestination(
             if (ServiceLocator.authRepository.isUserLoggedIn()) R.id.dashboardFragment
             else R.id.loginFragment
+        )
         navController.setGraph(graph, null)
 
         binding.bottomNav.setupWithNavController(navController)

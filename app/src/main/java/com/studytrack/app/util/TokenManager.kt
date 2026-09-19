@@ -8,7 +8,7 @@ import kotlinx.coroutines.tasks.await
  * Fetches the current Firebase user's ID token.
  *
  * The backend expects this token as a `Authorization: Bearer <token>` header on
- * every `/api/*` request (see [com.studytrack.app.data.remote.AuthInterceptor]).
+ * every API request (see [com.studytrack.app.data.remote.AuthInterceptor]).
  * Firebase SDK keeps its own in-memory cache, so [currentToken] is cheap unless
  * [forceRefresh] is used — which the OkHttp [okhttp3.Authenticator] does after
  * a 401 to retry with a freshly minted token.
