@@ -63,7 +63,7 @@ class ProfileFragment : Fragment() {
                 R.id.aiPriorityLow -> "Low"
                 R.id.aiPriorityMedium -> "Medium"
                 R.id.aiPriorityHigh -> "High"
-                else -> return@setOnButtonCheckedListener
+                else -> return@addOnButtonCheckedListener
             }
             viewModel.setDefaultAiPriority(raw)
         }
