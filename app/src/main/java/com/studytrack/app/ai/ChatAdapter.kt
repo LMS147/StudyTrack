@@ -178,9 +178,13 @@ class ChatAdapter(
                     binding.actionsRow.isVisible = true
                     binding.statusLabel.isVisible = false
                     binding.suggestionCard.alpha = 1f
-                    val canAccept = dueDate != null
-                    binding.acceptButton.isEnabled = canAccept
-                    binding.acceptButton.alpha = if (canAccept) 1f else 0.5f
+                    // Accept is ALWAYS tappable: when the AI couldn't resolve a
+                    // due date, tapping it opens the date picker and files the
+                    // task as soon as a date is chosen. (Disabling it here made
+                    // suggestions feel un-acceptable — the app never guesses
+                    // dates, and the model correctly returns null when unsure.)
+                    binding.acceptButton.isEnabled = true
+                    binding.acceptButton.alpha = 1f
                     binding.editButton.isEnabled = true
                     binding.rejectButton.isEnabled = true
                 }

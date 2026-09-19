@@ -23,7 +23,6 @@ import com.studytrack.app.databinding.FragmentAiAssistantBinding
 import com.studytrack.app.util.DateTimeUtils
 import com.studytrack.app.util.NavResultKeys
 import com.studytrack.app.util.hideKeyboard
-import com.studytrack.app.util.toast
 import kotlinx.coroutines.launch
 
 /**
@@ -138,7 +137,11 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
 
     override fun onAcceptSuggestion(item: ChatItem.Suggestion) {
         if (item.effectiveDueDate == null) {
-            toast(getString(R.string.suggestion_needs_date))
+            // No date yet: ask for one and accept the moment it is picked.
+            // The client still never *guesses* a date — but the user's tap on
+            // Accept is honoured instead of being refused.
+            acceptAfterDatePick = item.itemId
+            onPickSuggestionDate(item)
             return
         }
         viewModel.acceptSuggestion(item.itemId)
@@ -169,6 +172,13 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
         viewModel.rejectSuggestion(item.itemId)
     }
 
+    /**
+     * Set when the user pressed Accept on a suggestion that has no due date:
+     * the picker it opens then files the task straight after a date is chosen.
+     * Cleared whenever the picker is dismissed without a choice.
+     */
+    private var acceptAfterDatePick: String? = null
+
     override fun onPickSuggestionDate(item: ChatItem.Suggestion) {
         val current = DateTimeUtils.parseDate(item.effectiveDueDate) ?: DateTimeUtils.today()
         val picker = MaterialDatePicker.Builder.datePicker()
@@ -178,7 +188,14 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
         picker.addOnPositiveButtonClickListener { millis ->
             val date = DateTimeUtils.fromUtcMillis(millis)
             viewModel.setSuggestionDate(item.itemId, viewModel.userPickedIsoDate(date))
+            // Accept came via the Accept button (not the date chip): honour it
+            // now that the suggestion has the date it was missing.
+            if (acceptAfterDatePick == item.itemId) {
+                acceptAfterDatePick = null
+                viewModel.acceptSuggestion(item.itemId)
+            }
         }
+        picker.addOnDismissListener { acceptAfterDatePick = null }
         picker.show(childFragmentManager, "suggestion_date")
     }
 

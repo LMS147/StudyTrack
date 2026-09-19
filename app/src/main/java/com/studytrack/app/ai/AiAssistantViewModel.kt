@@ -265,7 +265,9 @@ class AiAssistantViewModel(
         } as? ChatItem.Suggestion ?: return
         if (item.status != SuggestionStatus.PENDING) return
 
-        val dueIso = item.effectiveDueDate ?: return // UI disables Accept without a date
+        // The UI guarantees a date before calling this (Accept opens the
+        // date picker when the AI left it null); bail out defensively.
+        val dueIso = item.effectiveDueDate ?: return
 
         // Where the task will live: the subject the user picked on the card,
         // the subject matched against the student's real subjects when the card

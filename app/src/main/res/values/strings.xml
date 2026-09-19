@@ -190,7 +190,7 @@
     <string name="suggestion_reject">Reject</string>
     <string name="suggestion_accepted">Added to your calendar ✓</string>
     <string name="suggestion_rejected">Rejected</string>
-    <string name="suggestion_needs_date">This suggestion needs a due date before you can accept it.</string>
+    <string name="suggestion_needs_date">No due date yet — tap Accept to choose one.</string>
     <string name="suggestion_set_date">Set date</string>
     <string name="suggestion_subtasks_count">%1$d subtasks</string>
     <string name="suggestion_add_failed">Couldn’t add the task. Please try again.</string>
