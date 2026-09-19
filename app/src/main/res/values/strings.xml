@@ -4,6 +4,10 @@
     <!-- Common -->
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>
+    <string name="title_tasks">Tasks</string>
+    <string name="filter_all">All</string>
+    <string name="empty_tasks_filtered">No tasks match these filters yet.</string>
+    <string name="cd_back">Back</string>
     <string name="action_delete">Delete</string>
     <string name="action_edit">Edit</string>
     <string name="action_retry">Retry</string>
@@ -34,6 +38,7 @@
     <!-- Bottom navigation -->
     <string name="nav_dashboard">Dashboard</string>
     <string name="nav_subjects">Subjects</string>
+    <string name="nav_tasks">Tasks</string>
     <string name="nav_calendar">Calendar</string>
     <string name="nav_progress">Progress</string>
     <string name="nav_ai">AI</string>
@@ -45,18 +50,28 @@
     <string name="ai_card_subtitle">Plan tasks, break down assignments and study smarter</string>
     <string name="dashboard_progress_today">Today\'s progress</string>
     <string name="dashboard_progress_summary">%1$d of %2$d tasks done</string>
-    <string name="section_due_today">Due today</string>
+    <string name="section_due_today">DUE TODAY</string>
     <string name="section_overdue">Overdue</string>
-    <string name="section_upcoming">Upcoming deadlines</string>
+    <string name="section_upcoming">Upcoming (7 Days)</string>
     <string name="empty_due_today">Nothing due today — enjoy! 🎉</string>
     <string name="empty_overdue">No overdue tasks. Nice work!</string>
     <string name="empty_upcoming">No upcoming deadlines yet.</string>
     <string name="cd_add_task">Add task</string>
-    <string name="greeting_morning">Good morning, %1$s</string>
-    <string name="greeting_afternoon">Good afternoon, %1$s</string>
-    <string name="greeting_evening">Good evening, %1$s</string>
+    <string name="greeting_morning">Good morning, %1$s 👋</string>
+    <string name="greeting_afternoon">Good afternoon, %1$s 👋</string>
+    <string name="greeting_evening">Good evening, %1$s 👋</string>
     <string name="greeting_night">Burning the midnight oil, %1$s?</string>
     <string name="greeting_fallback_name">there</string>
+
+    <!-- Home: stat cards + level banner -->
+    <string name="home_stat_due_today">Due Today</string>
+    <string name="home_stat_overdue">Overdue</string>
+    <string name="home_stat_points">Points</string>
+    <string name="home_level_format">Level %1$d Scholar</string>
+    <string name="home_level_xp_format">%1$d / %2$d XP to Level %3$d</string>
+    <string name="due_label_today">Today</string>
+    <string name="due_label_tomorrow">Tomorrow</string>
+    <string name="cd_profile_avatar_button">Open profile and settings</string>
 
     <!-- Subjects -->
     <string name="action_add_subject">Add subject</string>
@@ -177,6 +192,8 @@
     <string name="section_about">About</string>
     <string name="pref_dark_mode">Dark Mode</string>
     <string name="pref_dark_mode_summary">Use the dark colour scheme across the app</string>
+    <string name="pref_pomodoro_sound">Pomodoro Sound</string>
+    <string name="pref_pomodoro_sound_summary">Play a sound when a focus session ends</string>
     <string name="pref_task_reminders">Task reminders</string>
     <string name="pref_task_reminders_summary">Remind me when tasks are due</string>
     <string name="pref_streak_reminders">Streak reminders</string>

@@ -32,9 +32,33 @@ data class DashboardUiState(
     val subjectNames: Map<String, String> = emptyMap(),
     val showAiCard: Boolean = true,
     val error: String? = null,
+    /** Study points earned so far — the experience behind the level banner. */
+    val points: Int = 0,
 ) {
     val todayProgressPercent: Int
         get() = if (todayTotal == 0) 0 else (todayCompleted * 100) / todayTotal
+
+    val overdueCount: Int get() = overdue.size
+
+    /** Scholar level: one level per [XP_PER_LEVEL] points, starting at 1. */
+    val level: Int get() = points / XP_PER_LEVEL + 1
+
+    /** XP earned inside the current level — what the banner's bar fills to. */
+    val xpInLevel: Int get() = points % XP_PER_LEVEL
+
+    val initials: String
+        get() = userName.trim()
+            .split(' ')
+            .filter { it.isNotBlank() }
+            .take(2)
+            .map { it.first().uppercaseChar() }
+            .joinToString("")
+            .ifBlank { "?" }
+
+    companion object {
+        /** Points needed to advance one level (matches the design's 500). */
+        const val XP_PER_LEVEL = 500
+    }
 }
 
 /**
@@ -84,6 +108,7 @@ class DashboardViewModel(
             subjectNames = subjects.associate { it.subjectId to it.subjectName },
             showAiCard = settingsRepository.showAiCardOnDashboard,
             error = error,
+            points = tasks.filter { it.completed }.sumOf { it.points },
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DashboardUiState())
 

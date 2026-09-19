@@ -15,19 +15,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     /**
-     * Destinations on which the bottom bar is visible. Note the AI assistant
-     * is NOT a bottom-nav item (BottomNavigationView allows at most 5) — it
-     * is reached via the Dashboard's AI card and Task Details' AI shortcuts.
-     * It stays in this set so the bar remains visible while chatting, with
-     * the originating tab still selected.
+     * The five bottom-nav tabs (Home, Tasks, Calendar, Progress, AI). Profile
+     * & Settings is deliberately NOT in this set: it is pushed from the Home
+     * avatar and closes with its back arrow, like the reference design.
      */
     private val topLevelDestinations = setOf(
         R.id.dashboardFragment,
-        R.id.subjectsFragment,
+        R.id.tasksFragment,
         R.id.calendarFragment,
         R.id.progressFragment,
-        R.id.aiAssistantFragment,
-        R.id.profileFragment
+        R.id.aiAssistantFragment
     )
 
     /**

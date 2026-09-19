@@ -20,6 +20,7 @@ data class ProfileUiState(
     val streakReminders: Boolean = true,
     val showAiCard: Boolean = true,
     val defaultAiPriority: String = "Medium",
+    val pomodoroSound: Boolean = true,
 )
 
 /**
@@ -54,6 +55,7 @@ class ProfileViewModel(
                 streakReminders = settingsRepository.streakRemindersEnabled,
                 showAiCard = settingsRepository.showAiCardOnDashboard,
                 defaultAiPriority = settingsRepository.defaultAiPriority,
+                pomodoroSound = settingsRepository.pomodoroSoundEnabled,
             )
         }
     }
@@ -76,6 +78,11 @@ class ProfileViewModel(
     fun setDefaultAiPriority(raw: String) {
         settingsRepository.defaultAiPriority = raw
         _state.update { it.copy(defaultAiPriority = raw) }
+    }
+
+    fun setPomodoroSound(enabled: Boolean) {
+        settingsRepository.pomodoroSoundEnabled = enabled
+        _state.update { it.copy(pomodoroSound = enabled) }
     }
 
     /**

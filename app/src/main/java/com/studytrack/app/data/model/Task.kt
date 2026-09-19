@@ -4,13 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class TaskType(val label: String) {
-    @SerialName("Assignment") ASSIGNMENT("Assignment"),
-    @SerialName("Test") TEST("Test"),
-    @SerialName("Exam") EXAM("Exam"),
-    @SerialName("Project") PROJECT("Project"),
-    @SerialName("Presentation") PRESENTATION("Presentation"),
-    @SerialName("Study") STUDY("Study");
+enum class TaskType(val label: String, val emoji: String) {
+    @SerialName("Assignment") ASSIGNMENT("Assignment", "📄"),
+    @SerialName("Test") TEST("Test", "🧪"),
+    @SerialName("Exam") EXAM("Exam", "📝"),
+    @SerialName("Project") PROJECT("Project", "📈"),
+    @SerialName("Presentation") PRESENTATION("Presentation", "📊"),
+    @SerialName("Study") STUDY("Study", "📖");
 
     companion object {
         /**

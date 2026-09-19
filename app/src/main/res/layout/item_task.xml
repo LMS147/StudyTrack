@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/taskCard"
@@ -10,10 +9,15 @@
     android:focusable="true"
     app:cardBackgroundColor="@color/surface_card"
     app:cardCornerRadius="@dimen/corner_md"
-    app:cardElevation="1dp"
+    app:cardElevation="0dp"
     app:strokeColor="@color/divider"
     app:strokeWidth="1dp">
 
+    <!--
+      Shared task row (Dashboard / Tasks / Subject detail):
+        [✓]  Title                                  [High]
+             Subject  📄 Assignment                  Today
+    -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,11 +27,10 @@
 
         <ImageView
             android:id="@+id/taskCompletedIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/cd_task_completed_toggle"
-            android:padding="@dimen/spacing_xs"
             android:src="@drawable/ic_radio_unchecked" />
 
         <LinearLayout
@@ -43,46 +46,63 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="@color/text_primary" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_xs"
+                android:layout_marginTop="2dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/taskPriorityChip"
+                    android:id="@+id/taskSubject"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_priority_chip"
-                    android:paddingHorizontal="@dimen/spacing_sm"
-                    android:paddingVertical="2dp"
-                    android:textAppearance="?attr/textAppearanceLabelSmall" />
-
-                <TextView
-                    android:id="@+id/taskDueDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_sm"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textAppearance="?attr/textAppearanceLabelMedium"
                     android:textColor="@color/text_secondary" />
 
                 <TextView
-                    android:id="@+id/taskSubject"
+                    android:id="@+id/taskTypeLabel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/spacing_sm"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:gravity="end"
                     android:maxLines="1"
                     android:textAppearance="?attr/textAppearanceLabelMedium"
-                    android:textColor="@color/brand_primary" />
+                    android:textColor="@color/text_secondary" />
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_sm"
+            android:gravity="end"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/taskPriorityChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_priority_chip"
+                android:paddingHorizontal="@dimen/spacing_sm"
+                android:paddingVertical="2dp"
+                android:textAppearance="?attr/textAppearanceLabelSmall" />
+
+            <TextView
+                android:id="@+id/taskDueDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="@color/text_secondary" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

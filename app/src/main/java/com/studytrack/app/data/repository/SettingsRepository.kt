@@ -39,6 +39,17 @@ class SettingsRepository(context: Context) {
         }
 
     /**
+     * Pomodoro sound preference. The toggle exists (and its state is
+     * remembered) ahead of the focus timer itself: the timer will read this
+     * when it is built, so the choice already survives restarts.
+     */
+    var pomodoroSoundEnabled: Boolean
+        get() = prefs.getBoolean(KEY_POMODORO_SOUND, true)
+        set(value) {
+            prefs.edit().putBoolean(KEY_POMODORO_SOUND, value).apply()
+        }
+
+    /**
      * Theme choice: [DARK_MODE_SYSTEM] (default, follows the phone), or an
      * explicit [DARK_MODE_LIGHT] / [DARK_MODE_DARK] picked on the Profile
      * screen. Stored as a string so "follow the system" stays expressible —
@@ -67,5 +78,6 @@ class SettingsRepository(context: Context) {
         private const val KEY_SHOW_AI_CARD = "show_ai_card_on_dashboard"
         private const val KEY_DEFAULT_AI_PRIORITY = "default_ai_priority"
         private const val KEY_DARK_MODE = "dark_mode"
+        private const val KEY_POMODORO_SOUND = "pomodoro_sound_enabled"
     }
 }

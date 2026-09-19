@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.studytrack.app.BuildConfig
 import com.studytrack.app.R
@@ -39,6 +40,13 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Pushed from the Home avatar, so it closes with a back arrow.
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
+
+        binding.pomodoroSoundSwitch.setOnCheckedChangeListener { _, checked ->
+            if (!updatingUi) viewModel.setPomodoroSound(checked)
+        }
 
         binding.logoutButton.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
@@ -105,6 +113,7 @@ class ProfileFragment : Fragment() {
         binding.taskRemindersSwitch.isChecked = state.taskReminders
         binding.streakRemindersSwitch.isChecked = state.streakReminders
         binding.showAiCardSwitch.isChecked = state.showAiCard
+        binding.pomodoroSoundSwitch.isChecked = state.pomodoroSound
         val checkedId = when (state.defaultAiPriority.lowercase()) {
             "low" -> R.id.aiPriorityLow
             "high" -> R.id.aiPriorityHigh

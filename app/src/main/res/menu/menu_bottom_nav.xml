@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--
+      Bottom navigation per the reference design: Home, Tasks, Calendar,
+      Progress, AI. Profile is NOT a tab — it opens from the avatar on Home.
+      (BottomNavigationView supports at most 5 items.)
+    -->
     <item
         android:id="@+id/dashboardFragment"
         android:icon="@drawable/ic_dashboard"
         android:title="@string/nav_dashboard" />
 
     <item
-        android:id="@+id/subjectsFragment"
+        android:id="@+id/tasksFragment"
         android:icon="@drawable/ic_subjects"
-        android:title="@string/nav_subjects" />
+        android:title="@string/nav_tasks" />
 
     <item
         android:id="@+id/calendarFragment"
@@ -21,15 +26,9 @@
         android:icon="@drawable/ic_progress"
         android:title="@string/nav_progress" />
 
-    <!-- NOTE: BottomNavigationView supports at most 5 items (it throws at
-         inflation time otherwise). The AI Assistant is intentionally NOT a
-         tab — it's reached via the Dashboard's AI card and Task Details'
-         AI shortcuts, and MainActivity keeps the bar visible while on the
-         AI screen. -->
-
     <item
-        android:id="@+id/profileFragment"
-        android:icon="@drawable/ic_profile"
-        android:title="@string/nav_profile" />
+        android:id="@+id/aiAssistantFragment"
+        android:icon="@drawable/ic_ai"
+        android:title="@string/nav_ai" />
 
 </menu>

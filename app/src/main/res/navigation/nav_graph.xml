@@ -76,6 +76,20 @@
     </fragment>
 
     <fragment
+        android:id="@+id/tasksFragment"
+        android:name="com.studytrack.app.tasks.TasksFragment"
+        android:label="@string/nav_tasks">
+
+        <action
+            android:id="@+id/action_tasksFragment_to_taskDetailsFragment"
+            app:destination="@id/taskDetailsFragment" />
+
+        <action
+            android:id="@+id/action_tasksFragment_to_addEditTaskFragment"
+            app:destination="@id/addEditTaskFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/calendarFragment"
         android:name="com.studytrack.app.calendar.CalendarFragment"
         android:label="@string/nav_calendar">
@@ -205,5 +219,12 @@
         app:launchSingleTop="true"
         app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="true" />
+
+    <!-- Profile & Settings is not a bottom-nav tab in the design: it is opened
+         from the Home avatar and closed with the back arrow. -->
+    <action
+        android:id="@+id/action_global_profileFragment"
+        app:destination="@id/profileFragment"
+        app:launchSingleTop="true" />
 
 </navigation>

@@ -60,10 +60,10 @@ class DashboardFragment : Fragment() {
             )
         }
 
-        binding.aiCard.setOnClickListener {
-            findNavController().navigate(
-                DashboardFragmentDirections.actionDashboardFragmentToAiAssistantFragment()
-            )
+        // The avatar is the app's route to Profile & Settings (it is not a
+        // bottom-nav tab in the design).
+        binding.profileAvatarButton.setOnClickListener {
+            findNavController().navigate(R.id.action_global_profileFragment)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -82,14 +82,21 @@ class DashboardFragment : Fragment() {
         )
         binding.dateText.text = DateTimeUtils.todayLabel()
 
-        binding.aiCard.isVisible = state.showAiCard
+        // Stat cards + gamification banner.
+        binding.profileAvatarButton.text = state.initials
+        binding.statDueToday.text = state.dueToday.size.toString()
+        binding.statOverdue.text = state.overdueCount.toString()
+        binding.statPoints.text = state.points.toString()
 
-        binding.todayProgressRing.setProgress(state.todayProgressPercent, true)
-        binding.todayPercentText.text =
-            getString(R.string.percent_format, state.todayProgressPercent)
-        binding.todayProgressSummary.text = getString(
-            R.string.dashboard_progress_summary, state.todayCompleted, state.todayTotal
+        binding.levelTitle.text = getString(R.string.home_level_format, state.level)
+        binding.levelXpText.text = getString(
+            R.string.home_level_xp_format,
+            state.xpInLevel,
+            DashboardUiState.XP_PER_LEVEL,
+            state.level + 1,
         )
+        binding.levelProgress.max = DashboardUiState.XP_PER_LEVEL
+        binding.levelProgress.setProgressCompat(state.xpInLevel, true)
 
         adapter.submitList(buildItems(state))
 

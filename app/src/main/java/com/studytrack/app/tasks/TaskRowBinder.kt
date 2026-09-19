@@ -1,5 +1,6 @@
 package com.studytrack.app.tasks
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Paint
 import androidx.core.content.ContextCompat
@@ -9,6 +10,9 @@ import com.studytrack.app.data.model.Priority
 import com.studytrack.app.data.model.Task
 import com.studytrack.app.databinding.ItemTaskBinding
 import com.studytrack.app.util.DateTimeUtils
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
 /**
  * Shared binding logic for the task row layout (item_task.xml), used by
@@ -34,7 +38,7 @@ object TaskRowBinder {
 
         renderPriority(binding, task.priority)
 
-        binding.taskDueDate.text = DateTimeUtils.shortDateTime(task.dueDate)
+        binding.taskDueDate.text = dueLabel(context, task.dueDate)
         val overdue = !task.completed && DateTimeUtils.isOverdue(task.dueDate)
         binding.taskDueDate.setTextColor(
             ContextCompat.getColor(
@@ -45,6 +49,10 @@ object TaskRowBinder {
 
         binding.taskSubject.isVisible = !item.subjectName.isNullOrBlank()
         binding.taskSubject.text = item.subjectName.orEmpty()
+
+        // Type is always shown (icon + label) so a row is readable even when
+        // it belongs to no subject yet.
+        binding.taskTypeLabel.text = "${task.taskType.emoji} ${task.taskType.label}"
 
         binding.taskCompletedIcon.setImageResource(
             if (task.completed) R.drawable.ic_check_circle else R.drawable.ic_radio_unchecked
@@ -58,6 +66,22 @@ object TaskRowBinder {
         binding.taskCompletedIcon.setOnClickListener { onToggleComplete(task) }
 
         binding.root.setOnClickListener { onTaskClick(task) }
+    }
+
+    /**
+     * Human due label for a row: "Today" / "Tomorrow" / "20 Sep" — the date
+     * the reference design shows under the priority pill. Empty when the task
+     * has no due date at all.
+     */
+    private fun dueLabel(context: Context, iso: String?): String {
+        val date = DateTimeUtils.parseDate(iso) ?: return ""
+        val today = LocalDate.now()
+        return when (date) {
+            today -> context.getString(R.string.due_label_today)
+            today.plusDays(1) -> context.getString(R.string.due_label_tomorrow)
+            else -> "${date.dayOfMonth} " +
+                date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+        }
     }
 
     private fun renderPriority(binding: ItemTaskBinding, priority: Priority) {
