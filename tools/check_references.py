@@ -46,8 +46,12 @@ resources = {
     "id": set(),
 }
 
-# parse values files for string/color/dimen/style
-for vf in (RES / "values").glob("*.xml"):
+# color state lists / selectors live in res/color/, not res/values/
+resources["color"] |= collect("color")
+
+# parse values files for string/color/dimen/style — every values* variant
+# (values/, values-night/, values-v27/, …) contributes definitions
+for vf in [f for d in sorted(RES.glob("values*")) for f in d.glob("*.xml")]:
     try:
         tree = ET.parse(vf)
     except ET.ParseError as e:

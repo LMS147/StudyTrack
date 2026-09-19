@@ -12,7 +12,7 @@
         android:id="@+id/suggestionCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="@color/surface_card"
         app:cardCornerRadius="@dimen/corner_md"
         app:cardElevation="0dp"
         app:strokeColor="@color/brand_container"

@@ -173,7 +173,10 @@
     <string name="section_account">Account</string>
     <string name="section_notifications">Notifications</string>
     <string name="section_ai_preferences">AI preferences</string>
+    <string name="section_app_preferences">App preferences</string>
     <string name="section_about">About</string>
+    <string name="pref_dark_mode">Dark Mode</string>
+    <string name="pref_dark_mode_summary">Use the dark colour scheme across the app</string>
     <string name="pref_task_reminders">Task reminders</string>
     <string name="pref_task_reminders_summary">Remind me when tasks are due</string>
     <string name="pref_streak_reminders">Streak reminders</string>

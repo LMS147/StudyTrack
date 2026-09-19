@@ -1,16 +1,10 @@
 <resources>
-
     <!--
-      LIGHT theme. The DayNight parent swaps in values-night/themes.xml +
-      values-night/colors.xml when dark mode is active, so every Material 3
-      component (cards, chips, switches, dialogs, bottom bar) re-themes itself.
-      Layouts must therefore never hardcode hex — they reference @color names
-      or ?attr/ theme attributes.
-
-      Mirrored by values-night/themes.xml — keep the two in sync.
+      DARK theme overrides. Only what must differ from values/themes.xml: the
+      status/navigation bar icons flip to light, because the bars themselves are
+      now dark navy. All colour roles come from values-night/colors.xml.
     -->
     <style name="Theme.StudyTrack" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Brand -->
         <item name="colorPrimary">@color/brand_primary</item>
         <item name="colorOnPrimary">@color/brand_on_primary</item>
         <item name="colorPrimaryContainer">@color/brand_container</item>
@@ -23,7 +17,6 @@
         <item name="colorTertiaryContainer">@color/brand_container</item>
         <item name="colorOnTertiaryContainer">@color/brand_on_container</item>
 
-        <!-- Surfaces -->
         <item name="android:colorBackground">@color/background</item>
         <item name="colorOnBackground">@color/text_primary</item>
         <item name="colorSurface">@color/surface_card</item>
@@ -33,33 +26,17 @@
         <item name="colorOutline">@color/divider</item>
         <item name="colorOutlineVariant">@color/divider</item>
 
-        <!-- Status/errors -->
         <item name="colorError">@color/overdue_red</item>
         <item name="colorOnError">@color/white</item>
         <item name="colorErrorContainer">@color/priority_high_container</item>
         <item name="colorOnErrorContainer">@color/priority_high</item>
 
-        <!-- Window chrome -->
         <item name="android:windowBackground">@color/background</item>
         <item name="android:statusBarColor">@color/background</item>
         <item name="android:navigationBarColor">@color/surface_nav</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
 
-        <!-- Bottom navigation: purple active tab, muted inactive tabs -->
         <item name="bottomNavigationStyle">@style/Widget.StudyTrack.BottomNav</item>
     </style>
-
-    <style name="Widget.StudyTrack.BottomNav" parent="Widget.Material3.BottomNavigationView">
-        <item name="android:background">@color/surface_nav</item>
-        <item name="itemIconTint">@color/nav_item_tint</item>
-        <item name="itemTextColor">@color/nav_item_tint</item>
-        <item name="itemActiveIndicatorStyle">@style/Widget.StudyTrack.BottomNav.Indicator</item>
-        <item name="labelVisibilityMode">labeled</item>
-    </style>
-
-    <style name="Widget.StudyTrack.BottomNav.Indicator">
-        <item name="android:color">@color/brand_container</item>
-    </style>
-
 </resources>

@@ -1,9 +1,11 @@
 package com.studytrack.app.profile
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -57,6 +59,18 @@ class ProfileFragment : Fragment() {
             if (!updatingUi) viewModel.setShowAiCard(checked)
         }
 
+        // Dark Mode: the switch reflects what is on screen right now; flipping
+        // it stores an explicit choice and re-themes the whole app (the Activity
+        // recreates itself, so the new palette applies immediately).
+        binding.darkModeSwitch.isChecked = isNightModeActive()
+        binding.darkModeSwitch.setOnCheckedChangeListener { _, checked ->
+            if (updatingUi) return@setOnCheckedChangeListener
+            viewModel.setDarkMode(checked)
+            AppCompatDelegate.setDefaultNightMode(
+                if (checked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+            )
+        }
+
         binding.aiPriorityGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (updatingUi || !isChecked) return@addOnButtonCheckedListener
             val raw = when (checkedId) {
@@ -74,6 +88,11 @@ class ProfileFragment : Fragment() {
             }
         }
     }
+
+    /** True when the app is currently rendering the dark palette. */
+    private fun isNightModeActive(): Boolean =
+        (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
 
     private fun renderState(state: ProfileUiState) {
         binding.profileAvatar.text =

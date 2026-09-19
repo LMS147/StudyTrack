@@ -78,6 +78,20 @@ class ProfileViewModel(
         _state.update { it.copy(defaultAiPriority = raw) }
     }
 
+    /**
+     * Persists an explicit light/dark choice. The caller (ProfileFragment) is
+     * responsible for switching the app theme via AppCompatDelegate — the
+     * ViewModel only owns the preference, and "follow the system" stays the
+     * state until the user touches this switch.
+     */
+    fun setDarkMode(enabled: Boolean) {
+        settingsRepository.darkMode = if (enabled) {
+            SettingsRepository.DARK_MODE_DARK
+        } else {
+            SettingsRepository.DARK_MODE_LIGHT
+        }
+    }
+
     /** MainActivity's auth-state listener navigates back to the login screen. */
     fun logout() {
         authRepository.signOut()

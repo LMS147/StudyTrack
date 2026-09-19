@@ -1,0 +1,47 @@
+<resources>
+    <!--
+      DARK palette (values-night). Same names as values/colors.xml — the
+      DayNight theme picks this file automatically when the app (or the whole
+      phone) is in dark mode. Deep navy surfaces with the same purple accent,
+      brightened priority colours so pills stay legible on dark backgrounds.
+    -->
+
+    <!-- Brand -->
+    <color name="brand_primary">#6C5CE7</color>
+    <color name="brand_primary_dark">#5B4BD6</color>
+    <color name="brand_on_primary">#FFFFFF</color>
+    <color name="brand_container">#2A2550</color>
+    <color name="brand_on_container">#C7BFFF</color>
+    <color name="brand_secondary">#8B7CF6</color>
+
+    <!-- Surfaces & text -->
+    <color name="background">#0D0E1A</color>
+    <color name="surface_card">#171833</color>
+    <color name="surface_nav">#12132A</color>
+    <color name="surface_sunken">#1F2140</color>
+    <color name="surface_bubble_ai">#1C1E38</color>
+    <color name="text_primary">#F2F3FA</color>
+    <color name="text_secondary">#9BA1BC</color>
+    <color name="white">#FFFFFF</color>
+    <color name="divider">#2A2C48</color>
+
+    <!-- Priority (bright foregrounds, deep tinted containers) -->
+    <color name="priority_high">#FF6B81</color>
+    <color name="priority_medium">#FFB020</color>
+    <color name="priority_low">#4ADE80</color>
+    <color name="priority_high_container">#3A1D2B</color>
+    <color name="priority_medium_container">#3A2E15</color>
+    <color name="priority_low_container">#14301F</color>
+
+    <!-- Status -->
+    <color name="success">#4ADE80</color>
+    <color name="success_container">#14301F</color>
+    <color name="overdue_red">#FF6B81</color>
+
+    <!-- AI accents -->
+    <color name="ai_gradient_start">#7C3AED</color>
+    <color name="ai_gradient_end">#5B4BD6</color>
+
+    <!-- Launcher -->
+    <color name="ic_launcher_background">#6C5CE7</color>
+</resources>

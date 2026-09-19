@@ -1,37 +1,51 @@
 <resources>
-    <!-- Brand -->
-    <color name="brand_primary">#4F46E5</color>
-    <color name="brand_primary_dark">#4338CA</color>
+    <!--
+      LIGHT palette. Every entry here has a counterpart in values-night/colors.xml
+      with the same name — layouts and code only ever reference these names (or
+      theme attributes), so switching the system/app theme swaps the whole look.
+
+      Naming rules of thumb:
+        surface_card .. cards, sheets, the bottom bar (never use @color/white for these)
+        white ......... literal white only — text/icons that sit on brand colours
+      Keep this file and values-night/colors.xml in sync: same names, both files.
+    -->
+
+    <!-- Brand: one accent in both themes so the app keeps its identity -->
+    <color name="brand_primary">#6C5CE7</color>
+    <color name="brand_primary_dark">#5B4BD6</color>
     <color name="brand_on_primary">#FFFFFF</color>
-    <color name="brand_container">#E0E7FF</color>
-    <color name="brand_on_container">#3730A3</color>
+    <color name="brand_container">#EDE9FE</color>
+    <color name="brand_on_container">#4C1D95</color>
     <color name="brand_secondary">#7C3AED</color>
 
     <!-- Surfaces & text -->
     <color name="background">#F6F7FB</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="surface_nav">#FFFFFF</color>
+    <color name="surface_sunken">#EEF1FA</color>
     <color name="surface_bubble_ai">#EEF1FA</color>
     <color name="text_primary">#111827</color>
     <color name="text_secondary">#6B7280</color>
     <color name="white">#FFFFFF</color>
     <color name="divider">#E5E7EB</color>
 
-    <!-- Priority -->
-    <color name="priority_high">#EF4444</color>
-    <color name="priority_medium">#F59E0B</color>
-    <color name="priority_low">#3B82F6</color>
-    <color name="priority_high_container">#FEE2E2</color>
+    <!-- Priority: High = red/pink, Medium = amber, Low = green (pills + chips) -->
+    <color name="priority_high">#E11D48</color>
+    <color name="priority_medium">#D97706</color>
+    <color name="priority_low">#16A34A</color>
+    <color name="priority_high_container">#FFE4E6</color>
     <color name="priority_medium_container">#FEF3C7</color>
-    <color name="priority_low_container">#DBEAFE</color>
+    <color name="priority_low_container">#DCFCE7</color>
 
     <!-- Status -->
     <color name="success">#16A34A</color>
     <color name="success_container">#DCFCE7</color>
     <color name="overdue_red">#DC2626</color>
 
-    <!-- AI -->
+    <!-- AI accents (gradient banner, AI bubbles) -->
     <color name="ai_gradient_start">#7C3AED</color>
-    <color name="ai_gradient_end">#4F46E5</color>
+    <color name="ai_gradient_end">#6C5CE7</color>
 
     <!-- Launcher -->
-    <color name="ic_launcher_background">#4F46E5</color>
+    <color name="ic_launcher_background">#6C5CE7</color>
 </resources>
