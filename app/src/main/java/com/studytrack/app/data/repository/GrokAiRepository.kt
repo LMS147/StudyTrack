@@ -1,6 +1,5 @@
 package com.studytrack.app.data.repository
 
-import com.studytrack.app.BuildConfig
 import com.studytrack.app.data.model.TaskAssistanceRequest
 import com.studytrack.app.data.model.TaskAssistanceResponse
 import com.studytrack.app.data.model.TaskSuggestion

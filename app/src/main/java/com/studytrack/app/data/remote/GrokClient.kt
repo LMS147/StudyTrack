@@ -1,6 +1,5 @@
 package com.studytrack.app.data.remote
 
-import com.studytrack.app.BuildConfig
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import okhttp3.MediaType.Companion.toMediaType
