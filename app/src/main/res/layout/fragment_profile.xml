@@ -79,6 +79,14 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/manageSubjectsButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:text="@string/manage_subjects" />
+
         <!-- Notifications -->
         <TextView
             android:layout_width="match_parent"

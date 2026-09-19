@@ -48,6 +48,10 @@ class ProfileFragment : Fragment() {
             if (!updatingUi) viewModel.setPomodoroSound(checked)
         }
 
+        binding.manageSubjectsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_subjectsFragment)
+        }
+
         binding.logoutButton.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.logout_confirm_title)

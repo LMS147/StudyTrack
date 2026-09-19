@@ -135,7 +135,15 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.studytrack.app.profile.ProfileFragment"
-        android:label="@string/profile_title" />
+        android:label="@string/profile_title">
+
+        <!-- Subjects lost their tab in the design's 5-tab bar; until the
+             Profile rebuild gives the subject stats card this job, the
+             screen is reachable from here. -->
+        <action
+            android:id="@+id/action_profileFragment_to_subjectsFragment"
+            app:destination="@id/subjectsFragment" />
+    </fragment>
 
     <!-- ====================================================== Task flows -->
 

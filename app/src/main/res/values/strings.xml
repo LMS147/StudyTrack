@@ -201,6 +201,7 @@
     <string name="pref_ai_dashboard_card">AI card on dashboard</string>
     <string name="pref_ai_dashboard_card_summary">Show the AI assistant shortcut on the dashboard</string>
     <string name="pref_ai_default_priority">Default priority for AI-created tasks</string>
+    <string name="manage_subjects">Manage subjects</string>
     <string name="action_logout">Log out</string>
     <string name="logout_confirm_title">Log out?</string>
     <string name="logout_confirm_message">You can log back in at any time.</string>
