@@ -98,7 +98,7 @@ class SubjectsFragment : Fragment() {
                     toast(state.message)
                 }
             }
-            ApiResult.Success, ApiResult.Loading, null -> {
+            is ApiResult.Success, ApiResult.Loading, null -> {
                 if (isEmpty && !loading) {
                     binding.emptyState.isVisible = true
                     binding.emptyState.text = getString(R.string.empty_subjects)

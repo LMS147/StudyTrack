@@ -126,6 +126,7 @@ for xml_file in RES.rglob("*.xml"):
 # ---------------------------------------------------------------- check Kotlin references
 kt_files = sorted(SRC.rglob("*.kt"))
 r_ref_re = re.compile(r"\bR\.(string|color|dimen|drawable|mipmap|layout|menu|navigation|style|id)\.(\w+)")
+android_r_ref_re = re.compile(r"\bandroid\.R\.[\w.]+")
 
 layout_ids = {}  # layout file -> set of ids
 for lf in (RES / "layout").glob("*.xml"):
@@ -164,7 +165,8 @@ declared_pkgs = {p for p, _ in package_files}
 for kt in kt_files:
     text = kt.read_text()
     rel = kt.relative_to(ROOT)
-    for kind, name in r_ref_re.findall(text):
+    stripped = android_r_ref_re.sub("", text)  # android.R.* are framework resources
+    for kind, name in r_ref_re.findall(stripped):
         if name not in resources.get(kind, set()):
             fail(f"{rel}: unresolved R.{kind}.{name}")
     for imp in re.findall(r"^import\s+(com\.studytrack\.app\.[\w.]+)", text, re.M):

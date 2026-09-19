@@ -184,4 +184,10 @@
     <string name="cd_app_logo">StudyTrack</string>
     <string name="cd_more_options">More options</string>
     <string name="cd_ai_icon">AI assistant</string>
+
+    <!-- Task list / details extras -->
+    <string name="label_due">Due</string>
+    <string name="label_type">Type</string>
+    <string name="subject_tasks">Tasks</string>
+    <string name="empty_subject_tasks">No tasks for this subject yet.\nTap + to add one.</string>
 </resources>
