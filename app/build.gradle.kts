@@ -18,6 +18,13 @@ val localProperties = Properties().apply {
 fun localProperty(name: String, fallback: String): String =
     localProperties.getProperty(name)?.trim()?.takeIf { it.isNotEmpty() } ?: fallback
 
+// Values for BuildConfig fields, computed once (plain concatenation keeps the
+// buildConfigField arguments free of nested string templates).
+val apiBaseUrlProp: String = localProperty("api.baseUrl", "")
+val grokApiKeyProp: String = localProperty("grok.apiKey", "")
+val grokModelProp: String = localProperty("grok.model", "grok-4")
+val grokBaseUrlProp: String = localProperty("grok.baseUrl", "https://api.x.ai/v1/")
+
 android {
     namespace = "com.studytrack.app"
     compileSdk = 34
@@ -30,34 +37,14 @@ android {
         versionName = "0.1.0"
 
         // StudyTrack REST API base URL. Blank (the default) = LOCAL MODE:
-        // subjects/tasks/progress live on-device (SharedPreferences) and no
-        // backend is contacted. Set api.baseUrl in local.properties to switch
-        // every repository to the REST implementation.
-        buildConfigField(
-            "String",
-            "API_BASE_URL",
-            "\"${localProperty("api.baseUrl", "")}\""
-        )
+        // subjects/tasks/progress live on-device and no backend is contacted.
+        buildConfigField("String", "API_BASE_URL", "\"" + apiBaseUrlProp + "\"")
 
-        // Direct LLM ("AI brain") configuration, read from local.properties
-        // (gitignored) so API keys never land in the repository. When
-        // GROK_API_KEY is blank the app uses the StudyTrack backend's
-        // /api/ai/task-assistance endpoint instead.
-        buildConfigField(
-            "String",
-            "GROK_API_KEY",
-            "\"${localProperty("grok.apiKey", "")}\""
-        )
-        buildConfigField(
-            "String",
-            "GROK_MODEL",
-            "\"${localProperty("grok.model", "grok-4")}\""
-        )
-        buildConfigField(
-            "String",
-            "GROK_BASE_URL",
-            "\"${localProperty("grok.baseUrl", "https://api.x.ai/v1/")}\""
-        )
+        // Direct LLM ("AI brain") configuration. When GROK_API_KEY is blank
+        // the app uses the StudyTrack backend's /api/ai/task-assistance.
+        buildConfigField("String", "GROK_API_KEY", "\"" + grokApiKeyProp + "\"")
+        buildConfigField("String", "GROK_MODEL", "\"" + grokModelProp + "\"")
+        buildConfigField("String", "GROK_BASE_URL", "\"" + grokBaseUrlProp + "\"")
     }
 
     buildTypes {

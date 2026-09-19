@@ -58,6 +58,9 @@ jobs:
             java -version 2>&1
             echo "ANDROID_HOME=$ANDROID_HOME"
             echo
+            echo "=== generated BuildConfig.java ==="
+            cat app/build/generated/source/buildConfig/debug/com/studytrack/app/BuildConfig.java 2>/dev/null || echo "(not generated)"
+            echo
             tail -n 400 build-output.log
           } > .build/ci-failure.log
           git config user.name "studytrack-ci"
