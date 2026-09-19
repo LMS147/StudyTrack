@@ -22,8 +22,11 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Show Android SDK info
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "platforms:"; ls "$ANDROID_HOME/platforms" 2>/dev/null || true
+          echo "build-tools:"; ls "$ANDROID_HOME/build-tools" 2>/dev/null || true
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -37,7 +40,26 @@ jobs:
           fi
 
       - name: Assemble debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --stacktrace 2>&1 | tee build-output.log
+          status=$?
+          if [ $status -ne 0 ]; then
+            tail -n 40 build-output.log | sed 's/%/%25/g' | tr '\n' '\r' | sed 's/\r/%0A/g' | head -c 3800 > /tmp/msg.txt || true
+            echo "::error::Gradle build failed. Log tail:%0A$(cat /tmp/msg.txt)"
+          fi
+          exit $status
+
+      - name: Report failure context
+        if: failure()
+        run: |
+          {
+            echo "ANDROID_HOME=$ANDROID_HOME"
+            java -version 2>&1
+            echo "platforms:"; ls "$ANDROID_HOME/platforms" 2>/dev/null
+          } > /tmp/ctx.txt || true
+          sed 's/%/%25/g' /tmp/ctx.txt | tr '\n' '\r' | sed 's/\r/%0A/g' | head -c 3000 > /tmp/ctxmsg.txt || true
+          echo "::error::Failure context:%0A$(cat /tmp/ctxmsg.txt)"
 
       # One-time: CI generates the wrapper scripts + jar and commits them back,
       # so the repo is fully buildable with ./gradlew locally afterwards.
