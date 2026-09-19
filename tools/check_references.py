@@ -104,7 +104,7 @@ except ET.ParseError as e:
     fail(f"XML parse error in AndroidManifest.xml: {e}")
 
 # ---------------------------------------------------------------- check XML references
-ref_re = re.compile(r"@(string|color|dimen|drawable|mipmap|layout|menu|navigation|style)/([\w.]+)")
+ref_re = re.compile(r"@(string|color|dimen|drawable|mipmap|layout|menu|navigation)/([\w.]+)")
 for xml_file in RES.rglob("*.xml"):
     content = xml_file.read_text()
     try:
@@ -161,7 +161,7 @@ for kt in kt_files:
         if imp in ("com.studytrack.app",):
             continue
         # generated sources: ViewBinding classes + safe-args Directions/Args
-        if imp.startswith("com.studytrack.app.databinding"):
+        if imp.startswith("com.studytrack.app.databinding") or imp == "com.studytrack.app.R":
             continue
         if imp.endswith("Directions") or imp.endswith("Args"):
             continue

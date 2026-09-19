@@ -1,6 +1,7 @@
 package com.studytrack.app
 
 import android.content.Context
+import com.studytrack.app.data.repository.AuthRepository
 
 /**
  * Minimal manual dependency container (chosen over a DI framework to keep the
@@ -12,6 +13,8 @@ import android.content.Context
 object ServiceLocator {
 
     private lateinit var appContext: Context
+
+    val authRepository: AuthRepository by lazy { AuthRepository() }
 
     fun init(context: Context) {
         appContext = context.applicationContext
