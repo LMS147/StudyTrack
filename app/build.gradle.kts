@@ -28,6 +28,26 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "0.1.0"
+
+        // Direct LLM ("AI brain") configuration, read from local.properties
+        // (gitignored) so API keys never land in the repository. When
+        // GROK_API_KEY is blank the app uses the StudyTrack backend's
+        // /api/ai/task-assistance endpoint instead.
+        buildConfigField(
+            "String",
+            "GROK_API_KEY",
+            "\"${localProperty("grok.apiKey", "")}\""
+        )
+        buildConfigField(
+            "String",
+            "GROK_MODEL",
+            "\"${localProperty("grok.model", "grok-4")}\""
+        )
+        buildConfigField(
+            "String",
+            "GROK_BASE_URL",
+            "\"${localProperty("grok.baseUrl", "https://api.x.ai/")}\""
+        )
     }
 
     buildTypes {
