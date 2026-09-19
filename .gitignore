@@ -7,3 +7,9 @@ build/
 /captures
 .externalNativeBuild
 .cxx
+
+# IDE-generated BuildConfig copies (BuildConfig is generated at build time —
+# a copy in src shadows it and breaks local/backend mode switching)
+app/src/main/java/BuildConfig.java
+app/src/main/java/com/studytrack/app/BuildConfig.java
+app/src/main/res/values/values.xml
