@@ -73,7 +73,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
 
     // Firebase Authentication (email/password)
-    implementation(platform("com.google.firebase:firebase-bom:32.8.3"))
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
     implementation("com.google.firebase:firebase-auth")
 
     // Unit tests
