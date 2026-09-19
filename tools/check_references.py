@@ -49,6 +49,8 @@ resources = {
 # color state lists / selectors live in res/color/, not res/values/
 resources["color"] |= collect("color")
 
+seen_definitions = {}
+
 # parse values files for string/color/dimen/style — every values* variant
 # (values/, values-night/, values-v27/, …) contributes definitions
 for vf in [f for d in sorted(RES.glob("values*")) for f in d.glob("*.xml")]:
@@ -61,6 +63,15 @@ for vf in [f for d in sorted(RES.glob("values*")) for f in d.glob("*.xml")]:
         if el.tag in ("string", "color", "dimen", "style"):
             name = el.get("name")
             if name:
+                # A duplicate name in the same file is a build error in AAPT2
+                # ("Found item String/x more than one time") — catch it here.
+                # Scoped per folder: values-night/ is *expected* to redefine
+                # the names from values/, but a repeat inside one folder is an
+                # AAPT2 error.
+                scope = (vf.parent.name, el.tag)
+                if name in seen_definitions.get(scope, set()):
+                    fail(f"{vf}: duplicate <{el.tag}> '{name}'")
+                seen_definitions.setdefault(scope, set()).add(name)
                 resources[el.tag].add(name)
 
 # every @+id declared in layouts & menus

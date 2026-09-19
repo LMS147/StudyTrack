@@ -239,7 +239,6 @@
     <string name="action_sign_out">Sign Out</string>
     <string name="edit_profile_email_note">Your email address comes from your account and cannot be edited here.</string>
     <string name="edit_profile_title">Edit profile</string>
-    <string name="action_save">Save</string>
     <string name="action_close">Close</string>
     <string name="action_send_link">Send link</string>
     <string name="action_email_support">Email support</string>
