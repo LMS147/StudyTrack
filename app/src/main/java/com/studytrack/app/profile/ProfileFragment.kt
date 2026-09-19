@@ -97,7 +97,9 @@ class ProfileFragment : Fragment() {
         updatingUi = false
 
         binding.versionValue.text = BuildConfig.VERSION_NAME
-        binding.apiEndpointValue.text = RetrofitClient.BASE_URL
+        binding.apiEndpointValue.text = RetrofitClient.BASE_URL.ifBlank {
+            getString(R.string.local_mode_label)
+        }
     }
 
     override fun onDestroyView() {

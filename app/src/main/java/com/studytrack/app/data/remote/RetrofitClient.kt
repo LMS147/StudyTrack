@@ -25,8 +25,12 @@ import java.util.concurrent.TimeUnit
  */
 object RetrofitClient {
 
-    /** Placeholder base URL — point this at your FastAPI instance. Trailing slash required. */
-    const val BASE_URL = "https://api.studytrack.example.com/"
+    /**
+     * REST API base URL (trailing slash required), read from api.baseUrl in
+     * local.properties. Blank = local mode: repositories persist on-device
+     * and the API is never contacted.
+     */
+    val BASE_URL: String get() = BuildConfig.API_BASE_URL
 
     @OptIn(ExperimentalSerializationApi::class)
     val json: Json = Json {

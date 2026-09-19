@@ -46,6 +46,15 @@ every push.
 Firebase project, replace it with the real file from the Firebase console
 (Authentication → Sign-in method → Email/Password must be enabled).
 
+### Local mode (default — no backend needed)
+
+With **no** `api.baseUrl` configured, the app runs fully self-contained:
+subjects, tasks, calendar and progress are stored **on-device** (SharedPreferences
+via `LocalStore`), and completing tasks awards points (High 20 / Medium 10 /
+Low 5) and builds a daily streak locally. Add `api.baseUrl` to `local.properties`
+when you deploy a backend and every repository switches to the REST API
+(`docs/API_CONTRACT.md`) — the Profile → About screen shows which mode you're in.
+
 ### AI brain (optional — works without a backend)
 
 The assistant chat runs directly against any OpenAI-compatible LLM API

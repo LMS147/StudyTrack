@@ -140,3 +140,21 @@ acceptable for personal builds only, which is why it lives in gitignored
 `local.properties` → `BuildConfig`, never in source control. Accepting or
 editing suggestions still goes through the Tasks repository, so task
 persistence still requires the StudyTrack backend.
+
+## 14. Local mode (on-device repositories)
+
+Each repository became an interface with a remote (REST) and a local
+implementation: `LocalStore` persists subjects/tasks as JSON in
+SharedPreferences and exposes them as StateFlows; the local calendar derives
+from the task store, and local progress (points/streak) is computed from
+completion timestamps. `ServiceLocator` picks per startup: `api.baseUrl` blank
+(the default) → local mode; set → remote mode.
+
+**Why:** the app is fully usable — AI chat (Groq key) plus data screens and
+accepted AI suggestions — with zero infrastructure; switching to a real
+backend later is a one-line config change, not a code change.
+**Consequences:** data lives only on the device (no sync/backup — uninstalling
+loses it); points/streak rules are replicated client-side and could drift
+from backend rules; SharedPreferences+JSON was chosen over Room to keep the
+dependency list unchanged (the repository interfaces are the seam for a
+Room-backed swap later).

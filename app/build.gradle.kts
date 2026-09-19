@@ -29,6 +29,16 @@ android {
         versionCode = 1
         versionName = "0.1.0"
 
+        // StudyTrack REST API base URL. Blank (the default) = LOCAL MODE:
+        // subjects/tasks/progress live on-device (SharedPreferences) and no
+        // backend is contacted. Set api.baseUrl in local.properties to switch
+        // every repository to the REST implementation.
+        buildConfigField(
+            "String",
+            "API_BASE_URL",
+            "\"${localProperty("api.baseUrl", "")}\""
+        )
+
         // Direct LLM ("AI brain") configuration, read from local.properties
         // (gitignored) so API keys never land in the repository. When
         // GROK_API_KEY is blank the app uses the StudyTrack backend's
