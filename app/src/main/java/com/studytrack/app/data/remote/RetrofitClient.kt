@@ -1,7 +1,6 @@
 package com.studytrack.app.data.remote
 
-import com.google.firebase.BuildConfig
-//import com.studytrack.app.BuildConfig
+import com.studytrack.app.BuildConfig
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
