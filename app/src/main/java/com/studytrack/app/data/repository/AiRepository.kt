@@ -7,12 +7,27 @@ import com.studytrack.app.util.ApiResult
 import com.studytrack.app.util.safeApiCall
 
 /**
- * POST /api/ai/task-assistance. The only AI entry point — everything the
- * assistant creates goes through the normal TaskRepository afterwards.
+ * The app's AI "brain" — one method, two implementations:
+ * - [AiRepository]: POST /api/ai/task-assistance on the StudyTrack backend
+ *   (preferred when a backend is deployed; keys stay server-side).
+ * - [GrokAiRepository]: calls the xAI (Grok) chat-completions API directly
+ *   from the app using a key from local.properties — for development and
+ *   personal use without a backend.
+ *
+ * [ServiceLocator] picks the implementation at startup based on whether a
+ * Grok key is configured.
  */
-class AiRepository(private val api: ApiService) {
+interface AiBrain {
+    suspend fun taskAssistance(request: TaskAssistanceRequest): ApiResult<TaskAssistanceResponse>
+}
 
-    suspend fun taskAssistance(request: TaskAssistanceRequest): ApiResult<TaskAssistanceResponse> =
+/**
+ * POST /api/ai/task-assistance. Everything the assistant creates goes through
+ * the normal TaskRepository afterwards.
+ */
+class AiRepository(private val api: ApiService) : AiBrain {
+
+    override suspend fun taskAssistance(request: TaskAssistanceRequest): ApiResult<TaskAssistanceResponse> =
         safeApiCall {
             api.taskAssistance(request)
         }

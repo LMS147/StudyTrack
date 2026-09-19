@@ -46,6 +46,21 @@ every push.
 Firebase project, replace it with the real file from the Firebase console
 (Authentication → Sign-in method → Email/Password must be enabled).
 
+### AI brain (optional — works without a backend)
+
+The assistant chat can run directly against the xAI (Grok) API so it works
+during development with no StudyTrack backend deployed. Copy
+`local.properties.example` to `local.properties` (it's gitignored) and set:
+
+```properties
+grok.apiKey=xai-your-key-here
+```
+
+Get a key at [console.x.ai](https://console.x.ai) (Dashboard → API Keys).
+Optional: `grok.model` (default `grok-4`) and `grok.baseUrl` — any
+OpenAI-compatible provider works, e.g. Groq. Note the key is baked into your
+personal builds — fine for your own use, never publish such a build.
+
 ### API endpoint
 
 `RetrofitClient.BASE_URL` (in

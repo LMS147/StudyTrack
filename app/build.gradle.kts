@@ -6,6 +6,16 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
+}
+
+fun localProperty(name: String, fallback: String): String =
+    localProperties.getProperty(name)?.trim()?.takeIf { it.isNotEmpty() } ?: fallback
+
 android {
     namespace = "com.studytrack.app"
     compileSdk = 34
