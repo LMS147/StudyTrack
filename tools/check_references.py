@@ -261,6 +261,25 @@ if menu.exists() and nav_dest_ids:
         if mid not in nav_dest_ids:
             fail(f"menu_bottom_nav.xml: id '{mid}' is not a navigation destination")
 
+# ---------------------------------------------------------------- hardcoded colour lint
+# Dark mode is implemented with theme attributes and values/values-night colour
+# resources, so a literal colour in a layout or a menu is always a bug.
+LITERAL_COLOUR = re.compile(r'"(#[0-9A-Fa-f]{3,8})"')
+for folder in ("layout", "menu", "drawable"):
+    if not (RES / folder).exists():
+        continue
+    for xf in sorted((RES / folder).rglob("*.xml")):
+        text = xf.read_text()
+        # Vendor logo vectors opt out with a comment: their colours are fixed
+        # brand values and must not follow the theme.
+        if re.search(r"brand colour|brand color|fixed vendor palette|fixed .* glyph", text, re.I):
+            continue
+        for lineno, line in enumerate(text.splitlines(), start=1):
+            m = LITERAL_COLOUR.search(line)
+            if m:
+                fail(f"{xf.relative_to(RES)}:{lineno}: hardcoded colour {m.group(1)} "
+                     f"— use a @color resource (add a values-night variant if it differs)")
+
 # ---------------------------------------------------------------- report
 if failures:
     print(f"FAILED: {len(failures)} problem(s)")

@@ -52,4 +52,7 @@
 
     <!-- Launcher -->
     <color name="ic_launcher_background">#6C5CE7</color>
+    <!-- Text and track drawn on the purple level banner (same in both themes) -->
+    <color name="on_level_gradient">#CCFFFFFF</color>
+    <color name="on_level_gradient_track">#33FFFFFF</color>
 </resources>

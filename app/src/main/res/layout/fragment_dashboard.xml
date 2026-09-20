@@ -126,7 +126,7 @@
                         android:layout_marginBottom="4dp"
                         android:text="@string/xp_suffix"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
-                        android:textColor="#CCFFFFFF" />
+                        android:textColor="@color/on_level_gradient" />
                 </LinearLayout>
 
                 <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -135,7 +135,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_sm"
                     app:indicatorColor="@color/white"
-                    app:trackColor="#33FFFFFF"
+                    app:trackColor="@color/on_level_gradient_track"
                     app:trackCornerRadius="4dp"
                     app:trackThickness="6dp" />
 
@@ -145,7 +145,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_sm"
                     android:textAppearance="?attr/textAppearanceLabelMedium"
-                    android:textColor="#CCFFFFFF"
+                    android:textColor="@color/on_level_gradient"
                     tools:text="450 XP to Level 5" />
             </LinearLayout>
 
