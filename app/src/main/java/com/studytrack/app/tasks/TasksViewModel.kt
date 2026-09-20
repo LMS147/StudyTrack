@@ -20,15 +20,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** Status filter row on the Tasks screen: everything, open only, or done only. */
-enum class TaskStatusFilter { ALL, ACTIVE, COMPLETED }
-
 data class TasksUiState(
     val loading: Boolean = true,
     val items: List<TaskListItem> = emptyList(),
     val typeFilter: TaskType? = null,
     val priorityFilter: Priority? = null,
-    val statusFilter: TaskStatusFilter = TaskStatusFilter.ALL,
+    /** True when the "Completed" chip is selected (design folds it into the type row). */
+    val completedOnly: Boolean = false,
+    val pendingCount: Int = 0,
+    val completedCount: Int = 0,
     val totalCount: Int = 0,
     val error: String? = null,
 ) {
@@ -46,11 +46,11 @@ class TasksViewModel(
     private val subjectRepository: SubjectRepository,
 ) : ViewModel() {
 
-    /** All three filter rows in one flow: combine() is typed up to five sources. */
+    /** Filter rows in one flow: combine() is typed up to five sources. */
     private data class Filters(
         val type: TaskType? = null,
         val priority: Priority? = null,
-        val status: TaskStatusFilter = TaskStatusFilter.ALL,
+        val completedOnly: Boolean = false,
     )
 
     private val filters = MutableStateFlow(Filters())
@@ -68,18 +68,12 @@ class TasksViewModel(
         val filtered = tasks
             .filter { activeFilters.type == null || it.taskType == activeFilters.type }
             .filter { activeFilters.priority == null || it.priority == activeFilters.priority }
-            .filter {
-                when (activeFilters.status) {
-                    TaskStatusFilter.ALL -> true
-                    TaskStatusFilter.ACTIVE -> !it.completed
-                    TaskStatusFilter.COMPLETED -> it.completed
-                }
-            }
+            .filter { !activeFilters.completedOnly || it.completed }
             // The Completed view reads as a history, so it shows the most
             // recently finished work first; everywhere else open tasks come
             // first, then by due date (undated last).
             .let { visible ->
-                if (activeFilters.status == TaskStatusFilter.COMPLETED) {
+                if (activeFilters.completedOnly) {
                     visible.sortedByDescending { it.completedAt.orEmpty() }
                 } else {
                     visible.sortedWith(
@@ -95,8 +89,10 @@ class TasksViewModel(
             },
             typeFilter = activeFilters.type,
             priorityFilter = activeFilters.priority,
-            statusFilter = activeFilters.status,
+            completedOnly = activeFilters.completedOnly,
             totalCount = tasks.size,
+            pendingCount = tasks.count { !it.completed },
+            completedCount = tasks.count { it.completed },
             error = error,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TasksUiState())
@@ -115,16 +111,20 @@ class TasksViewModel(
         }
     }
 
-    fun setTypeFilter(type: TaskType?) {
-        filters.update { it.copy(type = type) }
-    }
-
     fun setPriorityFilter(priority: Priority?) {
         filters.update { it.copy(priority = priority) }
     }
 
-    fun setStatusFilter(status: TaskStatusFilter) {
-        filters.update { it.copy(status = status) }
+    /**
+     * Selecting a task type and selecting "Completed" are the same single
+     * choice in the design (one chip row), so each clears the other.
+     */
+    fun setTypeFilter(type: TaskType?) {
+        filters.update { it.copy(type = type, completedOnly = false) }
+    }
+
+    fun setCompletedOnly(completedOnly: Boolean) {
+        filters.update { it.copy(completedOnly = completedOnly, type = null) }
     }
 
     fun toggleComplete(taskId: String, completed: Boolean) {

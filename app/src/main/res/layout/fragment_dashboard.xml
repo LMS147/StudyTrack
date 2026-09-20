@@ -41,9 +41,11 @@
                         android:id="@+id/dateText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceLabelMedium"
+                        android:letterSpacing="0.06"
+                        android:textAllCaps="true"
+                        android:textAppearance="?attr/textAppearanceLabelSmall"
                         android:textColor="@color/text_secondary"
-                        tools:text="Saturday, 19 Sep 2026" />
+                        tools:text="SAT, 19 SEP 2026" />
 
                     <TextView
                         android:id="@+id/greetingText"
@@ -67,6 +69,84 @@
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:textColor="@color/white"
                     tools:text="LM" />
+            </LinearLayout>
+
+            <!-- Level / XP banner -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:background="@drawable/bg_level_banner"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_lg">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/levelTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:letterSpacing="0.08"
+                        android:textAppearance="?attr/textAppearanceLabelMedium"
+                        android:textColor="@color/white"
+                        tools:text="LEVEL 4 SCHOLAR" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🏅"
+                        android:textSize="24sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:baselineAligned="false"
+                    android:gravity="bottom"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/levelXpValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceHeadlineLarge"
+                        android:textColor="@color/white"
+                        tools:text="50" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:text="@string/xp_suffix"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textColor="#CCFFFFFF" />
+                </LinearLayout>
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/levelProgress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    app:indicatorColor="@color/white"
+                    app:trackColor="#33FFFFFF"
+                    app:trackCornerRadius="4dp"
+                    app:trackThickness="6dp" />
+
+                <TextView
+                    android:id="@+id/levelXpText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
+                    android:textColor="#CCFFFFFF"
+                    tools:text="450 XP to Level 5" />
             </LinearLayout>
 
             <!-- Stat cards -->
@@ -95,9 +175,16 @@
                         android:paddingVertical="@dimen/spacing_md">
 
                         <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📋"
+                            android:textSize="16sp" />
+
+                        <TextView
                             android:id="@+id/statDueToday"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
                             android:textAppearance="?attr/textAppearanceHeadlineSmall"
                             android:textColor="@color/priority_medium"
                             tools:text="1" />
@@ -131,9 +218,16 @@
                         android:paddingVertical="@dimen/spacing_md">
 
                         <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="⚠️"
+                            android:textSize="16sp" />
+
+                        <TextView
                             android:id="@+id/statOverdue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
                             android:textAppearance="?attr/textAppearanceHeadlineSmall"
                             android:textColor="@color/priority_high"
                             tools:text="0" />
@@ -167,73 +261,29 @@
                         android:paddingVertical="@dimen/spacing_md">
 
                         <TextView
-                            android:id="@+id/statPoints"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="✅"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/statCompleted"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
                             android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                            android:textColor="@color/brand_primary"
-                            tools:text="50" />
+                            android:textColor="@color/success"
+                            tools:text="2" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="@string/home_stat_points"
+                            android:text="@string/home_stat_completed"
                             android:textAppearance="?attr/textAppearanceLabelMedium"
                             android:textColor="@color/text_secondary" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-
-            <!-- Gamification banner -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_md"
-                android:background="@drawable/bg_level_banner"
-                android:orientation="vertical"
-                android:padding="@dimen/spacing_md">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/levelTitle"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textAppearance="?attr/textAppearanceTitleMedium"
-                        android:textColor="@color/white"
-                        tools:text="Level 4 Scholar" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⭐"
-                        android:textSize="20sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/levelXpText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:textAppearance="?attr/textAppearanceLabelMedium"
-                    android:textColor="#CCFFFFFF"
-                    tools:text="50 / 500 XP to Level 5" />
-
-                <com.google.android.material.progressindicator.LinearProgressIndicator
-                    android:id="@+id/levelProgress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_sm"
-                    app:indicatorColor="@color/white"
-                    app:trackColor="#33FFFFFF"
-                    app:trackCornerRadius="4dp"
-                    app:trackThickness="6dp" />
             </LinearLayout>
 
             <!-- Task sections (headers + rows + empty states) -->

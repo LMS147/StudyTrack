@@ -35,11 +35,15 @@ data class DashboardUiState(
     val error: String? = null,
     /** Study points earned so far — the experience behind the level banner. */
     val points: Int = 0,
+    val completedTotal: Int = 0,
 ) {
     val todayProgressPercent: Int
         get() = if (todayTotal == 0) 0 else (todayCompleted * 100) / todayTotal
 
     val overdueCount: Int get() = overdue.size
+
+    /** Tasks finished so far — the third header card. */
+    val completedCount: Int get() = completedTotal
 
     /** Scholar level — shared curve with the Progress screen ([Levels]). */
     val level: Int get() = Levels.levelFor(points)
@@ -106,6 +110,7 @@ class DashboardViewModel(
             showAiCard = settingsRepository.showAiCardOnDashboard,
             error = error,
             points = tasks.filter { it.completed }.sumOf { it.points },
+            completedTotal = tasks.count { it.completed },
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DashboardUiState())
 

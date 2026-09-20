@@ -62,10 +62,13 @@ class ProgressFragment : Fragment() {
     private fun renderState(state: ProgressUiState) {
         binding.loadingProgress.isVisible = state.loading
 
-        binding.xpValue.text = getString(R.string.progress_xp_format, state.points)
+        binding.xpValue.text = state.points.toString()
         binding.levelValue.text = getString(R.string.progress_level_format, state.level)
         binding.levelProgress.max = Levels.XP_PER_LEVEL
         binding.levelProgress.setProgressCompat(state.xpInLevel, true)
+        binding.levelStartLabel.text = getString(R.string.progress_level_short_format, state.level)
+        binding.levelEndLabel.text =
+            getString(R.string.progress_level_short_format, state.level + 1)
         binding.xpUntilNextLevel.text = getString(
             R.string.progress_xp_until_format,
             Levels.XP_PER_LEVEL - state.xpInLevel,

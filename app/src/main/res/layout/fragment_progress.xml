@@ -48,12 +48,37 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/xpValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                            android:textColor="@color/white"
-                            tools:text="50 XP" />
+                            android:letterSpacing="0.08"
+                            android:text="@string/section_total_experience"
+                            android:textAppearance="?attr/textAppearanceLabelSmall"
+                            android:textColor="#CCFFFFFF" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:baselineAligned="false"
+                            android:gravity="bottom"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/xpValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                                android:textColor="@color/white"
+                                tools:text="50" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_marginBottom="3dp"
+                                android:text="@string/xp_suffix"
+                                android:textAppearance="?attr/textAppearanceTitleMedium"
+                                android:textColor="#CCFFFFFF" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/levelValue"
@@ -82,14 +107,38 @@
                     app:trackCornerRadius="4dp"
                     app:trackThickness="8dp" />
 
-                <TextView
-                    android:id="@+id/xpUntilNextLevel"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_sm"
-                    android:textAppearance="?attr/textAppearanceLabelMedium"
-                    android:textColor="#CCFFFFFF"
-                    tools:text="450 XP until Level 5" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/levelStartLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceLabelSmall"
+                        android:textColor="#CCFFFFFF"
+                        tools:text="Level 4" />
+
+                    <TextView
+                        android:id="@+id/xpUntilNextLevel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textAppearance="?attr/textAppearanceLabelSmall"
+                        android:textColor="#CCFFFFFF"
+                        tools:text="450 XP to Level 5" />
+
+                    <TextView
+                        android:id="@+id/levelEndLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceLabelSmall"
+                        android:textColor="#CCFFFFFF"
+                        tools:text="Level 5" />
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Completed / Pending / % done -->
@@ -262,7 +311,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_lg"
                 android:letterSpacing="0.08"
-                android:text="@string/section_badges"
+                android:text="@string/section_achievements"
                 android:textAppearance="?attr/textAppearanceLabelMedium"
                 android:textColor="@color/text_secondary" />
 

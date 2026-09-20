@@ -65,18 +65,18 @@ class TasksFragment : Fragment() {
             )
         }
 
+        // One row covers both: the task types, then "Completed".
         binding.typeChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
-            viewModel.setTypeFilter(
-                when (checkedIds.firstOrNull()) {
-                    R.id.typeChipAssignment -> TaskType.ASSIGNMENT
-                    R.id.typeChipTest -> TaskType.TEST
-                    R.id.typeChipExam -> TaskType.EXAM
-                    R.id.typeChipProject -> TaskType.PROJECT
-                    R.id.typeChipPresentation -> TaskType.PRESENTATION
-                    R.id.typeChipStudy -> TaskType.STUDY
-                    else -> null // "All"
-                }
-            )
+            when (checkedIds.firstOrNull()) {
+                R.id.typeChipCompleted -> viewModel.setCompletedOnly(true)
+                R.id.typeChipAssignment -> viewModel.setTypeFilter(TaskType.ASSIGNMENT)
+                R.id.typeChipTest -> viewModel.setTypeFilter(TaskType.TEST)
+                R.id.typeChipExam -> viewModel.setTypeFilter(TaskType.EXAM)
+                R.id.typeChipProject -> viewModel.setTypeFilter(TaskType.PROJECT)
+                R.id.typeChipPresentation -> viewModel.setTypeFilter(TaskType.PRESENTATION)
+                R.id.typeChipStudy -> viewModel.setTypeFilter(TaskType.STUDY)
+                else -> viewModel.setTypeFilter(null) // "All"
+            }
         }
 
         binding.priorityChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
@@ -90,16 +90,6 @@ class TasksFragment : Fragment() {
             )
         }
 
-        binding.statusChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
-            viewModel.setStatusFilter(
-                when (checkedIds.firstOrNull()) {
-                    R.id.statusChipToDo -> TaskStatusFilter.ACTIVE
-                    R.id.statusChipCompleted -> TaskStatusFilter.COMPLETED
-                    else -> TaskStatusFilter.ALL
-                }
-            )
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collect { state -> renderState(state) }
@@ -108,6 +98,11 @@ class TasksFragment : Fragment() {
     }
 
     private fun renderState(state: TasksUiState) {
+        binding.tasksSubtitle.text = getString(
+            R.string.tasks_pending_completed,
+            state.pendingCount,
+            state.completedCount,
+        )
         binding.loadingProgress.isVisible = state.loading
         binding.emptyState.isVisible = state.filteredEmpty && !state.loading
         adapter.submitList(state.items)

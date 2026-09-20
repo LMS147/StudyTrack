@@ -87,7 +87,7 @@ class DashboardFragment : Fragment() {
         binding.profileAvatarButton.text = state.initials
         binding.statDueToday.text = state.dueToday.size.toString()
         binding.statOverdue.text = state.overdueCount.toString()
-        binding.statPoints.text = state.points.toString()
+        binding.statCompleted.text = state.completedCount.toString()
 
         binding.levelTitle.text = getString(R.string.home_level_format, state.level)
         binding.levelXpText.text = getString(

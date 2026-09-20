@@ -65,6 +65,9 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
         binding.suggestionPrioritise.setOnClickListener {
             sendText(getString(R.string.ai_suggestion_prioritise))
         }
+        binding.suggestionBreakDown.setOnClickListener {
+            sendText(getString(R.string.ai_suggestion_break_down))
+        }
         binding.messageInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 sendCurrentInput()
