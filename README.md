@@ -90,6 +90,11 @@ running Gradle`: Java 25 requires Gradle 9.1.0+).
   Gradle → *Gradle JDK* → **Download JDK…** → Version **17** → Download. Then
   *File → Sync Project with Gradle Files*. This is also what fixes an empty
   Run dialog: the run configuration is produced by a successful sync.
+  Pick **17 exactly, not "Latest"** — any 17.x patch release is fine, and the
+  vendor matters less than the version (Eclipse Temurin 17 is what CI installs;
+  JetBrains Runtime 17 also works). Java 21 would satisfy Gradle 8.7 but buys
+  nothing here: 17 is the version the Android Gradle Plugin 8.4.2 targets and
+  the one this build is pinned to.
 - **Terminal:** run `tools/set-gradle-jdk17.ps1`, which finds the installed
   JDK 17 and writes the setting for you (it backs the file up first and touches
   nothing in the repository). If Windows reports that running scripts is
