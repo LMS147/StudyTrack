@@ -75,7 +75,7 @@ usually bite:
 | Symptom (Gradle / Build output) | Cause | Fix |
 | --- | --- | --- |
 | `SDK location not found. Define a valid SDK location ...` | A fresh clone has no `local.properties` (it is gitignored), so Gradle doesn't know where the Android SDK is | Create `local.properties` in the project root with `sdk.dir=C:/Users/<you>/AppData/Local/Android/Sdk` (see `local.properties.example`), or set the `ANDROID_HOME` environment variable |
-| `What went wrong:` followed by nothing but a version number, e.g. `25.0.1` | That number **is the JDK version** Gradle refuses to run on. Gradle 8.7 (this project's wrapper) runs on Java 8–21 only; Java 25 needs Gradle 9.1+. Version 25 is the common "latest LTS" download, so a recent JDK install triggers this | Use JDK 17 — see below |
+| `What went wrong:` followed by nothing but a version number, e.g. `25.0.1` | That number **is the JDK version** Gradle refuses to run on — not your code, and not the app's version. Gradle below 9.0.0 embeds a Kotlin version that cannot read a JVM 25 or newer (fixed in Kotlin 2.1.20). Java 25 is a common default download, so a recent JDK install triggers this on an otherwise healthy project | Use JDK 17 — see below |
 | `Android Gradle plugin requires Java 17` / `Unsupported class file major version` | Same root cause: Gradle is being run by the wrong JDK | Use JDK 17 — see below |
 | `Plugin [id: 'com.android.application', version: '8.4.2'] was not found` or a sync that stops with a version message | The installed Android Studio is older than the Android Gradle Plugin (8.4.2 needs **Jellyfish 2023.3.1 or newer**) or there is no network access to `google()` | Update Android Studio, or build from the terminal (`./gradlew assembleDebug`) |
 
@@ -96,10 +96,14 @@ running Gradle`: Java 25 requires Gradle 9.1.0+).
   nothing here: 17 is the version the Android Gradle Plugin 8.4.2 targets and
   the one this build is pinned to.
 - **Terminal:** run `tools/set-gradle-jdk17.ps1`, which finds the installed
-  JDK 17 and writes the setting for you (it backs the file up first and touches
-  nothing in the repository). If Windows reports that running scripts is
-  disabled, use
-  `powershell -ExecutionPolicy Bypass -File .\tools\set-gradle-jdk17.ps1`. To do it by hand instead, add this line to
+  JDK 17 and writes the setting for you (it backs the file up first, and
+  touches nothing in the repository). If Windows reports that running scripts
+  is disabled, use
+  `powershell -ExecutionPolicy Bypass -File .\tools\set-gradle-jdk17.ps1`.
+  It scans `%USERPROFILE%\.jdks` (where Android Studio's *Download JDK* lands),
+  Android Studio's bundled runtime, and the usual vendor folders; finding no 17,
+  it lists the JDKs it did find and how to install 17. Point it at a specific
+  JDK with `-JdkPath`, or have it set `JAVA_HOME` as well with `-SetJavaHome`. To do it by hand instead, add this line to
   `C:\Users\<you>\.gradle\gradle.properties` — machine-local, never
   committed — replacing the path with your JDK 17:
 
