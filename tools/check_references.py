@@ -49,6 +49,13 @@ resources = {
 # color state lists / selectors live in res/color/, not res/values/
 resources["color"] |= collect("color")
 
+# Resources generated at build time by the google-services plugin (from
+# google-services.json) — not present in res/, so treat them as defined.
+resources["string"] |= {
+    "default_web_client_id", "google_app_id", "gcm_defaultSenderId",
+    "google_api_key", "project_id", "firebase_database_url", "ga_trackingId",
+}
+
 seen_definitions = {}
 
 # parse values files for string/color/dimen/style — every values* variant

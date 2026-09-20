@@ -103,6 +103,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
 
     // Firebase Authentication (email/password)
+    // Google Sign-In: ID-token flow, exchanged for a Firebase credential in
+    // AuthRepository. Needs the Google provider enabled in the Firebase
+    // console plus this build's SHA-1 fingerprint registered.
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+
     implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
     implementation("com.google.firebase:firebase-auth")
 

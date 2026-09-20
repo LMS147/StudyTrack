@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.studytrack.app.util.ApiResult
 import kotlinx.coroutines.CancellationException
@@ -67,6 +68,22 @@ class AuthRepository(
      */
     suspend fun sendPasswordReset(email: String): ApiResult<Unit> = try {
         auth.sendPasswordResetEmail(email).await()
+        ApiResult.Success(Unit)
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        ApiResult.Error(friendlyAuthError(e), e)
+    }
+
+    /**
+     * Signs in with a Google ID token obtained by the Google Sign-In SDK.
+     * The Firebase project must have the Google provider enabled and this
+     * build's SHA-1 fingerprint registered, otherwise Google returns no token
+     * at all and the caller surfaces that as a setup message.
+     */
+    suspend fun signInWithGoogle(idToken: String): ApiResult<Unit> = try {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential).await()
         ApiResult.Success(Unit)
     } catch (e: CancellationException) {
         throw e

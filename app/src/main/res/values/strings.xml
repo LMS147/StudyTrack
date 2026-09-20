@@ -20,7 +20,7 @@
 
     <!-- Auth -->
     <string name="login_title">Welcome back</string>
-    <string name="login_subtitle">Sign in to keep your studies on track</string>
+    <string name="login_subtitle">Sign in to your StudyTrack account</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="action_log_in">Log in</string>
@@ -294,4 +294,59 @@
     <string name="label_type">Type</string>
     <string name="subject_tasks">Tasks</string>
     <string name="empty_subject_tasks">No tasks for this subject yet.\nTap + to add one.</string>
+
+    <!-- Auth: sign-in + 3-step create account -->
+    <string name="app_logo_letter">S</string>
+    <string name="label_email_address">EMAIL ADDRESS</string>
+    <string name="label_password_upper">PASSWORD</string>
+    <string name="label_full_name_upper">FULL NAME</string>
+    <string name="label_student_id_upper">STUDENT ID</string>
+    <string name="label_institution_upper">INSTITUTION</string>
+    <string name="label_course_upper">COURSE / DEGREE</string>
+    <string name="label_year_of_study_upper">YEAR OF STUDY</string>
+    <string name="label_confirm_password_upper">CONFIRM PASSWORD</string>
+    <string name="hint_email_example">you@student.ac.za</string>
+    <string name="hint_password_example">Enter your password</string>
+    <string name="hint_password_min">Minimum 6 characters</string>
+    <string name="hint_confirm_password_example">Repeat your password</string>
+    <string name="hint_full_name">e.g. Lufuno Makhado</string>
+    <string name="hint_student_id">e.g. STI0442357</string>
+    <string name="hint_institution">e.g. Walter Sisulu University</string>
+    <string name="hint_course">e.g. BSc Computer Science</string>
+    <string name="action_forgot_password">Forgot password?</string>
+    <string name="action_sign_in">Sign In</string>
+    <string name="action_sign_in_link">Sign In</string>
+    <string name="action_continue_arrow">Continue →</string>
+    <string name="auth_or_continue_with">OR CONTINUE WITH</string>
+    <string name="auth_provider_google">Google</string>
+    <string name="auth_provider_microsoft">Microsoft</string>
+    <string name="auth_microsoft_unavailable">Microsoft sign-in needs an Azure app registration — use email or Google for now.</string>
+    <string name="auth_google_unavailable">Google sign-in isn’t set up for this build yet — enable the Google provider in Firebase and register the app’s SHA-1 fingerprint.</string>
+    <string name="auth_google_cancelled">Google sign-in cancelled.</string>
+    <string name="auth_google_no_token">Google didn’t return a sign-in token. Check that the Google provider is enabled in Firebase.</string>
+    <string name="login_no_account">Don’t have an account?</string>
+    <string name="action_create_account_link">Create account</string>
+    <string name="password_reset_prompt">We’ll email you a link to set a new password.</string>
+    <string name="register_title_wizard">Create Account</string>
+    <string name="register_step_format">Step %1$d of 3</string>
+    <string name="register_step_personal">PERSONAL</string>
+    <string name="register_step_academic">ACADEMIC</string>
+    <string name="register_step_security">SECURITY</string>
+    <string name="register_step_done_format">✓ %1$s</string>
+    <string name="register_have_account">Already have an account?</string>
+    <string name="year_1">1st Year</string>
+    <string name="year_2">2nd Year</string>
+    <string name="year_3">3rd Year</string>
+    <string name="year_4">4th Year</string>
+    <string name="year_honours">Honours</string>
+    <string name="year_masters">Masters</string>
+    <string name="password_strength_title">PASSWORD STRENGTH</string>
+    <string name="password_rule_length">At least 6 characters</string>
+    <string name="password_rule_number">Contains a number</string>
+    <string name="password_rule_match">Passwords match</string>
+    <string name="error_student_id_required">Enter your student number</string>
+    <string name="error_institution_required">Enter your institution</string>
+    <string name="error_course_required">Enter your course or degree</string>
+    <string name="error_year_required">Pick your year of study</string>
+    <string name="error_password_needs_number">Include at least one number</string>
 </resources>
