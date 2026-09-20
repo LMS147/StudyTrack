@@ -65,6 +65,28 @@ that rather than pretending to sign in.
 The wizard's academic fields (student number, institution, course, year of
 study) have no Firebase equivalent and are stored locally on the device.
 
+### It won't run: "Edit configuration" or a failing Gradle sync
+
+Android Studio creates its run configuration during Gradle sync, so **if sync
+fails, the Run dialog comes up empty**. Fix the sync error and the
+configuration appears by itself. The three local causes, in the order they
+usually bite:
+
+| Symptom (Gradle / Build output) | Cause | Fix |
+| --- | --- | --- |
+| `SDK location not found. Define a valid SDK location ...` | A fresh clone has no `local.properties` (it is gitignored), so Gradle doesn't know where the Android SDK is | Create `local.properties` in the project root with `sdk.dir=C:/Users/<you>/AppData/Local/Android/Sdk` (see `local.properties.example`), or set the `ANDROID_HOME` environment variable |
+| `Android Gradle plugin requires Java 17` / `Unsupported class file major version` | Terminals and IDEs pick up different JDKs | Android Studio: Settings → Build, Execution, Deployment → Build Tools → Gradle → **Gradle JDK = 17**. Terminal: check `java -version` and `$env:JAVA_HOME` |
+| `Plugin [id: 'com.android.application', version: '8.4.2'] was not found` or a sync that stops with a version message | The installed Android Studio is older than the Android Gradle Plugin (8.4.2 needs **Jellyfish 2023.3.1 or newer**) or there is no network access to `google()` | Update Android Studio, or build from the terminal (`./gradlew assembleDebug`) |
+
+The command that separates "my project is broken" from "my IDE is misconfigured"
+is the one CI runs:
+
+```bash
+./gradlew assembleDebug      # Windows PowerShell: .\gradlew assembleDebug
+```
+
+`BUILD SUCCESSFUL` means the code is fine and only the IDE needs attention.
+
 ### Local mode (default — no backend needed)
 
 With **no** `api.baseUrl` configured, the app runs fully self-contained:
