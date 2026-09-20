@@ -75,8 +75,29 @@ usually bite:
 | Symptom (Gradle / Build output) | Cause | Fix |
 | --- | --- | --- |
 | `SDK location not found. Define a valid SDK location ...` | A fresh clone has no `local.properties` (it is gitignored), so Gradle doesn't know where the Android SDK is | Create `local.properties` in the project root with `sdk.dir=C:/Users/<you>/AppData/Local/Android/Sdk` (see `local.properties.example`), or set the `ANDROID_HOME` environment variable |
-| `Android Gradle plugin requires Java 17` / `Unsupported class file major version` | Terminals and IDEs pick up different JDKs | Android Studio: Settings → Build, Execution, Deployment → Build Tools → Gradle → **Gradle JDK = 17**. Terminal: check `java -version` and `$env:JAVA_HOME` |
+| `What went wrong:` followed by nothing but a version number, e.g. `25.0.1` | That number **is the JDK version** Gradle refuses to run on. Gradle 8.7 (this project's wrapper) runs on Java 8–21 only; Java 25 needs Gradle 9.1+. Version 25 is the common "latest LTS" download, so a recent JDK install triggers this | Use JDK 17 — see below |
+| `Android Gradle plugin requires Java 17` / `Unsupported class file major version` | Same root cause: Gradle is being run by the wrong JDK | Use JDK 17 — see below |
 | `Plugin [id: 'com.android.application', version: '8.4.2'] was not found` or a sync that stops with a version message | The installed Android Studio is older than the Android Gradle Plugin (8.4.2 needs **Jellyfish 2023.3.1 or newer**) or there is no network access to `google()` | Update Android Studio, or build from the terminal (`./gradlew assembleDebug`) |
+
+**Running on JDK 17.** The app is compiled and run by JDK 17 (that is what CI
+pins, and it is the minimum the Android Gradle Plugin 8.4.2 accepts). A newer
+JDK on the machine will break the build even though the project is fine —
+Gradle's own compatibility matrix is the reference:
+<https://docs.gradle.org/current/userguide/compatibility.html> (`Support for
+running Gradle`: Java 25 requires Gradle 9.1.0+).
+
+- **Android Studio:** Settings → Build, Execution, Deployment → Build Tools →
+  Gradle → *Gradle JDK* → **Download JDK…** → Version **17** → Download. Then
+  *File → Sync Project with Gradle Files*. This is also what fixes an empty
+  Run dialog: the run configuration is produced by a successful sync.
+- **Terminal:** check what it is using (`java -version`, `$env:JAVA_HOME`) and
+  point it at 17 for that shell, or set it for every Gradle build on the
+  machine by adding a line to `C:\Users\<you>\.gradle\gradle.properties`
+  (machine-local, never committed):
+
+  ```properties
+  org.gradle.java.home=C:/Program Files/Java/jdk-17
+  ```
 
 The command that separates "my project is broken" from "my IDE is misconfigured"
 is the one CI runs:
