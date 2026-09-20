@@ -22,14 +22,15 @@ an API session and attaches it to every request.
 
 | Screen | What it does |
 | --- | --- |
-| **Login / Register** | Firebase email/password auth with friendly error mapping |
+| **Sign In** | Firebase email/password auth, password reset by email, Google sign-in, friendly error mapping |
 | **Dashboard** | Time-aware greeting, today's completion ring, AI assistant shortcut card, due-today / overdue / upcoming sections |
 | **Subjects** | Subject cards with task counts; create/edit/archive; subject detail with tasks grouped by status |
 | **Tasks** | Create/edit with type, priority, subject, due date (+ optional time), reminder; complete from any list |
 | **Calendar** | Month grid with locale-aware first-day-of-week, today ring, priority dots; tap a day to see and quick-add tasks |
-| **Progress** | Overall completion ring, points / completed / streak stat cards, per-subject progress bars |
+| **Progress** | Total XP and level ring, level endpoints, completed / pending / percent-done cards, per-category progress, achievement badges |
 | **AI Assistant** | Chat UI: text bubbles, structured suggestion cards with Accept / Edit / Reject, typing indicator, conversation history |
-| **Profile** | Account card, notification & AI preferences (local), About info, logout |
+| **Create Account** | Three-step wizard — personal details, academic details, password with a live strength checklist |
+| **Profile** | Level hero card, personal information rows with edit dialog, notifications, app preferences, account actions, About info, logout |
 
 ## Building
 
@@ -42,9 +43,27 @@ every push.
 
 ### Firebase setup
 
-`app/google-services.json` is a **placeholder**. To run against your own
-Firebase project, replace it with the real file from the Firebase console
-(Authentication → Sign-in method → Email/Password must be enabled).
+`app/google-services.json` is a **placeholder** in the public repo; the build in
+this checkout uses the project's real file. To run against your own Firebase
+project, replace it with the real file from the Firebase console.
+
+In the Firebase console, under **Authentication → Sign-in method**:
+
+- **Email/Password** — enable it. Required for Sign In and the Create Account
+  wizard, including the "Forgot password?" reset email.
+- **Google** — enable it (pick a support email) if you want the Google button to
+  work. Google sign-in additionally needs this build's signing fingerprint
+  registered under **Project settings → Your apps → Add fingerprint**; get it
+  with `./gradlew signingReport` (the SHA-1 of the `debug` variant). Without it
+  the SDK fails with DEVELOPER_ERROR and the app explains what is missing
+  instead of failing silently.
+
+The **Microsoft** button is a visual placeholder: Microsoft sign-in needs an
+Azure app registration, which this project does not have, so tapping it reports
+that rather than pretending to sign in.
+
+The wizard's academic fields (student number, institution, course, year of
+study) have no Firebase equivalent and are stored locally on the device.
 
 ### Local mode (default — no backend needed)
 
