@@ -90,14 +90,19 @@ running Gradle`: Java 25 requires Gradle 9.1.0+).
   Gradle → *Gradle JDK* → **Download JDK…** → Version **17** → Download. Then
   *File → Sync Project with Gradle Files*. This is also what fixes an empty
   Run dialog: the run configuration is produced by a successful sync.
-- **Terminal:** check what it is using (`java -version`, `$env:JAVA_HOME`) and
-  point it at 17 for that shell, or set it for every Gradle build on the
-  machine by adding a line to `C:\Users\<you>\.gradle\gradle.properties`
-  (machine-local, never committed):
+- **Terminal:** run `tools/set-gradle-jdk17.ps1`, which finds the installed
+  JDK 17 and writes the setting for you (it backs the file up first and touches
+  nothing in the repository). If Windows reports that running scripts is
+  disabled, use
+  `powershell -ExecutionPolicy Bypass -File .\tools\set-gradle-jdk17.ps1`. To do it by hand instead, add this line to
+  `C:\Users\<you>\.gradle\gradle.properties` — machine-local, never
+  committed — replacing the path with your JDK 17:
 
   ```properties
   org.gradle.java.home=C:/Program Files/Java/jdk-17
   ```
+
+  Check `java -version` and `$env:JAVA_HOME` if the build still fails.
 
 The command that separates "my project is broken" from "my IDE is misconfigured"
 is the one CI runs:
