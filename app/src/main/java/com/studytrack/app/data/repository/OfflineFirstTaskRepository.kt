@@ -115,6 +115,13 @@ class OfflineFirstTaskRepository(
 
     override suspend fun create(payload: TaskPayload): ApiResult<Task> {
         val uid = currentAccount.requireUid()
+        // Diagnostic (field bug: "second account's accepted AI task never
+        // saves"): log the UID the write is attributed to, so a device logcat
+        // shows immediately whether a stale account's UID is being used.
+        android.util.Log.d(
+            "StudyTrackTasks",
+            "create task ownerUid=$uid title=\"${payload.title}\"",
+        )
         val now = clock()
         val task = Task(
             taskId = UUID.randomUUID().toString(),
