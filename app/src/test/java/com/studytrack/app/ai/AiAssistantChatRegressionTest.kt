@@ -285,6 +285,22 @@ class AiAssistantChatRegressionTest {
     private fun titlesOf(uid: String): List<String> =
         runBlocking { db.taskDao().getAllForOwner(uid).map { it.title } }
 
+    /**
+     * Drains the shadow main looper until [condition] holds. The accept path
+     * suspends inside OfflineFirstTaskRepository.create (withContext IO), so a
+     * single idle() can run before the write finishes.
+     */
+    private fun pumpUntil(condition: () -> Boolean, timeoutMs: Long = 10_000): Boolean {
+        val deadline = System.nanoTime() + timeoutMs * 1_000_000
+        while (System.nanoTime() < deadline) {
+            shadowOf(Looper.getMainLooper()).idle()
+            if (condition()) return true
+            Thread.sleep(5)
+        }
+        shadowOf(Looper.getMainLooper()).idle()
+        return condition()
+    }
+
     private fun submitAndWait(adapter: ChatAdapter, items: List<ChatItem>) {
         adapter.submitList(items)
         val deadline = System.currentTimeMillis() + 5_000
