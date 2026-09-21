@@ -107,7 +107,7 @@ usually bite:
 | `What went wrong:` followed by nothing but a version number, e.g. `25.0.1` | That number **is the JDK version** Gradle refuses to run on — not your code, and not the app's version. Gradle below 9.0.0 embeds a Kotlin version that cannot read a JVM 25 or newer (fixed in Kotlin 2.1.20). Java 25 is a common default download, so a recent JDK install triggers this on an otherwise healthy project | Use JDK 17 — see below |
 | `Android Gradle plugin requires Java 17` / `Unsupported class file major version` | Same root cause: Gradle is being run by the wrong JDK | Use JDK 17 — see below |
 | `Plugin [id: 'com.android.application', version: '8.4.2'] was not found` or a sync that stops with a version message | The installed Android Studio is older than the Android Gradle Plugin (8.4.2 needs **Jellyfish 2023.3.1 or newer**) or there is no network access to `google()` | Update Android Studio, or build from the terminal (`./gradlew assembleDebug`) |
-| `Could not connect to Kotlin compile daemon` | Reads like a network problem but almost never is: the Kotlin compile daemon **process died before accepting a connection**. Since KSP (the Room annotation processor) was added, the daemon does materially more work than it used to, so an undersized heap is the usual cause. Stale daemon processes left over from an earlier failed build are the second cause. See below | Raise the heap (already done in `gradle.properties`), kill stale daemons, or compile in-process |
+| `Could not connect to Kotlin compile daemon` | Reads like a network problem but is not one: Gradle cannot reach the separate Kotlin compile daemon — a dead daemon process, a stale registration from a crashed build, an IPv4/IPv6 `localhost` mismatch, or antivirus on the loopback port | The project now compiles **in-process**, so no daemon is started. Update your checkout, run `.\tools\fix-kotlin-daemon.ps1`, rebuild. See below |
 
 **The quickest fix needs no download.** Android Studio ships its own JDK (17 or
 21 depending on its version) and Gradle 8.7 runs on any Java 8–21, so the
@@ -133,34 +133,42 @@ runtime you already have is enough:
   JDKs it found, and takes `-JdkPath` to force a specific runtime.
 
 **`Could not connect to Kotlin compile daemon`.** Kotlin normally compiles in a
-separate long-lived daemon process. When that process cannot start — or dies
-immediately — Gradle reports a connection failure, which misleads people into
-checking firewalls and proxies. The causes that actually matter here:
+separate long-lived daemon that Gradle reaches over a local socket. When that
+handshake fails the build dies with the message above, which reads like a
+networking problem but is not one — the causes are local and varied: the daemon
+process failing to start, a stale registration left by an earlier crashed build,
+an IPv4/IPv6 mismatch on `localhost`, or antivirus blocking the loopback port.
 
-1. **Not enough heap.** KSP (the Room compiler) runs *inside* that daemon, so
-   adding Room raised its memory floor. `gradle.properties` now sets
-   `org.gradle.jvmargs=-Xmx3072m` and gives the daemon its own
-   `kotlin.daemon.jvmargs=-Xmx1792m`. If the machine is tight on RAM, lower
-   those rather than deleting them — but do not go back below roughly 2 GB
-   total, or the original failure returns.
-2. **Stale daemons** from an earlier crashed build. Clear them and rebuild:
-
-   ```powershell
-   .\gradlew --stop
-   # then, if it still fails, remove the Kotlin daemon's state:
-   Remove-Item -Recurse -Force "$env:USERPROFILE\.kotlin\daemon" -ErrorAction SilentlyContinue
-   ```
-
-3. **Wrong JDK.** The daemon is spawned with the same JVM as Gradle, so the
-   Java 25 problem described below breaks it too. Pin JDK 17 first.
-
-If it still will not connect, sidestep the daemon entirely and compile inside
-the Gradle process. Slower, but it removes the whole failure class:
+**This project now sidesteps the problem by default.** `gradle.properties` sets:
 
 ```properties
-# machine-local: C:\Users\<you>\.gradle\gradle.properties
 kotlin.compiler.execution.strategy=in-process
 ```
+
+so the Kotlin compiler runs inside the Gradle daemon. There is no second process
+and no socket, which removes the whole failure class rather than treating one
+cause of it. The trade is a slower build with no compiler state reused between
+builds — a deliberate choice, since a build that intermittently will not start is
+worse than one that takes longer.
+
+**If you are seeing this error, your checkout predates that change.** Update it,
+then:
+
+```powershell
+.\tools\fix-kotlin-daemon.ps1     # clears stale daemon state; does not touch the repo
+.\gradlew assembleDebug
+```
+
+If you want the daemon's speed back on a machine where it works reliably,
+override it in `C:\Users\<you>\.gradle\gradle.properties` (machine-local, never
+committed):
+
+```properties
+kotlin.compiler.execution.strategy=daemon
+```
+
+and give it enough heap when you do — KSP (the Room compiler) runs *inside* that
+daemon, so it needs materially more than the old default.
 
 **Running on JDK 17.** The app is compiled and run by JDK 17 (that is what CI
 pins, and it is the minimum the Android Gradle Plugin 8.4.2 accepts). A newer
