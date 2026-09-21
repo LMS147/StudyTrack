@@ -1,6 +1,5 @@
 package com.studytrack.app.data.remote
 
-import com.studytrack.app.BuildConfig
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import okhttp3.MediaType.Companion.toMediaType
@@ -56,9 +55,15 @@ interface GrokApiService {
 
 object GrokClient {
 
-    fun apiService(apiKey: String): GrokApiService =
+    /**
+     * @param baseUrl an OpenAI-compatible base URL that already includes the
+     *   version segment (e.g. https://api.groq.com/openai/v1/); the client
+     *   appends "chat/completions". Resolved by the caller via
+     *   [AiEndpoints.resolve].
+     */
+    fun apiService(apiKey: String, baseUrl: String): GrokApiService =
         Retrofit.Builder()
-            .baseUrl(BuildConfig.GROK_BASE_URL)
+            .baseUrl(baseUrl)
             .client(
                 OkHttpClient.Builder()
                     .addInterceptor { chain ->

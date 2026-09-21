@@ -22,9 +22,13 @@ fun localProperty(name: String, fallback: String): String =
 // Values for BuildConfig fields, computed once (plain concatenation keeps the
 // buildConfigField arguments free of nested string templates).
 val apiBaseUrlProp: String = localProperty("api.baseUrl", "")
+// Blank by default. When grok.baseUrl / grok.model are left blank the app
+// infers the endpoint and a sensible model from the API key's prefix
+// (gsk_ -> Groq, otherwise xAI) via AiEndpoints.resolve(). Blank is what
+// makes a single-line `grok.apiKey=` config just work.
 val grokApiKeyProp: String = localProperty("grok.apiKey", "")
-val grokModelProp: String = localProperty("grok.model", "grok-4")
-val grokBaseUrlProp: String = localProperty("grok.baseUrl", "https://api.x.ai/v1/")
+val grokModelProp: String = localProperty("grok.model", "")
+val grokBaseUrlProp: String = localProperty("grok.baseUrl", "")
 
 android {
     namespace = "com.studytrack.app"

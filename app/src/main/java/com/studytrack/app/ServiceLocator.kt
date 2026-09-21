@@ -4,6 +4,7 @@ import android.content.Context
 import com.studytrack.app.auth.AccountSessionManager
 import com.studytrack.app.auth.CurrentAccount
 import com.studytrack.app.data.local.StudyTrackDatabase
+import com.studytrack.app.data.remote.AiEndpoints
 import com.studytrack.app.data.remote.ApiService
 import com.studytrack.app.data.remote.GrokClient
 import com.studytrack.app.data.remote.RetrofitClient
@@ -184,9 +185,20 @@ object ServiceLocator {
      */
     val aiBrain: AiBrain by lazy {
         when {
-            // A Groq/xAI key is configured — talk to the LLM directly.
-            BuildConfig.GROK_API_KEY.isNotBlank() ->
-                GrokAiRepository(GrokClient.apiService(BuildConfig.GROK_API_KEY))
+            // A Groq/xAI key is configured — talk to the LLM directly. The
+            // endpoint and default model are inferred from the key's prefix
+            // (gsk_ -> Groq) unless pinned in local.properties.
+            BuildConfig.GROK_API_KEY.isNotBlank() -> {
+                val endpoint = AiEndpoints.resolve(
+                    apiKey = BuildConfig.GROK_API_KEY,
+                    explicitBaseUrl = BuildConfig.GROK_BASE_URL,
+                    explicitModel = BuildConfig.GROK_MODEL,
+                )
+                GrokAiRepository(
+                    GrokClient.apiService(BuildConfig.GROK_API_KEY, endpoint.baseUrl),
+                    endpoint.model,
+                )
+            }
 
             // No key, but a backend is configured — use its AI endpoint.
             !isLocalMode -> AiRepository(apiService)

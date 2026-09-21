@@ -1,6 +1,5 @@
 package com.studytrack.app.data.repository
 
-import com.studytrack.app.BuildConfig
 import com.studytrack.app.data.model.TaskAssistanceRequest
 import com.studytrack.app.data.model.TaskAssistanceResponse
 import com.studytrack.app.data.model.TaskSuggestion
@@ -32,6 +31,7 @@ import java.util.UUID
  */
 class GrokAiRepository(
     private val api: GrokApiService,
+    private val model: String,
 ) : AiBrain {
 
     override suspend fun taskAssistance(request: TaskAssistanceRequest): ApiResult<TaskAssistanceResponse> = try {
@@ -47,7 +47,7 @@ class GrokAiRepository(
     private suspend fun callGrok(request: TaskAssistanceRequest): TaskAssistanceResponse {
         val response: Response<GrokChatResponse> = api.chatCompletions(
             GrokChatRequest(
-                model = BuildConfig.GROK_MODEL,
+                model = model,
                 messages = buildMessages(request),
             )
         )
