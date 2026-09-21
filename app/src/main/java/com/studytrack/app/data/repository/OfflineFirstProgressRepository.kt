@@ -34,7 +34,8 @@ class OfflineFirstProgressRepository(
     override val hasRemote: Boolean get() = api != null
 
     override suspend fun getProgress(): ApiResult<Progress> {
-        val uid = currentAccount.requireUid()
+        // Read path: nobody signed in means no progress to show, not a crash.
+        val uid = currentAccount.uidOrNull() ?: return ApiResult.Success(Progress())
 
         if (hasRemote) {
             when (val pull = pullRemote(uid)) {

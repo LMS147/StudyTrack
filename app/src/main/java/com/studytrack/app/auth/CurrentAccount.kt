@@ -68,6 +68,10 @@ class CurrentAccount {
     /**
      * The UID to scope a query with, or throw.
      *
+     * **Use this on write paths.** Persisting a row without an owner would put
+     * it outside every account's scope, so a write with no session is a bug and
+     * must fail loudly.
+     *
      * @throws IllegalStateException when no account is signed in. Callers that
      *   legitimately run in the background (the sync worker) must check
      *   [hasActiveSession] first and skip instead of calling this.
@@ -77,4 +81,15 @@ class CurrentAccount {
             "No active StudyTrack session — refusing to run an unscoped query. " +
                 "Background callers must check hasActiveSession first."
         )
+
+    /**
+     * The active UID, or `null` when nobody is signed in.
+     *
+     * **Use this on read paths.** A screen can legitimately be alive across an
+     * auth transition, and the safe answer to "whose data should I show?" when
+     * nobody is signed in is *nothing* — never a crash, and never another
+     * account's rows. Crashing the process on a read turned a transient startup
+     * race into a hard failure the user could not get past.
+     */
+    fun uidOrNull(): String? = _activeUid.value
 }

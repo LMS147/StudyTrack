@@ -53,7 +53,8 @@ class OfflineFirstCalendarRepository(
      * reports an error when there is nothing cached to show.
      */
     override suspend fun refresh(): ApiResult<List<Task>> {
-        val uid = currentAccount.requireUid()
+        // Read path: nobody signed in means nothing to show, not a crash.
+        val uid = currentAccount.uidOrNull() ?: return ApiResult.Success(emptyList())
         val pull = pullTasks(uid)
         if (pull is SyncOutcome.Failure) {
             val cached = db.taskDao().getAllForOwner(uid)

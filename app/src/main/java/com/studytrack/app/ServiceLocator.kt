@@ -183,10 +183,21 @@ object ServiceLocator {
      * otherwise use the StudyTrack backend endpoint.
      */
     val aiBrain: AiBrain by lazy {
-        if (BuildConfig.GROK_API_KEY.isNotBlank()) {
-            GrokAiRepository(GrokClient.apiService(BuildConfig.GROK_API_KEY))
-        } else {
-            AiRepository(apiService)
+        when {
+            // A Groq/xAI key is configured — talk to the LLM directly.
+            BuildConfig.GROK_API_KEY.isNotBlank() ->
+                GrokAiRepository(GrokClient.apiService(BuildConfig.GROK_API_KEY))
+
+            // No key, but a backend is configured — use its AI endpoint.
+            !isLocalMode -> AiRepository(apiService)
+
+            // Neither. Returning a brain that reaches for apiService here would
+            // throw "apiService requested in local mode" the moment the AI tab
+            // is opened, so hand back the explanatory stub instead. This branch
+            // existed as dead code (NoBrainConfigured was declared but never
+            // referenced), which is why opening the AI Assistant crashed in
+            // local mode.
+            else -> NoBrainConfigured
         }
     }
 

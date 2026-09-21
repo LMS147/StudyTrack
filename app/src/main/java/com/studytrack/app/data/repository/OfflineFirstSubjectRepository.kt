@@ -59,7 +59,8 @@ class OfflineFirstSubjectRepository(
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override suspend fun refresh(): ApiResult<List<Subject>> {
-        val uid = currentAccount.requireUid()
+        // Read path: nobody signed in means nothing to show, not a crash.
+        val uid = currentAccount.uidOrNull() ?: return ApiResult.Success(emptyList())
         val dao = db.subjectDao()
         if (hasRemote) {
             val pull = pullRemote(uid)
@@ -73,7 +74,7 @@ class OfflineFirstSubjectRepository(
     }
 
     override suspend fun getSubject(subjectId: String): ApiResult<Subject> {
-        val uid = currentAccount.requireUid()
+        val uid = currentAccount.uidOrNull() ?: return ApiResult.Error("Not signed in")
         return db.subjectDao().getById(uid, subjectId)
             ?.let { ApiResult.Success(it.toModel()) }
             ?: ApiResult.Error("Subject not found")

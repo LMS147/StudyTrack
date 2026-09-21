@@ -41,24 +41,40 @@ class StudyTrackApp : Application() {
 
     /**
      * Points the active-session holder at the account Firebase already restored
-     * from its own persisted credentials — before any screen queries Room.
+     * from its own persisted credentials.
      *
-     * Without this, the first repository call after a cold start would hit
-     * `CurrentAccount.requireUid()` with no session set and throw, or (worse, if
-     * it had a fallback) run unscoped.
+     * ## The UID is set synchronously, on purpose
+     *
+     * `FirebaseAuth.currentUser` is available immediately — Firebase restores it
+     * from disk before `Application.onCreate` runs. The Room-dependent work
+     * (upserting the account record, importing legacy rows) is genuinely async,
+     * and it used to be that the UID was set only *after* that completed. That
+     * produced a crash on cold start: `MainActivity` saw a logged-in user and
+     * routed to the Dashboard, whose `refresh()` called `requireUid()` before
+     * the coroutine had finished, and the app died with "No active StudyTrack
+     * session".
+     *
+     * So the pointer moves here, synchronously, and only the bookkeeping is
+     * deferred. No screen can ever query Room before the UID is known.
      */
     private fun restorePersistedSession() {
         val user = FirebaseAuth.getInstance().currentUser
+
+        // Synchronous: this must be true before onCreate returns.
+        ServiceLocator.currentAccount.setSession(user?.uid)
+
+        if (user == null) return
+
         appScope.launch {
+            // Ensures the account record exists so this device can recognize
+            // the account later (offline sign-in, instant cache restore).
             ServiceLocator.accountSessionManager.restoreSession(
-                ownerUid = user?.uid,
-                email = user?.email,
-                displayName = user?.displayName,
+                ownerUid = user.uid,
+                email = user.email,
+                displayName = user.displayName,
             )
-            if (user != null) {
-                // Pick up anything queued while the app was closed.
-                ServiceLocator.syncScheduler.requestSync()
-            }
+            // Pick up anything queued while the app was closed.
+            ServiceLocator.syncScheduler.requestSync()
         }
     }
 

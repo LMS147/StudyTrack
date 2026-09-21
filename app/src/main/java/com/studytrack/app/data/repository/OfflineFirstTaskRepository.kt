@@ -88,7 +88,8 @@ class OfflineFirstTaskRepository(
      * nothing to show.
      */
     override suspend fun refresh(): ApiResult<List<Task>> {
-        val uid = currentAccount.requireUid()
+        // Read path: nobody signed in means nothing to show, not a crash.
+        val uid = currentAccount.uidOrNull() ?: return ApiResult.Success(emptyList())
         val dao = db.taskDao()
 
         if (hasRemote) {
@@ -106,7 +107,7 @@ class OfflineFirstTaskRepository(
     }
 
     override suspend fun getTask(taskId: String): ApiResult<Task> {
-        val uid = currentAccount.requireUid()
+        val uid = currentAccount.uidOrNull() ?: return ApiResult.Error("Not signed in")
         return db.taskDao().getById(uid, taskId)
             ?.let { ApiResult.Success(it.toModel()) }
             ?: ApiResult.Error("Task not found")

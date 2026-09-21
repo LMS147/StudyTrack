@@ -175,6 +175,50 @@ class OfflineFirstTaskRepositoryIsolationTest {
         )
     }
 
+    // ------------------------------------------------- startup / signed-out reads
+
+    @Test
+    fun `a read with no active session returns empty instead of crashing`() = runBlocking {
+        // Regression: on cold start MainActivity routed to the Dashboard before
+        // the session pointer was set, and requireUid() threw out of refresh(),
+        // killing the app on launch. A read must degrade to "nothing to show".
+        currentAccount.clearSession()
+
+        val result = repository.refresh()
+
+        assertTrue(
+            "refresh must not throw when signed out, got $result",
+            result is ApiResult.Success,
+        )
+        assertTrue((result as ApiResult.Success).data.isEmpty())
+    }
+
+    @Test
+    fun `a single-item read with no session reports an error rather than throwing`() = runBlocking {
+        currentAccount.clearSession()
+
+        val result = runCatching { repository.getTask("any-id") }
+
+        assertTrue("getTask must not throw when signed out", result.isSuccess)
+        assertTrue(result.getOrNull() is ApiResult.Error)
+    }
+
+    @Test
+    fun `a session set after startup is picked up by the next read`() = runBlocking {
+        currentAccount.clearSession()
+        assertTrue((repository.refresh() as ApiResult.Success).data.isEmpty())
+
+        // The synchronous seed in StudyTrackApp sets this before any screen
+        // queries; here we assert the repository honours it once it is set.
+        currentAccount.setSession(alice)
+        repository.create(TaskPayload(title = "Alice's essay"))
+
+        assertEquals(
+            listOf("Alice's essay"),
+            (repository.refresh() as ApiResult.Success).data.map { it.title },
+        )
+    }
+
     @Test
     fun `a write with no active session throws instead of writing unscoped`() = runBlocking {
         currentAccount.clearSession()
