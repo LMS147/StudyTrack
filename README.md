@@ -79,6 +79,29 @@ usually bite:
 | `Android Gradle plugin requires Java 17` / `Unsupported class file major version` | Same root cause: Gradle is being run by the wrong JDK | Use JDK 17 — see below |
 | `Plugin [id: 'com.android.application', version: '8.4.2'] was not found` or a sync that stops with a version message | The installed Android Studio is older than the Android Gradle Plugin (8.4.2 needs **Jellyfish 2023.3.1 or newer**) or there is no network access to `google()` | Update Android Studio, or build from the terminal (`./gradlew assembleDebug`) |
 
+**The quickest fix needs no download.** Android Studio ships its own JDK (17 or
+21 depending on its version) and Gradle 8.7 runs on any Java 8–21, so the
+runtime you already have is enough:
+
+- **In the IDE:** Settings → Build, Execution, Deployment → Build Tools →
+  Gradle → *Gradle JDK* → choose the entry labelled **jbr-17 / jbr-21 /
+  Embedded JDK** → Apply → *File → Sync Project with Gradle Files*. The Run
+  configuration appears as soon as sync succeeds, and the terminal is not
+  needed at all: the Run button performs the Gradle build itself.
+- **From the terminal:** point Gradle at that same runtime by adding one line
+  to `C:\Users\<you>\.gradle\gradle.properties` (machine-local, never
+  committed):
+
+  ```properties
+  org.gradle.java.home=C:/Program Files/Android/Android Studio/jbr
+  ```
+
+  A Toolbox install keeps it at
+  `%LOCALAPPDATA%\Programs\Android Studio\jbr` instead. This is exactly what
+  `tools/set-gradle-jdk17.ps1` writes for you — it prefers JDK 17 to match CI
+  but accepts any JDK 8–21 rather than telling you to install one, prints the
+  JDKs it found, and takes `-JdkPath` to force a specific runtime.
+
 **Running on JDK 17.** The app is compiled and run by JDK 17 (that is what CI
 pins, and it is the minimum the Android Gradle Plugin 8.4.2 accepts). A newer
 JDK on the machine will break the build even though the project is fine —
@@ -86,15 +109,10 @@ Gradle's own compatibility matrix is the reference:
 <https://docs.gradle.org/current/userguide/compatibility.html> (`Support for
 running Gradle`: Java 25 requires Gradle 9.1.0+).
 
-- **Android Studio:** Settings → Build, Execution, Deployment → Build Tools →
-  Gradle → *Gradle JDK* → **Download JDK…** → Version **17** → Download. Then
-  *File → Sync Project with Gradle Files*. This is also what fixes an empty
-  Run dialog: the run configuration is produced by a successful sync.
-  Pick **17 exactly, not "Latest"** — any 17.x patch release is fine, and the
-  vendor matters less than the version (Eclipse Temurin 17 is what CI installs;
-  JetBrains Runtime 17 also works). Java 21 would satisfy Gradle 8.7 but buys
-  nothing here: 17 is the version the Android Gradle Plugin 8.4.2 targets and
-  the one this build is pinned to.
+- **If you would rather install a JDK anyway:** *Gradle JDK* →
+  **Download JDK…** → Version **17**, and pick **17 exactly, not "Latest"** —
+  "Latest" is 25, which is the thing that broke the build. Any 17.x patch
+  release is fine; Eclipse Temurin 17 is what CI installs.
 - **Terminal:** run `tools/set-gradle-jdk17.ps1`, which finds the installed
   JDK 17 and writes the setting for you (it backs the file up first, and
   touches nothing in the repository). If Windows reports that running scripts
