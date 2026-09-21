@@ -34,6 +34,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import android.os.Looper
+import kotlinx.coroutines.runBlocking
 
 /**
  * Regression tests for two field-reported bugs in the AI assistant:
@@ -184,7 +185,7 @@ class AiAssistantChatRegressionTest {
 
         assertEquals(
             listOf("Alice's essay plan"),
-            db.taskDao().getAllForOwner(alice).map { it.title },
+            titlesOf(alice),
         )
         assertEquals(
             SuggestionStatus.ACCEPTED,
@@ -206,14 +207,14 @@ class AiAssistantChatRegressionTest {
         // Bob's accepted task is stored under BOB's uid…
         assertEquals(
             listOf("Bob's revision session"),
-            db.taskDao().getAllForOwner(bob).map { it.title },
+            titlesOf(bob),
         )
         // …the card visibly accepted (a silent no-op is exactly the bug)…
         assertEquals(SuggestionStatus.ACCEPTED, latestSuggestion(vmBob).status)
         // …and Alice's row never moved into Bob's scope, nor Bob's into Alice's.
         assertEquals(
             listOf("Alice's essay plan"),
-            db.taskDao().getAllForOwner(alice).map { it.title },
+            titlesOf(alice),
         )
     }
 
@@ -248,8 +249,8 @@ class AiAssistantChatRegressionTest {
 
         // The decisive assertion: no row owned by Alice carries Bob's title and
         // vice versa — a stale-UID write would show up right here.
-        val aliceTitles = db.taskDao().getAllForOwner(alice).map { it.title }
-        val bobTitles = db.taskDao().getAllForOwner(bob).map { it.title }
+        val aliceTitles = titlesOf(alice)
+        val bobTitles = titlesOf(bob)
         assertTrue("Alice must not own Bob's task", "second account task" !in aliceTitles)
         assertTrue("Bob must not own Alice's task", "first account task" !in bobTitles)
         assertEquals(listOf("first account task"), aliceTitles)
@@ -280,6 +281,9 @@ class AiAssistantChatRegressionTest {
     private fun idleMain() {
         shadowOf(Looper.getMainLooper()).idle()
     }
+
+    private fun titlesOf(uid: String): List<String> =
+        runBlocking { db.taskDao().getAllForOwner(uid).map { it.title } }
 
     private fun submitAndWait(adapter: ChatAdapter, items: List<ChatItem>) {
         adapter.submitList(items)
