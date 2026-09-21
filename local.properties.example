@@ -29,10 +29,14 @@
 # all work.) When grok.apiKey is blank the app calls the StudyTrack backend's
 # /api/ai/task-assistance instead (requires BASE_URL to be configured).
 #
+# THE ONLY REQUIRED LINE IS grok.apiKey. The app infers the endpoint and a
+# sensible model from the key's prefix (gsk_ -> Groq, otherwise xAI); grok.baseUrl
+# and grok.model are optional overrides for a pinned provider/model.
+#
 # Groq example (https://console.groq.com → API Keys):
-#   grok.apiKey=gsk_your_key_here
-#   grok.baseUrl=https://api.groq.com/openai/v1/
-#   grok.model=openai/gpt-oss-120b
+#   grok.apiKey=gsk_your_key_here                 <- this alone is enough
+#   grok.baseUrl=https://api.groq.com/openai/v1/  <- optional override
+#   grok.model=openai/gpt-oss-120b                <- optional override
 #
 # Current Groq models (llama-3.3-70b / llama-3.1-8b were retired Aug 2026):
 #   openai/gpt-oss-120b   — best quality

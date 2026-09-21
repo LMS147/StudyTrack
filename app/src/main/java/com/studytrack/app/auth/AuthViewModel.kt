@@ -32,11 +32,32 @@ class AuthViewModel(
     private val _registerState = MutableStateFlow<ApiResult<Unit>?>(null)
     val registerState: StateFlow<ApiResult<Unit>?> = _registerState.asStateFlow()
 
-    /** Google sign-in runs through the same login state (it IS a sign-in). */
+    /**
+     * Signs in, unless the per-account isolation rules refuse the switch first.
+     *
+     * The guard runs **before** Firebase is asked to authenticate. That order
+     * matters: once Firebase has signed the new account in, the previous
+     * session is already gone and a switch that should never have happened
+     * cannot be cleanly undone. Refusing up front leaves the user exactly where
+     * they were, with their own data still on screen.
+     */
     fun login(email: String, password: String) {
         if (_loginState.value == ApiResult.Loading) return
         viewModelScope.launch {
             _loginState.value = ApiResult.Loading
+
+            when (val decision = ServiceLocator.accountSessionManager.evaluateSignIn(email)) {
+                is AccountSwitchDecision.BlockedOffline -> {
+                    _loginState.value = ApiResult.Error(decision.message)
+                    return@launch
+                }
+                // Both allowed cases proceed identically here; whether the app
+                // must fetch first is handled by the session manager after
+                // Firebase confirms who this account is.
+                is AccountSwitchDecision.AllowFromCache,
+                is AccountSwitchDecision.AllowWithBootstrap -> Unit
+            }
+
             _loginState.value = authRepository.login(email, password)
         }
     }

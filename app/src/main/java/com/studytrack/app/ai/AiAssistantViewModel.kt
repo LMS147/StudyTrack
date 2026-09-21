@@ -166,6 +166,14 @@ class AiAssistantViewModel(
                 timezone = DateTimeUtils.timezoneId(),
                 subjects = subjectRepository.subjects.value.map { it.subjectName },
                 taskContext = taskContext,
+                // The student's real open tasks from the same UID-scoped Room
+                // cache the Calendar reads — without this the model cannot
+                // answer "what's due this week?" (see AiTaskContextBuilder).
+                upcomingTasks = AiTaskContextBuilder.upcoming(
+                    tasks = taskRepository.tasks.value,
+                    subjectNames = subjectRepository.subjects.value
+                        .associate { s -> s.subjectId to s.subjectName },
+                ),
             )
 
             when (val result = aiBrain.taskAssistance(request)) {

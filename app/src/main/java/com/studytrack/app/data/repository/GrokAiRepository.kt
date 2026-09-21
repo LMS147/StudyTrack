@@ -1,6 +1,5 @@
 package com.studytrack.app.data.repository
 
-import com.studytrack.app.BuildConfig
 import com.studytrack.app.data.model.TaskAssistanceRequest
 import com.studytrack.app.data.model.TaskAssistanceResponse
 import com.studytrack.app.data.model.TaskSuggestion
@@ -32,6 +31,7 @@ import java.util.UUID
  */
 class GrokAiRepository(
     private val api: GrokApiService,
+    private val model: String,
 ) : AiBrain {
 
     override suspend fun taskAssistance(request: TaskAssistanceRequest): ApiResult<TaskAssistanceResponse> = try {
@@ -47,7 +47,7 @@ class GrokAiRepository(
     private suspend fun callGrok(request: TaskAssistanceRequest): TaskAssistanceResponse {
         val response: Response<GrokChatResponse> = api.chatCompletions(
             GrokChatRequest(
-                model = BuildConfig.GROK_MODEL,
+                model = model,
                 messages = buildMessages(request),
             )
         )
@@ -98,6 +98,21 @@ class GrokAiRepository(
             ctx.title?.let { append(" title=\"$it\"") }
             ctx.dueDate?.let { append(" dueDate=$it") }
             append(".\n")
+        }
+        if (request.upcomingTasks.isNotEmpty()) {
+            append("The student's open tasks that are overdue or due soon ")
+            append("(due dates are ISO-8601 in the device timezone):\n")
+            request.upcomingTasks.forEach { task ->
+                append("- \"${task.title}\" due ${task.dueDate}")
+                task.priority?.let { append(" (priority $it)") }
+                task.subjectName?.let { append(" [$it]") }
+                append("\n")
+            }
+            append(
+                "Use this list to answer what is due and to plan around " +
+                    "existing deadlines; never re-suggest a task that is " +
+                    "already on it.\n"
+            )
         }
         append(PROMPT_BODY)
     }

@@ -37,17 +37,107 @@ jobs:
             gradle wrapper --gradle-version 8.7
           fi
 
+      - name: Run unit tests
+        # Runs before the APK build: the per-account isolation rules are
+        # asserted here against a real SQLite database (Robolectric), and a
+        # cross-account leak is a worse failure than a compile error.
+        #
+        # Deliberately exits 0 so the APK build still runs afterwards — a test
+        # source-set compile error would otherwise hide whether the main
+        # sources compile. The real pass/fail is republished by the
+        # "Surface unit-test failures" step below.
+        run: |
+          # GitHub Actions runs `bash -e`, so a failing pipeline would abort the
+          # script before the status is recorded and the step could not stay
+          # green. Disable errexit and read Gradle's own status from PIPESTATUS
+          # (tee would otherwise mask it).
+          set +e
+          ./gradlew testDebugUnitTest --stacktrace 2>&1 | tee test-output.log
+          status=${PIPESTATUS[0]}
+          echo "TEST_EXIT=$status" >> "$GITHUB_ENV"
+          echo "Gradle testDebugUnitTest exit: $status"
+          exit 0
+
+      # Publishes the counts as an annotation so the result is visible without
+      # downloading the (large) report artifact.
+      - name: Report unit-test totals
+        if: always()
+        run: |
+          shopt -s nullglob
+          files=(app/build/test-results/testDebugUnitTest/*.xml)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::warning::No JUnit XML found — unit tests did not produce results"
+            exit 0
+          fi
+          python3 - "${files[@]}" <<'PYEOF'
+          import sys, xml.etree.ElementTree as ET
+          total = failed = skipped = 0
+          classes = 0
+          for path in sys.argv[1:]:
+              root = ET.parse(path).getroot()
+              classes += 1
+              total += int(root.get("tests") or 0)
+              failed += int(root.get("failures") or 0) + int(root.get("errors") or 0)
+              skipped += int(root.get("skipped") or 0)
+          print(f"Test classes: {classes}, tests: {total}, "
+                f"failed: {failed}, skipped: {skipped}")
+          print(f"::notice::StudyTrack unit tests: {total} tests across {classes} "
+                f"classes — {failed} failed, {skipped} skipped")
+          PYEOF
+
       - name: Assemble debug APK
         run: |
-          set -o pipefail
+          # Same errexit handling as the test step — without `set +e` the
+          # diagnostic block below was unreachable on failure.
+          set +e
           ./gradlew assembleDebug --stacktrace 2>&1 | tee build-output.log
-          status=$?
-          if [ $status -ne 0 ]; then
+          status=${PIPESTATUS[0]}
+          echo "BUILD_EXIT=$status" >> "$GITHUB_ENV"
+          if [ "$status" -ne 0 ]; then
             echo "=== BUILD FAILED (exit $status) ==="
-            FIRST_ERR=$(grep -m1 -E "^e: |What went wrong|FAILURE: Build failed" build-output.log || true)
+            grep -E "^e: " build-output.log | head -10 | while IFS= read -r line; do
+              echo "::error::${line}"
+            done
+            FIRST_ERR=$(grep -m1 -E "^e: |What went wrong|FAILURE: Build failed" build-output.log)
             echo "::error::${FIRST_ERR:-Gradle build failed — see .build/ci-failure.log committed to this branch}"
           fi
           exit $status
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results
+          path: app/build/reports/tests/
+          if-no-files-found: ignore
+
+      # The raw run log is not retrievable from every environment, so failures
+      # are republished as annotations, which are.
+      - name: Surface unit-test failures
+        if: always() && env.TEST_EXIT != '' && env.TEST_EXIT != '0'
+        run: |
+          echo "=== unit tests failed (exit $TEST_EXIT) ==="
+          echo "--- Gradle / Kotlin compiler diagnostics ---"
+          grep -E "^e: |FAILURE: |What went wrong|> Task .* FAILED|Caused by: " test-output.log | head -40 || true
+          echo
+          echo "--- failed assertions from the JUnit XML reports ---"
+          shopt -s nullglob
+          for f in app/build/test-results/testDebugUnitTest/*.xml; do
+            python3 - "$f" <<'PYEOF'
+          import sys, xml.etree.ElementTree as ET
+          root = ET.parse(sys.argv[1]).getroot()
+          for tc in root.iter("testcase"):
+              for bad in list(tc.iter("failure")) + list(tc.iter("error")):
+                  msg = (bad.get("message") or "").replace("\n", " ")[:280]
+                  print(f"::error::TEST {tc.get('classname')}.{tc.get('name')}: {msg}")
+          PYEOF
+          done
+          echo
+          echo "--- compiler errors (as annotations) ---"
+          grep -E "^e: " test-output.log | head -10 | while IFS= read -r line; do
+            echo "::error::${line}"
+          done
+          exit 1
 
       - name: Save failure log for inspection
         if: failure()
@@ -57,17 +147,56 @@ jobs:
             echo "=== gradle exit context ==="
             java -version 2>&1
             echo "ANDROID_HOME=$ANDROID_HOME"
+            echo "TEST_EXIT=$TEST_EXIT BUILD_EXIT=$BUILD_EXIT"
             echo
             echo "=== generated BuildConfig.java ==="
             cat app/build/generated/source/buildConfig/debug/com/studytrack/app/BuildConfig.java 2>/dev/null || echo "(not generated)"
             echo
-            tail -n 400 build-output.log
+            echo "=== every failing test (parsed from the JUnit XML) ==="
+            shopt -s nullglob
+            for f in app/build/test-results/testDebugUnitTest/*.xml; do
+              python3 - "$f" <<'PYEOF'
+            import sys, xml.etree.ElementTree as ET
+            root = ET.parse(sys.argv[1]).getroot()
+            for tc in root.iter("testcase"):
+                for bad in list(tc.iter("failure")) + list(tc.iter("error")):
+                    msg = (bad.get("message") or "").strip().splitlines()
+                    first = msg[0][:200] if msg else ""
+                    print(f"FAIL {tc.get('classname')}.{tc.get('name')}")
+                    print(f"     {first}")
+            PYEOF
+            done
+            echo
+            echo "=== unit test output (tail) ==="
+            tail -n 250 test-output.log 2>/dev/null || echo "(no test log)"
+            echo
+            echo "=== build output (tail) ==="
+            tail -n 400 build-output.log 2>/dev/null || echo "(no build log)"
           } > .build/ci-failure.log
           git config user.name "studytrack-ci"
           git config user.email "ci@studytrack.local"
           git add .build/ci-failure.log
-          git commit -m "ci: save build failure log [skip ci]"
-          git push
+          git commit -m "ci: save build failure log [skip ci]" || echo "nothing to commit"
+          # actions/checkout can leave a detached HEAD, where a bare `git push`
+          # refuses with "You are not currently on a branch". Push explicitly.
+          git push origin "HEAD:refs/heads/$GITHUB_REF_NAME" || echo "could not push log"
+
+      # Room exports the schema JSON at build time. Committing it gives future
+      # migrations a baseline to diff against, and makes an unreviewed schema
+      # change visible in the PR.
+      - name: Commit exported Room schema
+        if: success()
+        run: |
+          set +e
+          if [ -d app/schemas ] && [ -n "$(git status --porcelain app/schemas)" ]; then
+            git config user.name "studytrack-ci"
+            git config user.email "ci@studytrack.local"
+            git add app/schemas
+            git commit -m "chore: export Room schema baseline [skip ci]"
+            git push origin "HEAD:refs/heads/$GITHUB_REF_NAME" || echo "could not push schema"
+          else
+            echo "No Room schema changes to commit."
+          fi
 
       # One-time: CI generates the wrapper scripts + jar and commits them back,
       # so the repo is fully buildable with ./gradlew locally afterwards.
