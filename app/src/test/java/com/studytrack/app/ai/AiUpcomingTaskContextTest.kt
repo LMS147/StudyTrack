@@ -203,7 +203,7 @@ class AiUpcomingTaskContextTest {
                 task("due tomorrow", 1),
                 task("due in 14", 14),
                 task("due in 15 — out", 15),
-                task("undated backlog").copy(dueDate = null),
+                task("undated backlog", 0).copy(dueDate = null),
                 task("completed — out", 2, completed = true),
             ),
             today = today,
