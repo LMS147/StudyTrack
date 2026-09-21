@@ -1,0 +1,42 @@
+<resources>
+    <!--
+      DARK theme overrides. Only what must differ from values/themes.xml: the
+      status/navigation bar icons flip to light, because the bars themselves are
+      now dark navy. All colour roles come from values-night/colors.xml.
+    -->
+    <style name="Theme.StudyTrack" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_primary</item>
+        <item name="colorOnPrimary">@color/brand_on_primary</item>
+        <item name="colorPrimaryContainer">@color/brand_container</item>
+        <item name="colorOnPrimaryContainer">@color/brand_on_container</item>
+        <item name="colorSecondary">@color/brand_secondary</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/brand_container</item>
+        <item name="colorOnSecondaryContainer">@color/brand_on_container</item>
+        <item name="colorTertiary">@color/brand_secondary</item>
+        <item name="colorTertiaryContainer">@color/brand_container</item>
+        <item name="colorOnTertiaryContainer">@color/brand_on_container</item>
+
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="colorSurface">@color/surface_card</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/surface_sunken</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/divider</item>
+        <item name="colorOutlineVariant">@color/divider</item>
+
+        <item name="colorError">@color/overdue_red</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="colorErrorContainer">@color/priority_high_container</item>
+        <item name="colorOnErrorContainer">@color/priority_high</item>
+
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/surface_nav</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+
+        <item name="bottomNavigationStyle">@style/Widget.StudyTrack.BottomNav</item>
+    </style>
+</resources>

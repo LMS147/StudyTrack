@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/spacing_md">
+
+    <!-- Purple accent bar before the section title, as in the design -->
+    <View
+        android:layout_width="3dp"
+        android:layout_height="14dp"
+        android:background="@color/brand_primary" />
+
+    <TextView
+        android:id="@+id/headerTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_sm"
+        android:layout_weight="1"
+        android:letterSpacing="0.06"
+        android:textAppearance="?attr/textAppearanceLabelMedium"
+        android:textColor="@color/text_secondary" />
+
+    <TextView
+        android:id="@+id/headerCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_priority_chip"
+        android:backgroundTint="@color/brand_container"
+        android:paddingHorizontal="@dimen/spacing_sm"
+        android:paddingVertical="2dp"
+        android:textAppearance="?attr/textAppearanceLabelMedium"
+        android:textColor="@color/brand_on_container" />
+</LinearLayout>

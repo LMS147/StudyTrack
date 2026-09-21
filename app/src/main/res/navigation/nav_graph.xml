@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/dashboardFragment">
+
+    <!-- ============================================================ Auth -->
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.studytrack.app.auth.LoginFragment"
+        android:label="@string/login_title">
+
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.studytrack.app.auth.RegisterFragment"
+        android:label="@string/register_title">
+
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment" />
+    </fragment>
+
+    <!-- ================================================== Top level tabs -->
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.studytrack.app.dashboard.DashboardFragment"
+        android:label="@string/nav_dashboard">
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_addEditTaskFragment"
+            app:destination="@id/addEditTaskFragment" />
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_taskDetailsFragment"
+            app:destination="@id/taskDetailsFragment" />
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_aiAssistantFragment"
+            app:destination="@id/aiAssistantFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/subjectsFragment"
+        android:name="com.studytrack.app.subjects.SubjectsFragment"
+        android:label="@string/nav_subjects">
+
+        <action
+            android:id="@+id/action_subjectsFragment_to_subjectDetailFragment"
+            app:destination="@id/subjectDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/subjectDetailFragment"
+        android:name="com.studytrack.app.subjects.SubjectDetailFragment"
+        android:label="@string/nav_subjects">
+
+        <argument
+            android:name="subjectId"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_subjectDetailFragment_to_addEditTaskFragment"
+            app:destination="@id/addEditTaskFragment" />
+
+        <action
+            android:id="@+id/action_subjectDetailFragment_to_taskDetailsFragment"
+            app:destination="@id/taskDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/tasksFragment"
+        android:name="com.studytrack.app.tasks.TasksFragment"
+        android:label="@string/nav_tasks">
+
+        <action
+            android:id="@+id/action_tasksFragment_to_taskDetailsFragment"
+            app:destination="@id/taskDetailsFragment" />
+
+        <action
+            android:id="@+id/action_tasksFragment_to_addEditTaskFragment"
+            app:destination="@id/addEditTaskFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="com.studytrack.app.calendar.CalendarFragment"
+        android:label="@string/nav_calendar">
+
+        <action
+            android:id="@+id/action_calendarFragment_to_taskDetailsFragment"
+            app:destination="@id/taskDetailsFragment" />
+
+        <action
+            android:id="@+id/action_calendarFragment_to_addEditTaskFragment"
+            app:destination="@id/addEditTaskFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/progressFragment"
+        android:name="com.studytrack.app.progress.ProgressFragment"
+        android:label="@string/nav_progress" />
+
+    <fragment
+        android:id="@+id/aiAssistantFragment"
+        android:name="com.studytrack.app.ai.AiAssistantFragment"
+        android:label="@string/ai_title">
+
+        <action
+            android:id="@+id/action_aiAssistantFragment_to_addEditTaskFragment"
+            app:destination="@id/addEditTaskFragment" />
+
+        <!-- Optional deep-entry context: an initial prompt (e.g. from Task
+             Details AI shortcuts) and the task the prompt is about. -->
+        <argument
+            android:name="initialPrompt"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="contextTaskId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.studytrack.app.profile.ProfileFragment"
+        android:label="@string/profile_title">
+
+        <!-- Subjects lost their tab in the design's 5-tab bar; until the
+             Profile rebuild gives the subject stats card this job, the
+             screen is reachable from here. -->
+        <action
+            android:id="@+id/action_profileFragment_to_subjectsFragment"
+            app:destination="@id/subjectsFragment" />
+    </fragment>
+
+    <!-- ====================================================== Task flows -->
+
+    <!--
+      Multi-purpose task editor:
+        - taskId:        edit mode (null = create)
+        - defaultSubjectId: preselect a subject (e.g. from Subject Details)
+        - prefillJson:   a TaskSuggestion serialized as JSON (AI "Edit" flow)
+        - aiSuggestionId: id of the chat suggestion being edited, reported back
+                          to the AI screen via savedStateHandle when saved
+        - defaultDueDate: initial date (yyyy-MM-dd), e.g. selected calendar day
+    -->
+    <fragment
+        android:id="@+id/addEditTaskFragment"
+        android:name="com.studytrack.app.tasks.AddEditTaskFragment"
+        android:label="@string/title_add_task">
+
+        <argument
+            android:name="taskId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="defaultSubjectId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="prefillJson"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="aiSuggestionId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="defaultDueDate"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/taskDetailsFragment"
+        android:name="com.studytrack.app.tasks.TaskDetailsFragment"
+        android:label="@string/title_task_details">
+
+        <argument
+            android:name="taskId"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_taskDetailsFragment_to_addEditTaskFragment"
+            app:destination="@id/addEditTaskFragment" />
+
+        <action
+            android:id="@+id/action_taskDetailsFragment_to_aiAssistantFragment"
+            app:destination="@id/aiAssistantFragment" />
+    </fragment>
+
+    <!-- ================================================= Global actions -->
+
+    <!-- Auth transitions: pop the whole graph so back from the dashboard
+         never silently returns to a logged-out login screen (and vice versa). -->
+    <action
+        android:id="@+id/action_global_loginFragment"
+        app:destination="@id/loginFragment"
+        app:launchSingleTop="true"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
+
+    <action
+        android:id="@+id/action_global_dashboardFragment"
+        app:destination="@id/dashboardFragment"
+        app:launchSingleTop="true"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
+
+    <!-- Profile & Settings is not a bottom-nav tab in the design: it is opened
+         from the Home avatar and closed with the back arrow. -->
+    <action
+        android:id="@+id/action_global_profileFragment"
+        app:destination="@id/profileFragment"
+        app:launchSingleTop="true" />
+
+</navigation>

@@ -1,0 +1,51 @@
+# StudyTrack local configuration
+#
+# Copy this file to `local.properties` (which is gitignored) and fill in your
+# own values.
+#
+# IMPORTANT: this file must contain sdk.dir on a fresh clone, or Gradle fails
+# with "SDK location not found" and Android Studio cannot sync (which also
+# means it offers no run configuration). Android Studio writes the line itself
+# on its first successful sync; if you are building from the terminal first,
+# add it by hand. Forward slashes are fine on Windows, so nothing needs
+# escaping:
+#
+#   sdk.dir=C:/Users/<you>/AppData/Local/Android/Sdk          (Windows)
+#   sdk.dir=/Users/<you>/Library/Android/sdk                  (macOS)
+#   sdk.dir=/home/<you>/Android/Sdk                           (Linux)
+#
+# Add the properties below underneath it.
+
+# ---------------------------------------------------------------------------
+# StudyTrack REST API backend. Leave api.baseUrl BLANK (the default) to run
+# the app in LOCAL MODE: subjects, tasks, calendar and progress are stored
+# on-device (SharedPreferences) and no backend is contacted. Set it to your
+# deployed API (trailing slash required) to switch everything to the backend.
+#api.baseUrl=https://api.your-studytrack-backend.com/
+
+# ---------------------------------------------------------------------------
+# AI brain for the assistant chat — any OpenAI-compatible provider.
+# (Property names say "grok" for historical reasons; Groq, xAI, OpenRouter…
+# all work.) When grok.apiKey is blank the app calls the StudyTrack backend's
+# /api/ai/task-assistance instead (requires BASE_URL to be configured).
+#
+# Groq example (https://console.groq.com → API Keys):
+#   grok.apiKey=gsk_your_key_here
+#   grok.baseUrl=https://api.groq.com/openai/v1/
+#   grok.model=openai/gpt-oss-120b
+#
+# Current Groq models (llama-3.3-70b / llama-3.1-8b were retired Aug 2026):
+#   openai/gpt-oss-120b   — best quality
+#   openai/gpt-oss-20b    — cheapest & fastest
+#
+# xAI Groq... er, Grok example (https://console.x.ai → API Keys):
+#   grok.apiKey=xai_your_key_here
+#   grok.baseUrl=https://api.x.ai/v1/
+#   grok.model=grok-4
+#
+# NOTE: the base URL must include the version segment (…/v1/) — the app
+# appends "chat/completions" to it.
+# ---------------------------------------------------------------------------
+grok.apiKey=
+#grok.baseUrl=https://api.groq.com/openai/v1/
+#grok.model=openai/gpt-oss-120b
