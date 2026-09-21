@@ -302,7 +302,7 @@ class AiAssistantChatRegressionTest {
      * suspends inside OfflineFirstTaskRepository.create (withContext IO), so a
      * single idle() can run before the write finishes.
      */
-    private fun pumpUntil(condition: () -> Boolean, timeoutMs: Long = 10_000): Boolean {
+    private fun pumpUntil(timeoutMs: Long = 10_000, condition: () -> Boolean): Boolean {
         val deadline = System.nanoTime() + timeoutMs * 1_000_000
         while (System.nanoTime() < deadline) {
             shadowOf(Looper.getMainLooper()).idle()
