@@ -41,15 +41,23 @@ jobs:
         # Runs before the APK build: the per-account isolation rules are
         # asserted here against a real SQLite database (Robolectric), and a
         # cross-account leak is a worse failure than a compile error.
+        #
+        # Deliberately exits 0 so the APK build still runs afterwards — a test
+        # source-set compile error would otherwise hide whether the main
+        # sources compile. The real pass/fail is republished by the
+        # "Surface unit-test failures" step below.
         run: |
           set -o pipefail
           ./gradlew testDebugUnitTest --stacktrace 2>&1 | tee test-output.log
+          echo "TEST_EXIT=$?" >> "$GITHUB_ENV"
+          exit 0
 
       - name: Assemble debug APK
         run: |
           set -o pipefail
           ./gradlew assembleDebug --stacktrace 2>&1 | tee build-output.log
           status=$?
+          echo "BUILD_EXIT=$status" >> "$GITHUB_ENV"
           if [ $status -ne 0 ]; then
             echo "=== BUILD FAILED (exit $status) ==="
             FIRST_ERR=$(grep -m1 -E "^e: |What went wrong|FAILURE: Build failed" build-output.log || true)
@@ -65,6 +73,34 @@ jobs:
           path: app/build/reports/tests/
           if-no-files-found: ignore
 
+      # The raw run log is not retrievable from every environment, so failures
+      # are republished as annotations, which are.
+      - name: Surface unit-test failures
+        if: always() && env.TEST_EXIT != '' && env.TEST_EXIT != '0'
+        run: |
+          echo "=== unit tests failed (exit $TEST_EXIT) ==="
+          echo "--- Gradle / Kotlin compiler diagnostics ---"
+          grep -E "^e: |FAILURE: |What went wrong|> Task .* FAILED|Caused by: " test-output.log | head -40 || true
+          echo
+          echo "--- failed assertions from the JUnit XML reports ---"
+          shopt -s nullglob
+          for f in app/build/test-results/testDebugUnitTest/*.xml; do
+            python3 - "$f" <<'PYEOF'
+          import sys, xml.etree.ElementTree as ET
+          root = ET.parse(sys.argv[1]).getroot()
+          for tc in root.iter("testcase"):
+              for bad in list(tc.iter("failure")) + list(tc.iter("error")):
+                  msg = (bad.get("message") or "").replace("\n", " ")[:280]
+                  print(f"::error::TEST {tc.get('classname')}.{tc.get('name')}: {msg}")
+          PYEOF
+          done
+          echo
+          echo "--- compiler errors (as annotations) ---"
+          grep -E "^e: " test-output.log | head -10 | while IFS= read -r line; do
+            echo "::error::${line}"
+          done
+          exit 1
+
       - name: Save failure log for inspection
         if: failure()
         run: |
@@ -73,20 +109,24 @@ jobs:
             echo "=== gradle exit context ==="
             java -version 2>&1
             echo "ANDROID_HOME=$ANDROID_HOME"
+            echo "TEST_EXIT=$TEST_EXIT BUILD_EXIT=$BUILD_EXIT"
             echo
             echo "=== generated BuildConfig.java ==="
             cat app/build/generated/source/buildConfig/debug/com/studytrack/app/BuildConfig.java 2>/dev/null || echo "(not generated)"
             echo
             echo "=== unit test output (tail) ==="
-            tail -n 200 test-output.log 2>/dev/null || echo "(no test log)"
+            tail -n 250 test-output.log 2>/dev/null || echo "(no test log)"
             echo
-            tail -n 400 build-output.log
+            echo "=== build output (tail) ==="
+            tail -n 400 build-output.log 2>/dev/null || echo "(no build log)"
           } > .build/ci-failure.log
           git config user.name "studytrack-ci"
           git config user.email "ci@studytrack.local"
           git add .build/ci-failure.log
-          git commit -m "ci: save build failure log [skip ci]"
-          git push
+          git commit -m "ci: save build failure log [skip ci]" || echo "nothing to commit"
+          # actions/checkout can leave a detached HEAD, where a bare `git push`
+          # refuses with "You are not currently on a branch". Push explicitly.
+          git push origin "HEAD:refs/heads/$GITHUB_REF_NAME" || echo "could not push log"
 
       # One-time: CI generates the wrapper scripts + jar and commits them back,
       # so the repo is fully buildable with ./gradlew locally afterwards.
