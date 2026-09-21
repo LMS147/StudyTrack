@@ -99,6 +99,21 @@ class GrokAiRepository(
             ctx.dueDate?.let { append(" dueDate=$it") }
             append(".\n")
         }
+        if (request.upcomingTasks.isNotEmpty()) {
+            append("The student's open tasks that are overdue or due soon ")
+            append("(due dates are ISO-8601 in the device timezone):\n")
+            request.upcomingTasks.forEach { task ->
+                append("- \"${task.title}\" due ${task.dueDate}")
+                task.priority?.let { append(" (priority $it)") }
+                task.subjectName?.let { append(" [$it]") }
+                append("\n")
+            }
+            append(
+                "Use this list to answer what is due and to plan around " +
+                    "existing deadlines; never re-suggest a task that is " +
+                    "already on it.\n"
+            )
+        }
         append(PROMPT_BODY)
     }
 

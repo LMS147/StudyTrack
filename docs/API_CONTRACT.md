@@ -102,7 +102,11 @@ Request:
   "today": "2026-09-19",
   "timezone": "Africa/Johannesburg",
   "subjects": ["Mathematics", "Physical Sciences"],
-  "taskContext": { "taskId": "...", "title": "...", "dueDate": "..." }
+  "taskContext": { "taskId": "...", "title": "...", "dueDate": "..." },
+  "upcomingTasks": [
+    { "title": "Calculus test", "dueDate": "2026-09-24T17:00:00",
+      "subjectName": "Mathematics", "priority": "High" }
+  ]
 }
 ```
 
@@ -136,6 +140,15 @@ date**. The client never guesses dates.
 
 `conversationHistory` contains only text turns (user/assistant), never
 suggestion cards or system confirmations.
+
+`upcomingTasks` is the student's open tasks that are overdue or due within the
+next 14 days (earliest first, max 20), computed on the CLIENT from the same
+UID-scoped local cache the Calendar reads, with due dates passed through in
+their stored ISO-8601 form. It exists so the model can answer "what's due this
+week?" and plan around existing deadlines — in local mode the device is the
+only place these tasks exist, and in direct-LLM mode there is no backend to
+fetch them. Clients may omit it (older builds do); backends must treat it as
+optional and include it in the prompt when present.
 
 `subjects` is the student's current subject list, sent so the model can
 attribute a suggestion to a subject that actually exists: it should echo one of

@@ -46,9 +46,33 @@ class CalendarViewModel(
     val state: StateFlow<CalendarUiState> = _state.asStateFlow()
 
     init {
+        // The calendar OBSERVES the live UID-scoped Room flow — a task saved
+        // on any other screen (Add/Edit Task, AI assistant accept) appears
+        // here, dots included, the moment Room emits. The old code took a
+        // one-shot snapshot in init, and because this ViewModel survives
+        // bottom-nav navigation, tasks created after the Calendar tab was
+        // first opened never showed up at all.
+        viewModelScope.launch {
+            calendarRepository.calendarTasks.collect { tasks ->
+                _state.update { it.copy(tasksByDate = groupByDate(tasks)) }
+            }
+        }
+        viewModelScope.launch {
+            subjectRepository.subjects.collect { subjects ->
+                _state.update {
+                    it.copy(subjectNames = subjects.associate { s -> s.subjectId to s.subjectName })
+                }
+            }
+        }
         refresh()
     }
 
+    /**
+     * Pull-through refresh: fetches remote changes into Room. The screen's
+     * list itself is driven by the observed flow above, so a successful pull
+     * simply lands in Room and flows through — this only reports errors and
+     * drives the loading flag.
+     */
     fun refresh() {
         viewModelScope.launch {
             _state.update { it.copy(loading = true) }
@@ -57,13 +81,7 @@ class CalendarViewModel(
             }
             when (val result = calendarRepository.refresh()) {
                 is ApiResult.Success -> _state.update {
-                    it.copy(
-                        loading = false,
-                        error = null,
-                        tasksByDate = groupByDate(result.data),
-                        subjectNames = subjectRepository.subjects.value
-                            .associate { s -> s.subjectId to s.subjectName },
-                    )
+                    it.copy(loading = false, error = null)
                 }
                 is ApiResult.Error -> _state.update {
                     it.copy(loading = false, error = result.message)
@@ -85,19 +103,14 @@ class CalendarViewModel(
         _state.update { it.copy(selectedDate = date, month = YearMonth.from(date)) }
     }
 
-    /** Toggle completion via the Tasks repository, then re-sync the calendar cache. */
+    /**
+     * Toggle completion via the Tasks repository. The write lands in Room and
+     * the observed calendar flow re-emits on its own — no manual re-read.
+     */
     fun toggleComplete(taskId: String, completed: Boolean) {
         viewModelScope.launch {
             when (val result = taskRepository.setCompleted(taskId, completed)) {
-                is ApiResult.Success -> {
-                    when (val calendar = calendarRepository.refresh()) {
-                        is ApiResult.Success -> _state.update {
-                            it.copy(tasksByDate = groupByDate(calendar.data))
-                        }
-                        is ApiResult.Error -> _state.update { it.copy(error = calendar.message) }
-                        ApiResult.Loading -> Unit
-                    }
-                }
+                is ApiResult.Success -> Unit
                 is ApiResult.Error -> _state.update { it.copy(error = result.message) }
                 ApiResult.Loading -> Unit
             }

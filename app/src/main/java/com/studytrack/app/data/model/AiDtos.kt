@@ -19,6 +19,27 @@ data class AiTaskContext(
 )
 
 /**
+ * One of the student's open tasks, sent with every AI request so the model can
+ * answer "what's due this week?" and plan around existing deadlines.
+ *
+ * Computed on the CLIENT from the same UID-scoped Room cache the Calendar
+ * reads (see [com.studytrack.app.ai.AiTaskContextBuilder]) — in local mode the
+ * device is the only place these tasks exist, and in direct-LLM mode there is
+ * no backend to fetch them. Dates are passed through in their stored ISO-8601
+ * form; day-level comparisons use [com.studytrack.app.util.DateTimeUtils],
+ * the app's single canonical date parser.
+ */
+@Serializable
+data class AiUpcomingTask(
+    val title: String,
+    /** ISO-8601 date or date-time, exactly as stored on the task. */
+    val dueDate: String,
+    val subjectName: String? = null,
+    /** "Low" | "Medium" | "High". */
+    val priority: String? = null,
+)
+
+/**
  * Request body for POST /api/ai/task-assistance.
  *
  * `today` + `timezone` give the backend the device context it needs to resolve
@@ -42,6 +63,13 @@ data class TaskAssistanceRequest(
      */
     val subjects: List<String> = emptyList(),
     val taskContext: AiTaskContext? = null,
+    /**
+     * The student's open tasks that are overdue or due within the next two
+     * weeks (bounded, client-computed). Without this the model has no way to
+     * know what is already on the calendar. Backends must treat it as optional
+     * (older builds omit it) and include it in the prompt when present.
+     */
+    val upcomingTasks: List<AiUpcomingTask> = emptyList(),
 )
 
 /** Response for POST /api/ai/task-assistance. */
