@@ -2,6 +2,7 @@ package com.studytrack.app.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
  * Registry of the accounts that have ever signed in **on this device**.
@@ -25,6 +26,7 @@ import androidx.room.Entity
 @Entity(tableName = "account_records")
 data class AccountRecordEntity(
     /** Firebase UID. Primary key, and the `ownerUid` stamped onto that account's data rows. */
+    @PrimaryKey
     @ColumnInfo(name = "ownerUid") val ownerUid: String,
 
     /**

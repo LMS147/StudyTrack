@@ -385,10 +385,23 @@ PRIMARY_KEY_ANNO = re.compile(r"((?:@\w+(?:\([^)]*\))?\s*)+)val\s+ownerUid\b")
 
 if ENTITY_DIR.exists():
     for entity_file in sorted(ENTITY_DIR.glob("*.kt")):
-        if entity_file.stem == "AccountRecordEntity":
-            continue
         code = strip_kotlin_comments(entity_file.read_text())
         if "@Entity" not in code:
+            continue
+
+        # (a) Room rejects any @Entity with no primary key at KSP time. This
+        # applies to every entity, including the account registry.
+        has_pk = bool(PRIMARY_KEYS_LIST.search(code)) or "@PrimaryKey" in code
+        if not has_pk:
+            fail(f"{entity_file.name}: @Entity has no primary key — Room fails to "
+                 f"compile it (\"An entity must have at least 1 field annotated "
+                 f"with @PrimaryKey\")")
+            continue
+
+        # (b) Isolation: entities holding study data must be keyed by ownerUid.
+        # account_records is exempt from this one only — it is the device's
+        # account registry and holds no study data.
+        if entity_file.stem == "AccountRecordEntity":
             continue
         if 'name = "ownerUid"' not in code:
             fail(f"{entity_file.name}: @Entity is missing an ownerUid column — every "

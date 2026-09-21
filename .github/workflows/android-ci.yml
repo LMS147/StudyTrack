@@ -47,20 +47,31 @@ jobs:
         # sources compile. The real pass/fail is republished by the
         # "Surface unit-test failures" step below.
         run: |
-          set -o pipefail
+          # GitHub Actions runs `bash -e`, so a failing pipeline would abort the
+          # script before the status is recorded and the step could not stay
+          # green. Disable errexit and read Gradle's own status from PIPESTATUS
+          # (tee would otherwise mask it).
+          set +e
           ./gradlew testDebugUnitTest --stacktrace 2>&1 | tee test-output.log
-          echo "TEST_EXIT=$?" >> "$GITHUB_ENV"
+          status=${PIPESTATUS[0]}
+          echo "TEST_EXIT=$status" >> "$GITHUB_ENV"
+          echo "Gradle testDebugUnitTest exit: $status"
           exit 0
 
       - name: Assemble debug APK
         run: |
-          set -o pipefail
+          # Same errexit handling as the test step — without `set +e` the
+          # diagnostic block below was unreachable on failure.
+          set +e
           ./gradlew assembleDebug --stacktrace 2>&1 | tee build-output.log
-          status=$?
+          status=${PIPESTATUS[0]}
           echo "BUILD_EXIT=$status" >> "$GITHUB_ENV"
-          if [ $status -ne 0 ]; then
+          if [ "$status" -ne 0 ]; then
             echo "=== BUILD FAILED (exit $status) ==="
-            FIRST_ERR=$(grep -m1 -E "^e: |What went wrong|FAILURE: Build failed" build-output.log || true)
+            grep -E "^e: " build-output.log | head -10 | while IFS= read -r line; do
+              echo "::error::${line}"
+            done
+            FIRST_ERR=$(grep -m1 -E "^e: |What went wrong|FAILURE: Build failed" build-output.log)
             echo "::error::${FIRST_ERR:-Gradle build failed — see .build/ci-failure.log committed to this branch}"
           fi
           exit $status
