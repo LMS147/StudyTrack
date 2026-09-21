@@ -1,5 +1,6 @@
 package com.studytrack.app.data.repository
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -40,7 +41,10 @@ import java.io.IOException
  * moving any rows, and that signing out does not delete anyone's cache.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
+// A plain Application, not the manifest's StudyTrackApp: its onCreate
+// calls FirebaseAuth.getInstance(), which needs a FirebaseApp that
+// does not exist in a JVM test. Nothing under test needs it.
+@Config(sdk = [34], application = Application::class)
 class OfflineFirstTaskRepositoryIsolationTest {
 
     private lateinit var db: StudyTrackDatabase

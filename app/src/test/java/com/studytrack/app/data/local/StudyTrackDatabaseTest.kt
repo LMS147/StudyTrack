@@ -1,5 +1,6 @@
 package com.studytrack.app.data.local
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -20,7 +21,10 @@ import org.robolectric.annotation.Config
  * or the column becomes nullable, this fails.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
+// A plain Application, not the manifest's StudyTrackApp: its onCreate
+// calls FirebaseAuth.getInstance(), which needs a FirebaseApp that
+// does not exist in a JVM test. Nothing under test needs it.
+@Config(sdk = [34], application = Application::class)
 class StudyTrackDatabaseTest {
 
     private lateinit var db: StudyTrackDatabase

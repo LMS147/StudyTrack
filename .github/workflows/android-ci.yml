@@ -125,6 +125,21 @@ jobs:
             echo "=== generated BuildConfig.java ==="
             cat app/build/generated/source/buildConfig/debug/com/studytrack/app/BuildConfig.java 2>/dev/null || echo "(not generated)"
             echo
+            echo "=== every failing test (parsed from the JUnit XML) ==="
+            shopt -s nullglob
+            for f in app/build/test-results/testDebugUnitTest/*.xml; do
+              python3 - "$f" <<'PYEOF'
+            import sys, xml.etree.ElementTree as ET
+            root = ET.parse(sys.argv[1]).getroot()
+            for tc in root.iter("testcase"):
+                for bad in list(tc.iter("failure")) + list(tc.iter("error")):
+                    msg = (bad.get("message") or "").strip().splitlines()
+                    first = msg[0][:200] if msg else ""
+                    print(f"FAIL {tc.get('classname')}.{tc.get('name')}")
+                    print(f"     {first}")
+            PYEOF
+            done
+            echo
             echo "=== unit test output (tail) ==="
             tail -n 250 test-output.log 2>/dev/null || echo "(no test log)"
             echo

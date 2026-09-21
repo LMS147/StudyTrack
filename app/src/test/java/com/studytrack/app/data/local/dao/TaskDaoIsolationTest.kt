@@ -1,5 +1,6 @@
 package com.studytrack.app.data.local.dao
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -27,7 +28,10 @@ import org.robolectric.annotation.Config
  * dropped from one of these methods, the corresponding test here fails.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
+// A plain Application, not the manifest's StudyTrackApp: its onCreate
+// calls FirebaseAuth.getInstance(), which needs a FirebaseApp that
+// does not exist in a JVM test. Nothing under test needs it.
+@Config(sdk = [34], application = Application::class)
 class TaskDaoIsolationTest {
 
     private lateinit var db: StudyTrackDatabase
