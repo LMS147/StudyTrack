@@ -69,6 +69,37 @@ abstract class StudyTrackDatabase : RoomDatabase() {
         private var instance: StudyTrackDatabase? = null
 
         /**
+         * Template for the first future schema change, kept ready so the
+         * migration discipline is established from day one rather than invented
+         * under pressure after a release has shipped.
+         *
+         * It is dormant while [VERSION] is 1 (the filter below excludes it) and
+         * activates automatically when [VERSION] becomes 2. The pattern to copy
+         * for any later bump:
+         *
+         * 1. Change the entity.
+         * 2. Bump [VERSION].
+         * 3. Write `MIGRATION_<old>_<new>` with explicit SQL — never let Room
+         *    recreate the table for you.
+         * 4. Rebuild so the new `app/schemas/…/<new>.json` is generated, and
+         *    commit it.
+         * 5. Add a migration test covering the path.
+         *
+         * Declared *before* [ALL_MIGRATIONS] on purpose: Kotlin initializes
+         * object properties in declaration order and rejects a forward
+         * reference to a `val` declared later in the same object.
+         */
+        val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Additive changes only. A new column must be nullable or carry
+                // a DEFAULT, because SQLite rewrites every existing row.
+                db.execSQL(
+                    "ALTER TABLE tasks ADD COLUMN archivedAt INTEGER"
+                )
+            }
+        }
+
+        /**
          * Every migration written so far, including ones targeting versions
          * above [VERSION] (those stay dormant — see the class docs).
          */
@@ -80,33 +111,6 @@ abstract class StudyTrackDatabase : RoomDatabase() {
         val MIGRATIONS: Array<Migration> = ALL_MIGRATIONS
             .filter { it.endVersion <= VERSION }
             .toTypedArray()
-
-        /**
-         * Template for the first future schema change, kept ready so the
-         * migration discipline is established from day one rather than invented
-         * under pressure after a release has shipped.
-         *
-         * It is dormant while [VERSION] is 1 (the filter above excludes it) and
-         * activates automatically when [VERSION] becomes 2. The pattern to copy
-         * for any later bump:
-         *
-         * 1. Change the entity.
-         * 2. Bump [VERSION].
-         * 3. Write `MIGRATION_<old>_<new>` with explicit SQL — never let Room
-         *    recreate the table for you.
-         * 4. Rebuild so the new `app/schemas/…/<new>.json` is generated, and
-         *    commit it.
-         * 5. Add a migration test covering the path.
-         */
-        val MIGRATION_1_2: Migration = object : Migration(1, 2) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                // Additive changes only. A new column must be nullable or carry
-                // a DEFAULT, because SQLite rewrites every existing row.
-                db.execSQL(
-                    "ALTER TABLE tasks ADD COLUMN archivedAt INTEGER"
-                )
-            }
-        }
 
         /**
          * Single shared instance. Room's build is expensive and the DAOs are
