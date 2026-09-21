@@ -181,6 +181,23 @@ jobs:
           # refuses with "You are not currently on a branch". Push explicitly.
           git push origin "HEAD:refs/heads/$GITHUB_REF_NAME" || echo "could not push log"
 
+      # Room exports the schema JSON at build time. Committing it gives future
+      # migrations a baseline to diff against, and makes an unreviewed schema
+      # change visible in the PR.
+      - name: Commit exported Room schema
+        if: success()
+        run: |
+          set +e
+          if [ -d app/schemas ] && [ -n "$(git status --porcelain app/schemas)" ]; then
+            git config user.name "studytrack-ci"
+            git config user.email "ci@studytrack.local"
+            git add app/schemas
+            git commit -m "chore: export Room schema baseline [skip ci]"
+            git push origin "HEAD:refs/heads/$GITHUB_REF_NAME" || echo "could not push schema"
+          else
+            echo "No Room schema changes to commit."
+          fi
+
       # One-time: CI generates the wrapper scripts + jar and commits them back,
       # so the repo is fully buildable with ./gradlew locally afterwards.
       - name: Commit Gradle wrapper (first successful build only)
