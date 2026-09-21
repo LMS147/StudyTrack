@@ -96,7 +96,7 @@ class AiAssistantChatRegressionTest {
         val userHolder = adapter.onCreateViewHolder(parent, adapter.getItemViewType(0))
         adapter.onBindViewHolder(userHolder, 0)
         val userRow = userHolder.itemView as LinearLayout
-        assertEquals(Gravity.END, userRow.gravity)
+        assertEquals(Gravity.END or Gravity.TOP, userRow.gravity)
         assertEquals(1, userRow.childCount)
         assertEquals(
             "Help me prioritise my tasks",
@@ -107,7 +107,7 @@ class AiAssistantChatRegressionTest {
         val aiHolder = adapter.onCreateViewHolder(parent, adapter.getItemViewType(1))
         adapter.onBindViewHolder(aiHolder, 1)
         val aiRow = aiHolder.itemView as LinearLayout
-        assertEquals(Gravity.START, aiRow.gravity)
+        assertEquals(Gravity.START or Gravity.TOP, aiRow.gravity)
         assertEquals(2, aiRow.childCount)
         assertTrue(
             "AI row must start with the bot avatar",
@@ -151,9 +151,9 @@ class AiAssistantChatRegressionTest {
             pos to holder.itemView
         }
 
-        assertEquals(Gravity.START, (sides[0].second as LinearLayout).gravity)
-        assertEquals(Gravity.END, (sides[1].second as LinearLayout).gravity)
-        assertEquals(Gravity.START, (sides[2].second as LinearLayout).gravity)
+        assertEquals(Gravity.START or Gravity.TOP, (sides[0].second as LinearLayout).gravity)
+        assertEquals(Gravity.END or Gravity.TOP, (sides[1].second as LinearLayout).gravity)
+        assertEquals(Gravity.START or Gravity.TOP, (sides[2].second as LinearLayout).gravity)
         // The suggestion card is its own layout with Accept/Reject actions.
         assertNotNull(sides[3].second.findViewById<View>(R.id.acceptButton))
         assertNotNull(sides[3].second.findViewById<View>(R.id.rejectButton))
@@ -181,7 +181,10 @@ class AiAssistantChatRegressionTest {
         startAndChat(vmAlice)
         val aliceSuggestion = latestSuggestion(vmAlice)
         vmAlice.acceptSuggestion(aliceSuggestion.itemId)
-        idleMain()
+        assertTrue(
+            "accept did not settle for alice",
+            pumpUntil { latestSuggestion(vmAlice).status == SuggestionStatus.ACCEPTED },
+        )
 
         assertEquals(
             listOf("Alice's essay plan"),
@@ -202,7 +205,10 @@ class AiAssistantChatRegressionTest {
         startAndChat(vmBob)
         val bobSuggestion = latestSuggestion(vmBob)
         vmBob.acceptSuggestion(bobSuggestion.itemId)
-        idleMain()
+        assertTrue(
+            "accept did not settle for bob",
+            pumpUntil { latestSuggestion(vmBob).status == SuggestionStatus.ACCEPTED },
+        )
 
         // Bob's accepted task is stored under BOB's uid…
         assertEquals(
@@ -236,7 +242,10 @@ class AiAssistantChatRegressionTest {
         )
         startAndChat(vmAlice)
         vmAlice.acceptSuggestion(latestSuggestion(vmAlice).itemId)
-        idleMain()
+        assertTrue(
+            "accept did not settle for alice",
+            pumpUntil { latestSuggestion(vmAlice).status == SuggestionStatus.ACCEPTED },
+        )
 
         currentAccount.clearSession()
         currentAccount.setSession(bob)
@@ -245,7 +254,10 @@ class AiAssistantChatRegressionTest {
         )
         startAndChat(vmBob)
         vmBob.acceptSuggestion(latestSuggestion(vmBob).itemId)
-        idleMain()
+        assertTrue(
+            "accept did not settle for bob",
+            pumpUntil { latestSuggestion(vmBob).status == SuggestionStatus.ACCEPTED },
+        )
 
         // The decisive assertion: no row owned by Alice carries Bob's title and
         // vice versa — a stale-UID write would show up right here.
