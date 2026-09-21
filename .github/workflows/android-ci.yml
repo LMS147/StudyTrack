@@ -37,6 +37,14 @@ jobs:
             gradle wrapper --gradle-version 8.7
           fi
 
+      - name: Run unit tests
+        # Runs before the APK build: the per-account isolation rules are
+        # asserted here against a real SQLite database (Robolectric), and a
+        # cross-account leak is a worse failure than a compile error.
+        run: |
+          set -o pipefail
+          ./gradlew testDebugUnitTest --stacktrace 2>&1 | tee test-output.log
+
       - name: Assemble debug APK
         run: |
           set -o pipefail
@@ -49,6 +57,14 @@ jobs:
           fi
           exit $status
 
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results
+          path: app/build/reports/tests/
+          if-no-files-found: ignore
+
       - name: Save failure log for inspection
         if: failure()
         run: |
@@ -60,6 +76,9 @@ jobs:
             echo
             echo "=== generated BuildConfig.java ==="
             cat app/build/generated/source/buildConfig/debug/com/studytrack/app/BuildConfig.java 2>/dev/null || echo "(not generated)"
+            echo
+            echo "=== unit test output (tail) ==="
+            tail -n 200 test-output.log 2>/dev/null || echo "(no test log)"
             echo
             tail -n 400 build-output.log
           } > .build/ci-failure.log

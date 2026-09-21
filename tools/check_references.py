@@ -280,6 +280,129 @@ for folder in ("layout", "menu", "drawable"):
                 fail(f"{xf.relative_to(RES)}:{lineno}: hardcoded colour {m.group(1)} "
                      f"— use a @color resource (add a values-night variant if it differs)")
 
+# ------------------------------------------------- per-account (ownerUid) isolation
+# Every row of study data belongs to exactly one Firebase UID. A Room query that
+# forgets its `ownerUid` predicate is a data leak between accounts, and it is
+# invisible at runtime until two people share a device. Gradle cannot catch it
+# (the SQL is valid either way), so it is enforced here.
+DAO_DIR = SRC / "data/local/dao"
+ENTITY_DIR = SRC / "data/local/entity"
+SCOPED_TABLES = {"tasks", "subjects", "progress", "study_sessions"}
+
+
+def strip_kotlin_comments(text):
+    """Removes /* ... */ and // comments so docs cannot be mistaken for code.
+
+    The DAO KDoc deliberately quotes a forbidden query as an example
+    (`@Query("SELECT * FROM tasks")`); without this the checker would flag its
+    own documentation.
+    """
+    text = re.sub(r"/\*.*?\*/", "", text, flags=re.DOTALL)
+    out = []
+    for line in text.splitlines():
+        # Only treat // as a comment start when it is not inside a string.
+        in_string = False
+        cut = len(line)
+        i = 0
+        while i < len(line) - 1:
+            ch = line[i]
+            if ch == '"' and (i == 0 or line[i - 1] != "\\"):
+                in_string = not in_string
+            elif not in_string and line[i:i + 2] == "//":
+                cut = i
+                break
+            i += 1
+        out.append(line[:cut])
+    return "\n".join(out)
+
+
+def extract_annotation_bodies(text, annotation):
+    """Yields (annotation_args, text_after_annotation) for each @annotation(...)."""
+    results = []
+    for m in re.finditer(re.escape(annotation) + r"\s*\(", text):
+        i = m.end()
+        depth = 1
+        while i < len(text) and depth:
+            if text[i] == "(":
+                depth += 1
+            elif text[i] == ")":
+                depth -= 1
+            i += 1
+        results.append((text[m.end():i - 1], text[i:]))
+    return results
+
+
+def join_string_literals(body):
+    """Concatenates the literals of a multi-line Kotlin string expression."""
+    return "".join(re.findall(r'"((?:[^"\\]|\\.)*)"', body))
+
+
+def method_params(rest):
+    """The parameter list of the function that follows an annotation."""
+    m = re.search(r"\b(?:suspend\s+)?fun\s+\w+\s*\(", rest)
+    if not m:
+        return ""
+    i = m.end()
+    depth = 1
+    while i < len(rest) and depth:
+        if rest[i] == "(":
+            depth += 1
+        elif rest[i] == ")":
+            depth -= 1
+        i += 1
+    return rest[m.end():i - 1]
+
+
+OWNER_PREDICATE = re.compile(r"\bownerUid\s*(?:=|!=|<>|\bIN\b)", re.IGNORECASE)
+TABLE_REF = re.compile(
+    r"\b(?:FROM|UPDATE|INTO|JOIN)\s+([A-Za-z_][A-Za-z0-9_]*)", re.IGNORECASE
+)
+
+if DAO_DIR.exists():
+    for dao_file in sorted(DAO_DIR.glob("*.kt")):
+        code = strip_kotlin_comments(dao_file.read_text())
+        for body, rest in extract_annotation_bodies(code, "@Query"):
+            sql = join_string_literals(body)
+            if not sql.strip():
+                continue
+            scoped = {t.lower() for t in TABLE_REF.findall(sql)} & SCOPED_TABLES
+            if not scoped:
+                continue
+            if not OWNER_PREDICATE.search(sql):
+                fail(f"{dao_file.name}: query on {sorted(scoped)} has no ownerUid "
+                     f"predicate — it would read or write every account's rows: "
+                     f"{' '.join(sql.split())[:90]}")
+            elif "ownerUid" not in method_params(rest):
+                fail(f"{dao_file.name}: query on {sorted(scoped)} binds :ownerUid but "
+                     f"the method takes no ownerUid parameter: "
+                     f"{' '.join(sql.split())[:90]}")
+
+# Every entity holding study data must be keyed by ownerUid, so two accounts can
+# never collide on the same row id. account_records is exempt: it is the device's
+# account registry and holds no study data.
+PRIMARY_KEYS_LIST = re.compile(r"primaryKeys\s*=\s*\[([^\]]*)\]")
+PRIMARY_KEY_ANNO = re.compile(r"((?:@\w+(?:\([^)]*\))?\s*)+)val\s+ownerUid\b")
+
+if ENTITY_DIR.exists():
+    for entity_file in sorted(ENTITY_DIR.glob("*.kt")):
+        if entity_file.stem == "AccountRecordEntity":
+            continue
+        code = strip_kotlin_comments(entity_file.read_text())
+        if "@Entity" not in code:
+            continue
+        if 'name = "ownerUid"' not in code:
+            fail(f"{entity_file.name}: @Entity is missing an ownerUid column — every "
+                 f"row of study data must be scoped to a Firebase UID")
+            continue
+        listed = PRIMARY_KEYS_LIST.search(code)
+        keyed_by_list = bool(listed) and '"ownerUid"' in listed.group(1)
+        anno = PRIMARY_KEY_ANNO.search(code)
+        keyed_by_anno = bool(anno) and "@PrimaryKey" in anno.group(1)
+        if not (keyed_by_list or keyed_by_anno):
+            fail(f"{entity_file.name}: ownerUid must be part of the primary key "
+                 f"(primaryKeys = [..., \"ownerUid\"] or @PrimaryKey), so two accounts "
+                 f"can never collide on the same row id")
+
 # ---------------------------------------------------------------- report
 if failures:
     print(f"FAILED: {len(failures)} problem(s)")

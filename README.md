@@ -12,6 +12,8 @@ an API session and attaches it to every request.
 
 - **Kotlin**, single-activity Navigation Component app (view-based UI with ViewBinding)
 - **Material 3** components (`com.google.android.material:material:1.11.0`)
+- **Room 2.6** (SQLite) as the offline cache and sync queue, keyed per Firebase UID
+- **WorkManager 2.9** for background sync with network-aware retry
 - **Retrofit 2.11 + OkHttp 4.12** with `kotlinx-serialization` converters
 - **Coroutines + Flow** (`StateFlow` in ViewModels, `combine` for screen state)
 - **Firebase Auth** (email/password) + `google-services` plugin
@@ -31,6 +33,27 @@ an API session and attaches it to every request.
 | **AI Assistant** | Chat UI: text bubbles, structured suggestion cards with Accept / Edit / Reject, typing indicator, conversation history |
 | **Create Account** | Three-step wizard — personal details, academic details, password with a live strength checklist |
 | **Profile** | Level hero card, personal information rows with edit dialog, notifications, app preferences, account actions, About info, logout |
+
+## Offline support & multi-account isolation
+
+The app is offline-first: reads come from a local Room (SQLite) cache and writes
+land there immediately, then queue for the REST API when connectivity returns.
+WorkManager retries failed syncs when the network comes back.
+
+Every local row carries the Firebase UID of the account that owns it, and
+`ownerUid` is part of each table's primary key — so two accounts on one device
+cannot collide, and no DAO method exists that can read tasks without a UID
+filter. Signing out keeps every account's cache, so switching back restores it
+instantly; switching to an account this device has never seen requires a full
+fetch first, and is **refused outright while offline** rather than showing empty
+or wrong data:
+
+> Can't switch accounts while offline — connect to the internet first
+
+Full details — the schema, the sync and conflict rules, the migration strategy,
+and the four layers that enforce isolation — are in
+[`docs/OFFLINE_SYNC.md`](docs/OFFLINE_SYNC.md). Note that document also records
+why the remote source of truth here is the REST API rather than Firestore.
 
 ## Building
 
