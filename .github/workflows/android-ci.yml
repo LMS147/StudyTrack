@@ -58,6 +58,33 @@ jobs:
           echo "Gradle testDebugUnitTest exit: $status"
           exit 0
 
+      # Publishes the counts as an annotation so the result is visible without
+      # downloading the (large) report artifact.
+      - name: Report unit-test totals
+        if: always()
+        run: |
+          shopt -s nullglob
+          files=(app/build/test-results/testDebugUnitTest/*.xml)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::warning::No JUnit XML found — unit tests did not produce results"
+            exit 0
+          fi
+          python3 - "${files[@]}" <<'PYEOF'
+          import sys, xml.etree.ElementTree as ET
+          total = failed = skipped = 0
+          classes = 0
+          for path in sys.argv[1:]:
+              root = ET.parse(path).getroot()
+              classes += 1
+              total += int(root.get("tests") or 0)
+              failed += int(root.get("failures") or 0) + int(root.get("errors") or 0)
+              skipped += int(root.get("skipped") or 0)
+          print(f"Test classes: {classes}, tests: {total}, "
+                f"failed: {failed}, skipped: {skipped}")
+          print(f"::notice::StudyTrack unit tests: {total} tests across {classes} "
+                f"classes — {failed} failed, {skipped} skipped")
+          PYEOF
+
       - name: Assemble debug APK
         run: |
           # Same errexit handling as the test step — without `set +e` the
