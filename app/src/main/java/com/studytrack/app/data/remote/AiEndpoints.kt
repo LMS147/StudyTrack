@@ -23,13 +23,13 @@ object AiEndpoints {
     /** Groq (https://console.groq.com). Current production models, verified. */
     val GROQ = AiEndpoint(
         baseUrl = "https://api.groq.com/openai/v1/",
-        defaultModel = "openai/gpt-oss-120b",
+        model = "openai/gpt-oss-120b",
     )
 
     /** xAI Grok (https://console.x.ai). */
     val XAI = AiEndpoint(
         baseUrl = "https://api.x.ai/v1/",
-        defaultModel = "grok-4",
+        model = "grok-4",
     )
 
     /** Picks a provider from the API key's prefix. */
@@ -46,7 +46,7 @@ object AiEndpoints {
         val defaults = forKey(apiKey)
         return AiEndpoint(
             baseUrl = explicitBaseUrl.takeIf { it.isNotBlank() } ?: defaults.baseUrl,
-            model = explicitModel.takeIf { it.isNotBlank() } ?: defaults.defaultModel,
+            model = explicitModel.takeIf { it.isNotBlank() } ?: defaults.model,
         )
     }
 }
@@ -54,5 +54,5 @@ object AiEndpoints {
 /** A concrete LLM endpoint: where to send chat-completions, and a default model. */
 data class AiEndpoint(
     val baseUrl: String,
-    val defaultModel: String,
+    val model: String,
 )
