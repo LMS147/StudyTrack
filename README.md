@@ -197,3 +197,7 @@ app/src/main/java/com/studytrack/app/
 
 Architecture notes and the reasoning behind key decisions live in
 [docs/ARCHITECTURE_DECISIONS.md](docs/ARCHITECTURE_DECISIONS.md).
+
+## Links
+  ## Video: https://advtechonline-my.sharepoint.com/:v:/g/personal/st10436200_rcconnect_edu_za/IQA4xewqoSBYRLH8nBW_NqshAbYLtYmEmdj6FjwkhLpuNY4?e=hEOk2X
+  ## GitHub: https://github.com/LMS147/StudyTrack
