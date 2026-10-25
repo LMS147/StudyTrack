@@ -5,4 +5,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.24" apply false
     id("androidx.navigation.safeargs.kotlin") version "2.7.7" apply false
     id("com.google.gms.google-services") version "4.4.2" apply false
+    // KSP drives the Room annotation processor. The KSP version is pinned to
+    // the Kotlin version in lockstep (1.9.24-1.0.20) — a mismatched KSP is a
+    // silent no-op that leaves the generated Room implementations missing.
+    id("com.google.devtools.ksp") version "1.9.24-1.0.20" apply false
 }

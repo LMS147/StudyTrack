@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- ConnectivityMonitor needs this to decide whether queued writes can
+         be pushed, and to refuse an account switch that has no cache to
+         fall back on while offline. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".StudyTrackApp"

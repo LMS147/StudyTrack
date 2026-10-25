@@ -6,6 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("androidx.navigation.safeargs.kotlin")
     id("com.google.gms.google-services")
+    id("com.google.devtools.ksp")
 }
 
 val localProperties = Properties().apply {
@@ -21,9 +22,13 @@ fun localProperty(name: String, fallback: String): String =
 // Values for BuildConfig fields, computed once (plain concatenation keeps the
 // buildConfigField arguments free of nested string templates).
 val apiBaseUrlProp: String = localProperty("api.baseUrl", "")
+// Blank by default. When grok.baseUrl / grok.model are left blank the app
+// infers the endpoint and a sensible model from the API key's prefix
+// (gsk_ -> Groq, otherwise xAI) via AiEndpoints.resolve(). Blank is what
+// makes a single-line `grok.apiKey=` config just work.
 val grokApiKeyProp: String = localProperty("grok.apiKey", "")
-val grokModelProp: String = localProperty("grok.model", "grok-4")
-val grokBaseUrlProp: String = localProperty("grok.baseUrl", "https://api.x.ai/v1/")
+val grokModelProp: String = localProperty("grok.model", "")
+val grokBaseUrlProp: String = localProperty("grok.baseUrl", "")
 
 android {
     namespace = "com.studytrack.app"
@@ -70,6 +75,34 @@ android {
         viewBinding = true
         buildConfig = true
     }
+
+    // Robolectric drives the local (JVM) Room tests, so it needs the merged
+    // Android resources available to the unit-test classpath.
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+    }
+}
+
+// Print every failing test with its message. Gradle's default summary caps
+// output, which is unusable when the only way to read the results is a CI log.
+tasks.withType<Test>().configureEach {
+    testLogging {
+        events("failed")
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.SHORT
+        showStackTraces = false
+        showCauses = true
+    }
+}
+
+// Exported Room schemas. These JSON files are the contract that makes future
+// migrations reviewable: a schema change shows up as a diff here, and the
+// migration tests read them back. They are committed, never ignored.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.incremental", "true")
 }
 
 dependencies {
@@ -111,6 +144,23 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
     implementation("com.google.firebase:firebase-auth")
 
-    // Unit tests
+    // Local persistence: Room (SQLite). The offline cache / sync queue that
+    // makes the app usable with no connectivity, scoped per Firebase UID.
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+
+    // Background sync: retries queued writes when connectivity returns.
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    // Unit tests. Robolectric runs the Room DAO tests on the JVM, which is what
+    // makes the per-UID isolation rules verifiable in CI without an emulator.
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.12.2")
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("androidx.test:core-ktx:1.5.0")
+    testImplementation("androidx.test.ext:junit:1.1.5")
+    testImplementation("androidx.room:room-testing:2.6.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 }

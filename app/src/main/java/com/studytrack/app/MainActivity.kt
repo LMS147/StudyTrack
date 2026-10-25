@@ -8,11 +8,19 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.studytrack.app.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+
+    /** Scope for moving the account session before navigation. */
+    private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     /**
      * The five bottom-nav tabs (Home, Tasks, Calendar, Progress, AI). Profile
@@ -31,9 +39,26 @@ class MainActivity : AppCompatActivity() {
      * Central auth routing: any sign-in lands on the dashboard, any sign-out on
      * the login screen. Fragments never navigate on auth events themselves, so
      * there is exactly one place that owns these transitions.
+     *
+     * The account session is moved **before** navigation, so no screen can
+     * query Room while the active UID still points at the previous account.
      */
-    private val authStateListener = FirebaseAuth.AuthStateListener {
-        routeForAuthState()
+    private val authStateListener = FirebaseAuth.AuthStateListener { auth ->
+        val user = auth.currentUser
+        activityScope.launch {
+            if (user != null) {
+                ServiceLocator.accountSessionManager.onSignedIn(
+                    ownerUid = user.uid,
+                    email = user.email,
+                    displayName = user.displayName,
+                )
+            } else {
+                // Clears the pointer only — cached rows for every account stay
+                // in Room so a returning account is restored instantly.
+                ServiceLocator.accountSessionManager.onSignedOut()
+            }
+            routeForAuthState()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +97,11 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         FirebaseAuth.getInstance().removeAuthStateListener(authStateListener)
+    }
+
+    override fun onDestroy() {
+        activityScope.cancel()
+        super.onDestroy()
     }
 
     private fun routeForAuthState() {

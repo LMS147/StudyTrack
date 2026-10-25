@@ -12,6 +12,8 @@ an API session and attaches it to every request.
 
 - **Kotlin**, single-activity Navigation Component app (view-based UI with ViewBinding)
 - **Material 3** components (`com.google.android.material:material:1.11.0`)
+- **Room 2.6** (SQLite) as the offline cache and sync queue, keyed per Firebase UID
+- **WorkManager 2.9** for background sync with network-aware retry
 - **Retrofit 2.11 + OkHttp 4.12** with `kotlinx-serialization` converters
 - **Coroutines + Flow** (`StateFlow` in ViewModels, `combine` for screen state)
 - **Firebase Auth** (email/password) + `google-services` plugin
@@ -32,6 +34,27 @@ an API session and attaches it to every request.
 | **Create Account** | Three-step wizard — personal details, academic details, password with a live strength checklist |
 | **Profile** | Level hero card, personal information rows with edit dialog, notifications, app preferences, account actions, About info, logout |
 
+## Offline support & multi-account isolation
+
+The app is offline-first: reads come from a local Room (SQLite) cache and writes
+land there immediately, then queue for the REST API when connectivity returns.
+WorkManager retries failed syncs when the network comes back.
+
+Every local row carries the Firebase UID of the account that owns it, and
+`ownerUid` is part of each table's primary key — so two accounts on one device
+cannot collide, and no DAO method exists that can read tasks without a UID
+filter. Signing out keeps every account's cache, so switching back restores it
+instantly; switching to an account this device has never seen requires a full
+fetch first, and is **refused outright while offline** rather than showing empty
+or wrong data:
+
+> Can't switch accounts while offline — connect to the internet first
+
+Full details — the schema, the sync and conflict rules, the migration strategy,
+and the four layers that enforce isolation — are in
+[`docs/OFFLINE_SYNC.md`](docs/OFFLINE_SYNC.md). Note that document also records
+why the remote source of truth here is the REST API rather than Firestore.
+
 ## Building
 
 ```bash
@@ -43,9 +66,15 @@ every push.
 
 ### Firebase setup
 
-`app/google-services.json` is a **placeholder** in the public repo; the build in
-this checkout uses the project's real file. To run against your own Firebase
-project, replace it with the real file from the Firebase console.
+`app/google-services.json` is the **real** file for the `studytrack-88a28`
+Firebase project and is committed to the repo. That is normal for Android: the
+values in it are app identifiers, and the API key is scoped to this package
+name and signing fingerprint rather than being a server secret.
+
+To point the app at your own Firebase project, replace it with the file from
+your Firebase console (Project settings → Your apps → `google-services.json`).
+Keep the package name `com.studytrack.app`, or update `applicationId` in
+`app/build.gradle.kts` to match.
 
 In the Firebase console, under **Authentication → Sign-in method**:
 
@@ -78,6 +107,7 @@ usually bite:
 | `What went wrong:` followed by nothing but a version number, e.g. `25.0.1` | That number **is the JDK version** Gradle refuses to run on — not your code, and not the app's version. Gradle below 9.0.0 embeds a Kotlin version that cannot read a JVM 25 or newer (fixed in Kotlin 2.1.20). Java 25 is a common default download, so a recent JDK install triggers this on an otherwise healthy project | Use JDK 17 — see below |
 | `Android Gradle plugin requires Java 17` / `Unsupported class file major version` | Same root cause: Gradle is being run by the wrong JDK | Use JDK 17 — see below |
 | `Plugin [id: 'com.android.application', version: '8.4.2'] was not found` or a sync that stops with a version message | The installed Android Studio is older than the Android Gradle Plugin (8.4.2 needs **Jellyfish 2023.3.1 or newer**) or there is no network access to `google()` | Update Android Studio, or build from the terminal (`./gradlew assembleDebug`) |
+| `Could not connect to Kotlin compile daemon` | Reads like a network problem but is not one: Gradle cannot reach the separate Kotlin compile daemon — a dead daemon process, a stale registration from a crashed build, an IPv4/IPv6 `localhost` mismatch, or antivirus on the loopback port | The project now compiles **in-process**, so no daemon is started. Update your checkout, run `.\tools\fix-kotlin-daemon.ps1`, rebuild. See below |
 
 **The quickest fix needs no download.** Android Studio ships its own JDK (17 or
 21 depending on its version) and Gradle 8.7 runs on any Java 8–21, so the
@@ -101,6 +131,44 @@ runtime you already have is enough:
   `tools/set-gradle-jdk17.ps1` writes for you — it prefers JDK 17 to match CI
   but accepts any JDK 8–21 rather than telling you to install one, prints the
   JDKs it found, and takes `-JdkPath` to force a specific runtime.
+
+**`Could not connect to Kotlin compile daemon`.** Kotlin normally compiles in a
+separate long-lived daemon that Gradle reaches over a local socket. When that
+handshake fails the build dies with the message above, which reads like a
+networking problem but is not one — the causes are local and varied: the daemon
+process failing to start, a stale registration left by an earlier crashed build,
+an IPv4/IPv6 mismatch on `localhost`, or antivirus blocking the loopback port.
+
+**This project now sidesteps the problem by default.** `gradle.properties` sets:
+
+```properties
+kotlin.compiler.execution.strategy=in-process
+```
+
+so the Kotlin compiler runs inside the Gradle daemon. There is no second process
+and no socket, which removes the whole failure class rather than treating one
+cause of it. The trade is a slower build with no compiler state reused between
+builds — a deliberate choice, since a build that intermittently will not start is
+worse than one that takes longer.
+
+**If you are seeing this error, your checkout predates that change.** Update it,
+then:
+
+```powershell
+.\tools\fix-kotlin-daemon.ps1     # clears stale daemon state; does not touch the repo
+.\gradlew assembleDebug
+```
+
+If you want the daemon's speed back on a machine where it works reliably,
+override it in `C:\Users\<you>\.gradle\gradle.properties` (machine-local, never
+committed):
+
+```properties
+kotlin.compiler.execution.strategy=daemon
+```
+
+and give it enough heap when you do — KSP (the Room compiler) runs *inside* that
+daemon, so it needs materially more than the old default.
 
 **Running on JDK 17.** The app is compiled and run by JDK 17 (that is what CI
 pins, and it is the minimum the Android Gradle Plugin 8.4.2 accepts). A newer
