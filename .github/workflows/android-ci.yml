@@ -129,14 +129,28 @@ jobs:
           STUDYTRACK_KEYSTORE_PASSWORD: ${{ secrets.STUDYTRACK_KEYSTORE_PASSWORD }}
         run: |
           set -euo pipefail
-          signer=$(rg --files "$ANDROID_HOME/build-tools" | rg '/apksigner$' | sort -V | tail -n 1)
-          expected=$(keytool -exportcert -keystore "$STUDYTRACK_KEYSTORE_PATH" -alias studytrack -storepass:env STUDYTRACK_KEYSTORE_PASSWORD | sha256sum | cut -d ' ' -f 1)
-          "$signer" verify --print-certs app/build/outputs/apk/debug/app-debug.apk > "$RUNNER_TEMP/studytrack-cert.txt"
-          actual=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "$RUNNER_TEMP/studytrack-cert.txt")
-          if [ "$actual" != "$expected" ]; then
-            echo "::error::APK signing certificate does not match the permanent update key."
-            exit 1
-          fi
+          signer=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n 1)
+          export STUDYTRACK_APKSIGNER="$signer"
+          python3 - <<'PYEOF'
+          import hashlib, os, re, subprocess
+          certificate = subprocess.check_output([
+              "keytool", "-exportcert", "-keystore", os.environ["STUDYTRACK_KEYSTORE_PATH"],
+              "-alias", "studytrack", "-storepass:env", "STUDYTRACK_KEYSTORE_PASSWORD"
+          ])
+          expected = hashlib.sha256(certificate).hexdigest()
+          result = subprocess.run([
+              os.environ["STUDYTRACK_APKSIGNER"], "verify", "--print-certs",
+              "app/build/outputs/apk/debug/app-debug.apk"
+          ], check=True, capture_output=True, text=True)
+          actual = {value.lower() for value in re.findall(
+              r"certificate SHA-256 digest:\s*([0-9a-fA-F]{64})", result.stdout
+          )}
+          print("Expected signing certificate SHA-256:", expected)
+          print("APK signing certificate SHA-256:", ", ".join(sorted(actual)) or "(not detected)")
+          if actual != {expected}:
+              print(result.stdout)
+              raise SystemExit("APK signing certificate does not match the permanent update key.")
+          PYEOF
 
       - name: Upload debug APK
         if: success()
