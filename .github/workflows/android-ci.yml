@@ -13,6 +13,7 @@ jobs:
     name: Assemble debug APK
     runs-on: ubuntu-latest
     env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       STUDYTRACK_API_BASE_URL: ${{ vars.STUDYTRACK_API_BASE_URL }}
     steps:
       - name: Checkout
@@ -209,8 +210,7 @@ jobs:
             echo "ANDROID_HOME=$ANDROID_HOME"
             echo "TEST_EXIT=$TEST_EXIT BUILD_EXIT=$BUILD_EXIT"
             echo
-            echo "=== generated BuildConfig.java ==="
-            cat app/build/generated/source/buildConfig/debug/com/studytrack/app/BuildConfig.java 2>/dev/null || echo "(not generated)"
+            echo "Generated BuildConfig omitted: it may contain private build credentials."
             echo
             echo "=== every failing test (parsed from the JUnit XML) ==="
             shopt -s nullglob
