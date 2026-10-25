@@ -39,10 +39,11 @@ android {
         minSdk = 26
         targetSdk = 34
         // CI supplies a monotonically increasing code for every workflow run.
-        versionCode = providers.environmentVariable("STUDYTRACK_VERSION_CODE")
+        val buildVersionCode = providers.environmentVariable("STUDYTRACK_VERSION_CODE")
             .orNull?.toIntOrNull() ?: 100000
-        versionName = "0.1." + (versionCode - 100000).coerceAtLeast(0)
-        require(versionCode in 1..2100000000) { "Invalid StudyTrack version code" }
+        require(buildVersionCode in 1..2100000000) { "Invalid StudyTrack version code" }
+        versionCode = buildVersionCode
+        versionName = "0.1." + (buildVersionCode - 100000).coerceAtLeast(0)
 
         // StudyTrack REST API base URL. Blank (the default) = LOCAL MODE:
         // subjects/tasks/progress live on-device and no backend is contacted.
