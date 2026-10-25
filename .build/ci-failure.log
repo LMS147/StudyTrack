@@ -1,0 +1,17 @@
+=== gradle exit context ===
+openjdk version "17.0.20.1" 2026-08-18
+OpenJDK Runtime Environment Temurin-17.0.20.1+1 (build 17.0.20.1+1)
+OpenJDK 64-Bit Server VM Temurin-17.0.20.1+1 (build 17.0.20.1+1, mixed mode, sharing)
+ANDROID_HOME=/usr/local/lib/android/sdk
+TEST_EXIT= BUILD_EXIT=
+
+=== generated BuildConfig.java ===
+(not generated)
+
+=== every failing test (parsed from the JUnit XML) ===
+
+=== unit test output (tail) ===
+(no test log)
+
+=== build output (tail) ===
+(no build log)
