@@ -22,6 +22,23 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Prepare permanent APK signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.STUDYTRACK_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.STUDYTRACK_KEYSTORE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEYSTORE_PASSWORD" ]; then
+            echo "::error::Set STUDYTRACK_KEYSTORE_BASE64 and STUDYTRACK_KEYSTORE_PASSWORD in repository Actions secrets. See docs/APK_UPDATES.md."
+            exit 1
+          fi
+          keystore_path="$RUNNER_TEMP/studytrack-update.jks"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$keystore_path"
+          chmod 600 "$keystore_path"
+          keytool -list -keystore "$keystore_path" -alias studytrack -storepass:env KEYSTORE_PASSWORD > /dev/null
+          echo "STUDYTRACK_KEYSTORE_PATH=$keystore_path" >> "$GITHUB_ENV"
+          echo "STUDYTRACK_VERSION_CODE=$((100000 + GITHUB_RUN_NUMBER))" >> "$GITHUB_ENV"
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -38,6 +55,8 @@ jobs:
           fi
 
       - name: Run unit tests
+        env:
+          STUDYTRACK_KEYSTORE_PASSWORD: ${{ secrets.STUDYTRACK_KEYSTORE_PASSWORD }}
         # Runs before the APK build: the per-account isolation rules are
         # asserted here against a real SQLite database (Robolectric), and a
         # cross-account leak is a worse failure than a compile error.
@@ -86,6 +105,8 @@ jobs:
           PYEOF
 
       - name: Assemble debug APK
+        env:
+          STUDYTRACK_KEYSTORE_PASSWORD: ${{ secrets.STUDYTRACK_KEYSTORE_PASSWORD }}
         run: |
           # Same errexit handling as the test step — without `set +e` the
           # diagnostic block below was unreachable on failure.
@@ -102,6 +123,20 @@ jobs:
             echo "::error::${FIRST_ERR:-Gradle build failed — see .build/ci-failure.log committed to this branch}"
           fi
           exit $status
+
+      - name: Verify APK uses the permanent signing certificate
+        env:
+          STUDYTRACK_KEYSTORE_PASSWORD: ${{ secrets.STUDYTRACK_KEYSTORE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          signer=$(rg --files "$ANDROID_HOME/build-tools" | rg '/apksigner$' | sort -V | tail -n 1)
+          expected=$(keytool -exportcert -keystore "$STUDYTRACK_KEYSTORE_PATH" -alias studytrack -storepass:env STUDYTRACK_KEYSTORE_PASSWORD | sha256sum | cut -d ' ' -f 1)
+          "$signer" verify --print-certs app/build/outputs/apk/debug/app-debug.apk > "$RUNNER_TEMP/studytrack-cert.txt"
+          actual=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "$RUNNER_TEMP/studytrack-cert.txt")
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::APK signing certificate does not match the permanent update key."
+            exit 1
+          fi
 
       - name: Upload debug APK
         if: success()
@@ -224,3 +259,7 @@ jobs:
           else
             echo "Nothing to commit."
           fi
+
+      - name: Remove temporary signing key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/studytrack-update.jks"

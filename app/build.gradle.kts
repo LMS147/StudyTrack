@@ -38,8 +38,11 @@ android {
         applicationId = "com.studytrack.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.1.0"
+        // CI supplies a monotonically increasing code for every workflow run.
+        versionCode = providers.environmentVariable("STUDYTRACK_VERSION_CODE")
+            .orNull?.toIntOrNull() ?: 100000
+        versionName = "0.1." + (versionCode - 100000).coerceAtLeast(0)
+        require(versionCode in 1..2100000000) { "Invalid StudyTrack version code" }
 
         // StudyTrack REST API base URL. Blank (the default) = LOCAL MODE:
         // subjects/tasks/progress live on-device and no backend is contacted.
@@ -50,6 +53,20 @@ android {
         buildConfigField("String", "GROK_API_KEY", "\"" + grokApiKeyProp + "\"")
         buildConfigField("String", "GROK_MODEL", "\"" + grokModelProp + "\"")
         buildConfigField("String", "GROK_BASE_URL", "\"" + grokBaseUrlProp + "\"")
+    }
+
+    // The same private key must sign every APK installed as an update.
+    // No passwords or keystore contents belong in source control.
+    signingConfigs {
+        getByName("debug") {
+            val updateKeystore = providers.environmentVariable("STUDYTRACK_KEYSTORE_PATH").orNull
+            if (!updateKeystore.isNullOrBlank()) {
+                storeFile = file(updateKeystore)
+                storePassword = providers.environmentVariable("STUDYTRACK_KEYSTORE_PASSWORD").get()
+                keyAlias = "studytrack"
+                keyPassword = storePassword
+            }
+        }
     }
 
     buildTypes {
