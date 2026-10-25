@@ -26,7 +26,11 @@ data class CalendarUiState(
     val subjectNames: Map<String, String> = emptyMap(),
     val loading: Boolean = true,
     val error: String? = null,
+    val classes: List<com.studytrack.app.data.local.entity.TimetableEntry> = emptyList(),
 ) {
+    val selectedDateClasses: List<com.studytrack.app.data.local.entity.TimetableEntry>
+        get() = classes.filter { com.studytrack.app.timetable.TimetableRules.occursOn(it, selectedDate) }
+            .sortedBy { it.startMinute }
     val selectedDateTasks: List<Task>
         get() = tasksByDate[selectedDate].orEmpty()
 }
@@ -40,12 +44,17 @@ class CalendarViewModel(
     private val calendarRepository: CalendarRepository,
     private val subjectRepository: SubjectRepository,
     private val taskRepository: com.studytrack.app.data.repository.TaskRepository,
+    private val timetableEntries: kotlinx.coroutines.flow.Flow<List<com.studytrack.app.data.local.entity.TimetableEntry>> =
+        kotlinx.coroutines.flow.flowOf(emptyList()),
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CalendarUiState())
     val state: StateFlow<CalendarUiState> = _state.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            timetableEntries.collect { classes -> _state.update { it.copy(classes = classes) } }
+        }
         // The calendar OBSERVES the live UID-scoped Room flow — a task saved
         // on any other screen (Add/Edit Task, AI assistant accept) appears
         // here, dots included, the moment Room emits. The old code took a
@@ -131,6 +140,7 @@ class CalendarViewModel(
                     ServiceLocator.calendarRepository,
                     ServiceLocator.subjectRepository,
                     ServiceLocator.taskRepository,
+                    ServiceLocator.timetableRepository.entries,
                 )
             }
         }

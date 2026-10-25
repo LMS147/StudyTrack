@@ -93,6 +93,7 @@
         android:id="@+id/calendarFragment"
         android:name="com.studytrack.app.calendar.CalendarFragment"
         android:label="@string/nav_calendar">
+        <action android:id="@+id/action_calendarFragment_to_timetableFragment" app:destination="@id/timetableFragment" />
 
         <action
             android:id="@+id/action_calendarFragment_to_taskDetailsFragment"
@@ -153,6 +154,8 @@
         android:id="@+id/settingsFragment"
         android:name="com.studytrack.app.profile.SettingsFragment"
         android:label="@string/settings_title" />
+
+    <fragment android:id="@+id/timetableFragment" android:name="com.studytrack.app.timetable.TimetableFragment" android:label="@string/timetable_title" />
 
     <!-- ====================================================== Task flows -->
 

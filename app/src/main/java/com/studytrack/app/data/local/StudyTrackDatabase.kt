@@ -47,6 +47,7 @@ import com.studytrack.app.data.local.entity.TaskEntity
         ProgressEntity::class,
         StudySessionEntity::class,
         AccountRecordEntity::class,
+        com.studytrack.app.data.local.entity.TimetableEntry::class,
     ],
     version = StudyTrackDatabase.VERSION,
     exportSchema = true,
@@ -59,43 +60,25 @@ abstract class StudyTrackDatabase : RoomDatabase() {
     abstract fun progressDao(): ProgressDao
     abstract fun studySessionDao(): StudySessionDao
     abstract fun accountDao(): AccountDao
+    abstract fun timetableDao(): com.studytrack.app.data.local.dao.TimetableDao
 
     companion object {
 
-        const val VERSION = 1
+        const val VERSION = 2
         private const val DATABASE_NAME = "studytrack.db"
 
         @Volatile
         private var instance: StudyTrackDatabase? = null
 
-        /**
-         * Template for the first future schema change, kept ready so the
-         * migration discipline is established from day one rather than invented
-         * under pressure after a release has shipped.
-         *
-         * It is dormant while [VERSION] is 1 (the filter below excludes it) and
-         * activates automatically when [VERSION] becomes 2. The pattern to copy
-         * for any later bump:
-         *
-         * 1. Change the entity.
-         * 2. Bump [VERSION].
-         * 3. Write `MIGRATION_<old>_<new>` with explicit SQL — never let Room
-         *    recreate the table for you.
-         * 4. Rebuild so the new `app/schemas/…/<new>.json` is generated, and
-         *    commit it.
-         * 5. Add a migration test covering the path.
-         *
-         * Declared *before* [ALL_MIGRATIONS] on purpose: Kotlin initializes
-         * object properties in declaration order and rejects a forward
-         * reference to a `val` declared later in the same object.
-         */
+        /** Add weekly schedules without modifying or deleting existing study data. */
         val MIGRATION_1_2: Migration = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // Additive changes only. A new column must be nullable or carry
-                // a DEFAULT, because SQLite rewrites every existing row.
-                db.execSQL(
-                    "ALTER TABLE tasks ADD COLUMN archivedAt INTEGER"
-                )
+                db.execSQL("""CREATE TABLE IF NOT EXISTS `timetable_entries` (
+                    `ownerUid` TEXT NOT NULL, `entryId` TEXT NOT NULL, `title` TEXT NOT NULL,
+                    `subjectId` TEXT, `dayOfWeek` INTEGER NOT NULL, `startMinute` INTEGER NOT NULL,
+                    `endMinute` INTEGER NOT NULL, `venue` TEXT NOT NULL, `lecturer` TEXT NOT NULL,
+                    `startsOn` TEXT NOT NULL, `endsOn` TEXT, PRIMARY KEY(`ownerUid`, `entryId`)
+                )""")
             }
         }
 

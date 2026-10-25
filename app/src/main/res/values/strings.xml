@@ -370,4 +370,26 @@
     <string name="groq_key_invalid">Enter a Groq API key beginning with gsk_, without spaces.</string>
     <string name="groq_key_save_error">Could not securely save the key. Please try again.</string>
     <string name="groq_remove_key">Remove device key</string>
+    <string name="timetable_title">Timetable</string>
+    <string name="timetable_add">Add class</string>
+    <string name="timetable_edit">Edit weekly class</string>
+    <string name="timetable_description">Your weekly classes, saved offline for this account. Tap a class to edit it. Classes also appear in Calendar.</string>
+    <string name="timetable_empty">No classes yet. Add your first weekly class to get started.</string>
+    <string name="timetable_class_title">Class title</string>
+    <string name="timetable_venue">Venue (optional)</string>
+    <string name="timetable_lecturer">Lecturer (optional)</string>
+    <string name="timetable_subject">Subject</string>
+    <string name="timetable_no_subject">No linked subject</string>
+    <string name="timetable_day">Repeats every</string>
+    <string name="timetable_start_time">Start time</string>
+    <string name="timetable_end_time">End time</string>
+    <string name="timetable_start_date">From date (inclusive)</string>
+    <string name="timetable_end_date">Until date (inclusive, optional)</string>
+    <string name="timetable_clear_end">Clear end date</string>
+    <string name="timetable_no_end">No end date</string>
+    <string name="timetable_term_format">Weekly · %1$s → %2$s</string>
+    <string name="timetable_delete_title">Delete weekly class?</string>
+    <string name="timetable_delete_message">This removes every occurrence of this class from your timetable and calendar. Tasks stay unchanged.</string>
+    <string name="timetable_save_error">Could not save this class. Please try again.</string>
+    <string name="calendar_day_summary">%1$s · %2$d classes · %3$d tasks</string>
 </resources>

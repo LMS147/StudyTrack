@@ -43,6 +43,7 @@ class CalendarFragment : Fragment() {
 
     private lateinit var gridAdapter: MonthGridAdapter
     private lateinit var taskAdapter: CalendarTaskAdapter
+    private lateinit var classAdapter: com.studytrack.app.timetable.TimetableAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,7 +70,13 @@ class CalendarFragment : Fragment() {
                 )
             },
         )
-        binding.dayTaskList.adapter = taskAdapter
+        classAdapter = com.studytrack.app.timetable.TimetableAdapter(false) {
+            com.studytrack.app.timetable.TimetableEditorDialog.edit(it).show(childFragmentManager, "class-editor")
+        }
+        binding.dayTaskList.adapter = androidx.recyclerview.widget.ConcatAdapter(classAdapter, taskAdapter)
+        binding.timetableButton.setOnClickListener {
+            findNavController().navigate(R.id.action_calendarFragment_to_timetableFragment)
+        }
         binding.dayTaskList.layoutManager = LinearLayoutManager(requireContext())
 
         binding.previousMonthButton.setOnClickListener { viewModel.previousMonth() }
@@ -132,14 +139,12 @@ class CalendarFragment : Fragment() {
         } else {
             DateTimeUtils.shortDate(DateTimeUtils.isoDate(selected))
         }
-        binding.selectedDateTitle.text = resources.getQuantityString(
-            R.plurals.calendar_task_count,
-            tasks.size,
-            dayLabel,
-            tasks.size,
-        )
-        binding.emptyDay.isVisible = tasks.isEmpty() && !state.loading
-        binding.loadingProgress.isVisible = state.loading && tasks.isEmpty()
+        val classes = state.selectedDateClasses
+        binding.selectedDateTitle.text = getString(R.string.calendar_day_summary, dayLabel, classes.size, tasks.size)
+        binding.emptyDay.isVisible = tasks.isEmpty() && classes.isEmpty() && !state.loading
+        binding.loadingProgress.isVisible = state.loading && tasks.isEmpty() && classes.isEmpty()
+        classAdapter.subjectNames = state.subjectNames
+        classAdapter.submitList(classes)
 
         val subjectNames = state.subjectNames
         taskAdapter.submitList(
@@ -165,7 +170,8 @@ class CalendarFragment : Fragment() {
                 date = date,
                 isToday = date == today,
                 isSelected = date == state.selectedDate,
-                dotColors = dayTasks.take(3).map { priorityDotColor(it) },
+                dotColors = (dayTasks.map { priorityDotColor(it) } +
+                    if (state.classes.any { com.studytrack.app.timetable.TimetableRules.occursOn(it, date) }) listOf(R.color.brand_primary) else emptyList()).take(3),
             )
             date = date.plusDays(1)
         }

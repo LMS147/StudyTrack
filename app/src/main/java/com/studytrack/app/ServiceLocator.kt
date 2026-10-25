@@ -215,6 +215,10 @@ object ServiceLocator {
             resolveAiBrain().taskAssistance(request)
     }
 
+    val timetableRepository: com.studytrack.app.data.repository.TimetableRepository by lazy {
+        com.studytrack.app.data.repository.TimetableRepository(database, currentAccount)
+    }
+
     val settingsRepository: SettingsRepository by lazy {
         SettingsRepository(appContext)
     }
