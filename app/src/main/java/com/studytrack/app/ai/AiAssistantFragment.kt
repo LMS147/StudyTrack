@@ -83,8 +83,9 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
                     viewModel.messages.collect { items ->
                         // The quick prompts are a starting point: once the
                         // conversation has begun they stop taking up space.
-                        binding.suggestionsScroll.isVisible =
-                            items.none { it is ChatItem.UserMessage }
+                        val hasConversation = items.any { it is ChatItem.UserMessage }
+                        binding.welcomePanel.isVisible = !hasConversation
+                        binding.chatList.isVisible = hasConversation
                         adapter.submitList(items) {
                             if (items.isNotEmpty()) {
                                 binding.chatList.scrollToPosition(items.lastIndex)

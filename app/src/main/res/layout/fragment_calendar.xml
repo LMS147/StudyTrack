@@ -32,8 +32,8 @@
 
             <ImageButton
                 android:id="@+id/previousMonthButton"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/cd_previous_month"
                 android:src="@drawable/ic_chevron_left"
@@ -53,8 +53,8 @@
 
             <ImageButton
                 android:id="@+id/nextMonthButton"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/cd_next_month"
                 android:src="@drawable/ic_chevron_right"
@@ -121,17 +121,41 @@
                 tools:itemCount="2"
                 tools:listitem="@layout/item_calendar_task" />
 
-            <TextView
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/emptyDay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="@dimen/spacing_md"
-                android:text="@string/empty_day"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="@color/text_secondary"
-                android:visibility="gone"
-                tools:visibility="gone" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:visibility="gone">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_lg">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/empty_day"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textColor="@color/text_primary" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:gravity="center"
+                        android:text="@string/calendar_empty_help"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="@color/text_secondary" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/emptyDayAddButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_md"
+                        android:text="@string/calendar_add_for_day" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
 
             <ProgressBar
                 android:id="@+id/loadingProgress"

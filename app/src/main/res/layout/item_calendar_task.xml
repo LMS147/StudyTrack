@@ -21,7 +21,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="@dimen/spacing_md">
+        android:paddingHorizontal="@dimen/spacing_md"
+        android:paddingVertical="18dp">
 
         <TextView
             android:id="@+id/calendarTaskIcon"
@@ -53,7 +54,7 @@
                 android:id="@+id/calendarTaskSubject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="6dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textAppearance="?attr/textAppearanceLabelMedium"

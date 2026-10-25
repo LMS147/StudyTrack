@@ -1,0 +1,55 @@
+<resources>
+    <style name="TextAppearance.StudyTrack.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+    <style name="TextAppearance.StudyTrack.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+    <style name="TextAppearance.StudyTrack.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="TextAppearance.StudyTrack.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="TextAppearance.StudyTrack.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="TextAppearance.StudyTrack.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="TextAppearance.StudyTrack.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="TextAppearance.StudyTrack.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="TextAppearance.StudyTrack.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="TextAppearance.StudyTrack.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="TextAppearance.StudyTrack.Navigation" parent="TextAppearance.StudyTrack.LabelSmall">
+        <item name="android:textSize">12sp</item>
+    </style>
+</resources>

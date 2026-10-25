@@ -349,4 +349,8 @@
     <string name="error_course_required">Enter your course or degree</string>
     <string name="error_year_required">Pick your year of study</string>
     <string name="error_password_needs_number">Include at least one number</string>
+    <string name="settings_title">Settings</string>
+    <string name="ai_welcome_title">What would you like to study?</string>
+    <string name="calendar_empty_help">Plan a study session or add a deadline for this date.</string>
+    <string name="calendar_add_for_day">Add task for this day</string>
 </resources>
