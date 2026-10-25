@@ -357,8 +357,17 @@
     <string name="ai_status_unavailable">Unavailable in this build</string>
     <string name="ai_unavailable_title">Assistant unavailable</string>
     <string name="ai_unavailable_message">AI assistance is not connected in this version. You can still create tasks and plan your studies in Tasks and Calendar.</string>
-    <string name="ai_connection">Connection</string>
+    <string name="ai_connection">AI settings</string>
     <string name="ai_connection_required">Connect your study assistant</string>
     <string name="ai_connection_help">Enter your StudyTrack backend HTTPS base address. It must support the authenticated study assistant API. Leave blank to use the build default.</string>
     <string name="ai_connection_invalid">Enter the HTTPS site root, without an API path, credentials, query or fragment.</string>
+    <string name="groq_settings_title">Groq AI settings</string>
+    <string name="groq_status_ready">Powered by Groq</string>
+    <string name="groq_status_required">Add your Groq key in AI settings</string>
+    <string name="groq_key_hint">Groq API key (gsk_…)</string>
+    <string name="groq_key_help">Your study assistant connects directly to Groq. Enter your own API key. It is encrypted on this device and is sent only to Groq to answer your requests.</string>
+    <string name="groq_key_saved_help">An AI key is configured. Leave blank to keep it, enter a replacement, or remove the device key. A key included in a personal local build remains available after removing a device key.</string>
+    <string name="groq_key_invalid">Enter a Groq API key beginning with gsk_, without spaces.</string>
+    <string name="groq_key_save_error">Could not securely save the key. Please try again.</string>
+    <string name="groq_remove_key">Remove device key</string>
 </resources>

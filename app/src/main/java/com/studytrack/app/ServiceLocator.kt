@@ -9,7 +9,6 @@ import com.studytrack.app.data.remote.ApiService
 import com.studytrack.app.data.remote.GrokClient
 import com.studytrack.app.data.remote.RetrofitClient
 import com.studytrack.app.data.repository.AiBrain
-import com.studytrack.app.data.repository.AiRepository
 import com.studytrack.app.data.repository.CalendarRepository
 import com.studytrack.app.data.repository.GrokAiRepository
 import com.studytrack.app.data.repository.OfflineFirstCalendarRepository
@@ -183,29 +182,30 @@ object ServiceLocator {
      * local.properties (BuildConfig.GROK_API_KEY), chat directly with the LLM;
      * otherwise use the StudyTrack backend endpoint.
      */
-    val aiBackendBaseUrl: String get() = com.studytrack.app.data.remote.AiBackendConfig.resolve(
-        settingsRepository.aiBackendBaseUrl, BuildConfig.AI_BASE_URL, RetrofitClient.BASE_URL,
-    )
+    val groqKeyStore: com.studytrack.app.data.repository.GroqKeyStore by lazy {
+        com.studytrack.app.data.repository.GroqKeyStore(appContext)
+    }
 
-    val isAiConfigured: Boolean get() = aiBackendBaseUrl.isNotBlank() || BuildConfig.GROK_API_KEY.isNotBlank()
+    val hasDeviceGroqKey: Boolean get() = groqKeyStore.read().isNotBlank()
+    val hasBundledAiKey: Boolean get() = BuildConfig.GROK_API_KEY.isNotBlank()
+    val isAiConfigured: Boolean get() = hasDeviceGroqKey || hasBundledAiKey
 
-    private var cachedAiUrl: String? = null
-    private var cachedBackendBrain: AiBrain? = null
+    private var cachedProviderKey: String? = null
+    private var cachedProviderBrain: AiBrain? = null
 
     private fun resolveAiBrain(): AiBrain {
-        val url = aiBackendBaseUrl
-        if (url.isNotBlank()) {
-            if (url != cachedAiUrl) {
-                cachedBackendBrain = AiRepository(RetrofitClient.createApiService(url))
-                cachedAiUrl = url
-            }
-            return requireNotNull(cachedBackendBrain)
+        val savedKey = groqKeyStore.read()
+        val key = com.studytrack.app.data.remote.GroqConnectionConfig.key(savedKey, BuildConfig.GROK_API_KEY)
+        if (key.isBlank()) return NoBrainConfigured
+        if (key != cachedProviderKey) {
+            // Device-entered keys always use Groq; never send them to a saved backend URL.
+            val endpoint = if (savedKey.isNotBlank()) AiEndpoints.GROQ else AiEndpoints.resolve(
+                key, BuildConfig.GROK_BASE_URL, BuildConfig.GROK_MODEL,
+            )
+            cachedProviderBrain = GrokAiRepository(GrokClient.apiService(key, endpoint.baseUrl), endpoint.model)
+            cachedProviderKey = key
         }
-        if (BuildConfig.GROK_API_KEY.isNotBlank()) {
-            val endpoint = AiEndpoints.resolve(BuildConfig.GROK_API_KEY, BuildConfig.GROK_BASE_URL, BuildConfig.GROK_MODEL)
-            return GrokAiRepository(GrokClient.apiService(BuildConfig.GROK_API_KEY, endpoint.baseUrl), endpoint.model)
-        }
-        return NoBrainConfigured
+        return requireNotNull(cachedProviderBrain)
     }
 
     val aiBrain: AiBrain = object : AiBrain {
@@ -238,7 +238,7 @@ object ServiceLocator {
             request: com.studytrack.app.data.model.TaskAssistanceRequest,
         ): com.studytrack.app.util.ApiResult<com.studytrack.app.data.model.TaskAssistanceResponse> =
             com.studytrack.app.util.ApiResult.Error(
-                "Connect your study assistant using the Connection button above, then try again."
+                "Add your Groq API key in AI settings to enable the study assistant."
             )
     }
 }

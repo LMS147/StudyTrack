@@ -1,11 +1,15 @@
-# AI connection in installed APKs
+# StudyTrack AI: direct Groq connection
 
-GitHub runners do not receive your laptop's ignored local.properties. UI changes must not disable the chat or remove the backend routing.
+The assistant runs in the Android app and calls Groq directly. A StudyTrack backend URL is not required for AI. Task backend/sync settings remain independent.
 
-The assistant now resolves its hosted backend in this order: the Connection setting saved on the device, the ai.baseUrl / STUDYTRACK_AI_BASE_URL build setting, then the existing api.baseUrl / STUDYTRACK_API_BASE_URL app backend. Existing local grok.apiKey development builds still work when no hosted backend is configured.
+## Installed GitHub APKs
 
-For GitHub APK builds, add STUDYTRACK_AI_BASE_URL under repository Settings → Secrets and variables → Actions → Variables (for example, your real HTTPS site root, with a trailing slash). STUDYTRACK_API_BASE_URL remains available if the same server also handles task sync. The AI-only variable does not turn local task storage into remote sync. The workflow also accepts STUDYTRACK_AI_BASE_URL as a secret.
+Open AI → AI settings and enter your own Groq API key (gsk_…). The key is encrypted using Android Keystore AES-GCM and stored in the app's no-backup directory. It persists across ordinary app updates with the same application ID/signing key. It is not exported, displayed again, logged, or committed to GitHub. Removing the app clears it. Remove device key clears only the saved override.
 
-An already installed APK can use AI → Connection to save your real HTTPS backend site root. The change takes effect on the next request, without reinstalling or restarting. Clearing the override restores the build default. Only use your trusted StudyTrack backend: requests use the existing Firebase Bearer authentication. The server must implement POST /api/ai/task-assistance using the contract in API_CONTRACT.md; this is not a field for a Groq or xAI provider URL.
+The next request uses the new key without restarting. Device-entered keys always go to https://api.groq.com/openai/v1/chat/completions with Groq Bearer authentication, not Firebase or the obsolete backend setting. Model selection uses the existing AiEndpoints.GROQ default. A configured status does not claim the key has been validated with a live request.
 
-Do not add provider API keys to a public APK. Keep them on the backend. The backend address and live provider credentials were not supplied in this session, so a live AI reply cannot be verified until a real server is configured. The status text describes configuration, not a health check.
+## Existing local development builds
+
+The existing grok.apiKey, grok.baseUrl and grok.model fields in ignored local.properties still work as a fallback when no device key is saved. Do not share a public APK containing a provider key: keys compiled into an APK are extractable. GitHub runners do not have your laptop's ignored local.properties, so enter your own key in AI settings for downloaded builds. Never paste real API keys into chat, issues or source control.
+
+The former AI-backend URL dialog and AI-only CI URL variable were based on an incorrect assumption and have been removed. Existing task REST APIs and Firebase sign-in are preserved. Live Groq validation requires the owner to enter a real key on their device; no live key is available to this session.
