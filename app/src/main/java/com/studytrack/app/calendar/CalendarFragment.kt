@@ -85,6 +85,8 @@ class CalendarFragment : Fragment() {
             )
         }
 
+        binding.emptyDayAddButton.setOnClickListener { binding.addTaskFab.performClick() }
+
         setupWeekdayHeader()
 
         viewLifecycleOwner.lifecycleScope.launch {

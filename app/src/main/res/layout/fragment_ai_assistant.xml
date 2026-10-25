@@ -50,8 +50,59 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/welcomePanel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_lg">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/ai_welcome_title"
+                    android:textAppearance="?attr/textAppearanceTitleLarge"
+                    android:textColor="@color/text_primary" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:layout_marginBottom="@dimen/spacing_md"
+                    android:gravity="center"
+                    android:text="@string/ai_welcome_message"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="@color/text_secondary" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/suggestionDueWeek"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/ai_suggestion_due_this_week" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/suggestionPrioritise"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/ai_suggestion_prioritise" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/suggestionBreakDown"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/ai_suggestion_break_down" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chatList"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
@@ -60,45 +111,6 @@
             tools:itemCount="2"
             tools:listitem="@layout/item_message_ai" />
     </FrameLayout>
-
-    <!-- Quick prompts: one tap sends the question -->
-    <HorizontalScrollView
-        android:id="@+id/suggestionsScroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:paddingHorizontal="@dimen/spacing_md"
-        android:paddingBottom="@dimen/spacing_xs"
-        android:scrollbars="none">
-
-        <com.google.android.material.chip.ChipGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:chipSpacingHorizontal="@dimen/spacing_sm"
-            app:singleLine="true">
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/suggestionDueWeek"
-                style="@style/Widget.Material3.Chip.Assist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ai_suggestion_due_this_week" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/suggestionPrioritise"
-                style="@style/Widget.Material3.Chip.Assist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ai_suggestion_prioritise" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/suggestionBreakDown"
-                style="@style/Widget.Material3.Chip.Assist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ai_suggestion_break_down" />
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -112,6 +124,7 @@
 
         <EditText
             android:id="@+id/messageInput"
+            android:minHeight="48dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -134,7 +147,7 @@
             android:contentDescription="@string/cd_send_message"
             android:src="@drawable/ic_send"
             app:backgroundTint="@color/brand_primary"
-            app:fabCustomSize="44dp"
+            app:fabCustomSize="48dp"
             app:maxImageSize="20dp"
             app:tint="@color/white" />
     </LinearLayout>

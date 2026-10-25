@@ -60,7 +60,7 @@ object TaskRowBinder {
         binding.taskCompletedIcon.imageTintList = ColorStateList.valueOf(
             ContextCompat.getColor(
                 context,
-                if (task.completed) R.color.success else R.color.divider
+                if (task.completed) R.color.success else R.color.text_secondary
             )
         )
         binding.taskCompletedIcon.setOnClickListener { onToggleComplete(task) }

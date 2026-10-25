@@ -10,6 +10,20 @@
       Mirrored by values-night/themes.xml — keep the two in sync.
     -->
     <style name="Theme.StudyTrack" parent="Theme.Material3.DayNight.NoActionBar">
+
+        <!-- Use a readable app font even on devices with a decorative system font. -->
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.StudyTrack.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.StudyTrack.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.StudyTrack.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.StudyTrack.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.StudyTrack.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.StudyTrack.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.StudyTrack.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.StudyTrack.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.StudyTrack.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.StudyTrack.LabelSmall</item>
         <!-- Brand -->
         <item name="colorPrimary">@color/brand_primary</item>
         <item name="colorOnPrimary">@color/brand_on_primary</item>
@@ -55,6 +69,8 @@
         <item name="itemIconTint">@color/nav_item_tint</item>
         <item name="itemTextColor">@color/nav_item_tint</item>
         <item name="itemActiveIndicatorStyle">@style/Widget.StudyTrack.BottomNav.Indicator</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.StudyTrack.Navigation</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.StudyTrack.Navigation</item>
         <item name="labelVisibilityMode">labeled</item>
     </style>
 
