@@ -55,13 +55,13 @@
     <string name="section_due_today">DUE TODAY</string>
     <string name="section_overdue">Overdue</string>
     <string name="section_upcoming">UPCOMING — NEXT 7 DAYS</string>
-    <string name="empty_due_today">Nothing due today — enjoy! 🎉</string>
+    <string name="empty_due_today">No tasks due today.</string>
     <string name="empty_overdue">No overdue tasks. Nice work!</string>
     <string name="empty_upcoming">No upcoming deadlines yet.</string>
     <string name="cd_add_task">Add task</string>
-    <string name="greeting_morning">Good morning, %1$s 👋</string>
-    <string name="greeting_afternoon">Good afternoon, %1$s 👋</string>
-    <string name="greeting_evening">Good evening, %1$s 👋</string>
+    <string name="greeting_morning">Good morning, %1$s </string>
+    <string name="greeting_afternoon">Good afternoon, %1$s </string>
+    <string name="greeting_evening">Good evening, %1$s </string>
     <string name="greeting_night">Burning the midnight oil, %1$s?</string>
     <string name="greeting_fallback_name">there</string>
 
@@ -199,7 +199,7 @@
     <string name="suggestion_accept">Accept</string>
     <string name="suggestion_edit">Edit</string>
     <string name="suggestion_reject">Reject</string>
-    <string name="suggestion_accepted">Added to your calendar ✓</string>
+    <string name="suggestion_accepted">Added to your calendar </string>
     <string name="suggestion_rejected">Rejected</string>
     <string name="suggestion_needs_date">No due date yet — tap Accept to choose one.</string>
     <string name="suggestion_set_date">Set date</string>
@@ -213,7 +213,7 @@
     <string name="chat_added_confirmation">Added to your calendar for %1$s</string>
     <string name="chat_added_with_subtasks">Added to your calendar for %1$s — plus %2$d subtask(s)</string>
     <string name="ai_empty_reply">I couldn\'t come up with anything for that — could you rephrase or add a bit more detail?</string>
-    <string name="chat_added_via_editor">Added via the task editor ✓</string>
+    <string name="chat_added_via_editor">Added via the task editor </string>
     <string name="local_mode_label">On-device storage (local mode)</string>
     <string name="label_due_short">Due</string>
 
@@ -221,8 +221,8 @@
     <string name="profile_stat_tasks_done">Tasks Done</string>
     <string name="profile_stat_subjects">Subjects</string>
     <string name="profile_stat_streak">Streak</string>
-    <string name="profile_streak_format">%1$dd 🔥</string>
-    <string name="profile_level_pill_format">🎖 Level %1$d Scholar</string>
+    <string name="profile_streak_format">%1$d days</string>
+    <string name="profile_level_pill_format">Level %1$d Scholar</string>
     <string name="profile_xp_pill_format">⭐ %1$d XP</string>
     <string name="profile_value_empty">Not set</string>
     <string name="profile_footer_format">StudyTrack v%1$s · OPSC6312 Group Project</string>
@@ -332,7 +332,7 @@
     <string name="register_step_personal">PERSONAL</string>
     <string name="register_step_academic">ACADEMIC</string>
     <string name="register_step_security">SECURITY</string>
-    <string name="register_step_done_format">✓ %1$s</string>
+    <string name="register_step_done_format"> %1$s</string>
     <string name="register_have_account">Already have an account?</string>
     <string name="year_1">1st Year</string>
     <string name="year_2">2nd Year</string>
@@ -353,4 +353,8 @@
     <string name="ai_welcome_title">What would you like to study?</string>
     <string name="calendar_empty_help">Plan a study session or add a deadline for this date.</string>
     <string name="calendar_add_for_day">Add task for this day</string>
+    <string name="ai_status_ready">Study planning assistant</string>
+    <string name="ai_status_unavailable">Unavailable in this build</string>
+    <string name="ai_unavailable_title">Assistant unavailable</string>
+    <string name="ai_unavailable_message">AI assistance is not connected in this version. You can still create tasks and plan your studies in Tasks and Calendar.</string>
 </resources>

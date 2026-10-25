@@ -158,7 +158,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/nameField"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPersonName|textCapWords"
                     android:maxLines="1" />
@@ -184,7 +185,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/emailField"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
                     android:maxLines="1" />
@@ -210,7 +212,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/studentIdField"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
                     android:maxLines="1" />
@@ -254,7 +257,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/institutionField"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapWords"
                     android:maxLines="1" />
@@ -280,7 +284,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/courseField"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapWords"
                     android:maxLines="1" />
@@ -306,7 +311,8 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/year1"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/year_1" />
@@ -314,7 +320,8 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/year2"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/year_2" />
@@ -322,7 +329,8 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/year3"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/year_3" />
@@ -339,7 +347,8 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/year4"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/year_4" />
@@ -347,7 +356,8 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/yearHonours"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/year_honours" />
@@ -355,7 +365,8 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/yearMasters"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/year_masters" />
@@ -400,7 +411,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/passwordField"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
                     android:maxLines="1" />
@@ -427,7 +439,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/confirmField"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
                     android:maxLines="1" />

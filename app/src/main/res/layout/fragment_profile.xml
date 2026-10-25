@@ -84,17 +84,19 @@
                     android:textColor="@color/white"
                     tools:text="LM" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/editAvatarButton"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_gravity="bottom|end"
                     android:background="@drawable/bg_avatar_badge"
                     android:clickable="true"
                     android:contentDescription="@string/cd_edit_profile"
                     android:focusable="true"
                     android:gravity="center"
-                    android:text="✏️"
+                    android:src="@drawable/ic_edit"
+                    android:padding="12dp"
+                    app:tint="@color/brand_on_container"
                     android:textSize="12sp" />
             </FrameLayout>
 
@@ -139,7 +141,7 @@
                     android:paddingVertical="3dp"
                     android:textAppearance="?attr/textAppearanceLabelMedium"
                     android:textColor="@color/brand_on_container"
-                    tools:text="🎖 Level 4 Scholar" />
+                    tools:text=" Level 4 Scholar" />
 
                 <TextView
                     android:id="@+id/xpPill"
@@ -265,7 +267,7 @@
                             android:layout_height="wrap_content"
                             android:textAppearance="?attr/textAppearanceHeadlineSmall"
                             android:textColor="@color/priority_high"
-                            tools:text="5d 🔥" />
+                            tools:text="5d " />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -313,7 +315,8 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/editPersonalButton"
                             style="?attr/materialButtonOutlinedStyle"
-                            android:layout_width="wrap_content"
+                            android:fontFamily="@font/studytrack_regular"
+        android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:minWidth="0dp"
                             android:text="@string/action_edit" />
@@ -579,7 +582,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/settingsButton"
                 style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
+                android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_md"
                 android:minHeight="48dp"
@@ -815,7 +819,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/logoutButton"
                 style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
+                android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_md"
                 android:paddingVertical="@dimen/spacing_sm"

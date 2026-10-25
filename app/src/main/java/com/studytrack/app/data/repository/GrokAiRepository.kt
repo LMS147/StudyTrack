@@ -53,13 +53,11 @@ class GrokAiRepository(
         )
 
         if (!response.isSuccessful) {
-            val body = response.errorBody()?.string().orEmpty().take(400)
+            response.errorBody()?.close()
             val message = when (response.code()) {
-                401, 403 ->
-                    "Grok rejected the API key (${response.code()}). " +
-                        "Check grok.apiKey in local.properties."
-                429 -> "Grok is rate-limiting you (429). Wait a moment and try again."
-                else -> "Grok API error ${response.code()}: $body"
+                401, 403 -> "The assistant could not connect. Please contact support."
+                429 -> "The assistant is busy. Please try again shortly."
+                else -> "The assistant is temporarily unavailable. Please try again later."
             }
             // IllegalStateException flows through friendlyMessage() verbatim
             // (unlike IOException, which is mapped to a generic network error).

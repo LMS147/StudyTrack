@@ -358,7 +358,7 @@ class AiAssistantViewModel(
         append(
             ChatItem.AiText(
                 nextId("sys"),
-                "✓ \"${item.suggestion.title}\" — $addedViaEditorText",
+                "\"${item.suggestion.title}\" — $addedViaEditorText",
             )
         )
     }

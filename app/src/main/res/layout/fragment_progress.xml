@@ -90,10 +90,13 @@
                             tools:text="Level 4 Scholar" />
                     </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🏅"
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_badge"
+                        android:padding="4dp"
+                        android:contentDescription="@null"
+                        app:tint="@color/brand_secondary"
                         android:textSize="30sp" />
                 </LinearLayout>
 

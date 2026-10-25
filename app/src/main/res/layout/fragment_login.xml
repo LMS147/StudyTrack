@@ -64,7 +64,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/emailField"
-                android:layout_width="match_parent"
+                android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
                 android:maxLines="1" />
@@ -92,7 +93,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/passwordField"
-                android:layout_width="match_parent"
+                android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
                 android:maxLines="1" />
@@ -170,7 +172,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/googleButton"
                 style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
+                android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingVertical="12dp"
@@ -182,7 +185,8 @@
                 android:id="@+id/microsoftButton"
                 android:visibility="gone"
                 style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
+                android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_sm"
                 android:layout_weight="1"

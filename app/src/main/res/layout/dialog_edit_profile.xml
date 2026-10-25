@@ -14,7 +14,8 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/fullNameField"
-            android:layout_width="match_parent"
+            android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:maxLines="1" />
@@ -29,7 +30,8 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/studentIdField"
-            android:layout_width="match_parent"
+            android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
             android:maxLines="1" />
@@ -44,7 +46,8 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/institutionField"
-            android:layout_width="match_parent"
+            android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
             android:maxLines="1" />
@@ -59,7 +62,8 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/courseField"
-            android:layout_width="match_parent"
+            android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
             android:maxLines="1" />
@@ -74,7 +78,8 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/yearField"
-            android:layout_width="match_parent"
+            android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
             android:maxLines="1" />

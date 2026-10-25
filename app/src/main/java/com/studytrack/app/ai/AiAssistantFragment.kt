@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.studytrack.app.ServiceLocator
 import com.studytrack.app.R
 import com.studytrack.app.data.model.TaskSuggestion
 import com.studytrack.app.data.remote.RetrofitClient
@@ -54,7 +55,18 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
 
         adapter = ChatAdapter(this)
         binding.chatList.adapter = adapter
-        (binding.chatList.layoutManager as LinearLayoutManager).stackFromEnd = true
+        (binding.chatList.layoutManager as LinearLayoutManager).stackFromEnd = false
+
+        val aiAvailable = ServiceLocator.isAiConfigured
+        binding.assistantStatus.setText(if (aiAvailable) R.string.ai_status_ready else R.string.ai_status_unavailable)
+        binding.assistantStatusDot.isVisible = false
+        binding.messageComposer.isVisible = aiAvailable
+        listOf(binding.suggestionDueWeek, binding.suggestionPrioritise, binding.suggestionBreakDown)
+            .forEach { it.isVisible = aiAvailable }
+        if (!aiAvailable) {
+            binding.welcomeTitle.setText(R.string.ai_unavailable_title)
+            binding.welcomeDescription.setText(R.string.ai_unavailable_message)
+        }
 
         binding.sendButton.setOnClickListener { sendCurrentInput() }
 
@@ -83,7 +95,7 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
                     viewModel.messages.collect { items ->
                         // The quick prompts are a starting point: once the
                         // conversation has begun they stop taking up space.
-                        val hasConversation = items.any { it is ChatItem.UserMessage }
+                        val hasConversation = aiAvailable && items.any { it is ChatItem.UserMessage }
                         binding.welcomePanel.isVisible = !hasConversation
                         binding.chatList.isVisible = hasConversation
                         adapter.submitList(items) {
@@ -110,7 +122,7 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
                 savedStateHandle.remove<Any>(NavResultKeys.AI_SUGGESTION_CREATED)
             }
 
-        viewModel.start(
+        if (aiAvailable) viewModel.start(
             welcomeText = getString(R.string.ai_welcome_message),
             emptyReplyText = getString(R.string.ai_empty_reply),
             addedViaEditorText = getString(R.string.chat_added_via_editor),
