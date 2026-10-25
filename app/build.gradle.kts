@@ -26,7 +26,7 @@ val apiBaseUrlProp: String = localProperty("api.baseUrl", System.getenv("STUDYTR
 // infers the endpoint and a sensible model from the API key's prefix
 // (gsk_ -> Groq, otherwise xAI) via AiEndpoints.resolve(). Blank is what
 // makes a single-line `grok.apiKey=` config just work.
-val grokApiKeyProp: String = localProperty("grok.apiKey", "")
+val grokApiKeyProp: String = localProperty("grok.apiKey", System.getenv("GROQ_API_KEY").orEmpty().trim())
 val grokModelProp: String = localProperty("grok.model", "")
 val grokBaseUrlProp: String = localProperty("grok.baseUrl", "")
 
