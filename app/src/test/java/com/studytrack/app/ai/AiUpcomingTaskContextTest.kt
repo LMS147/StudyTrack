@@ -114,10 +114,16 @@ class AiUpcomingTaskContextTest {
         val brain = CapturingBrain()
         val vm = newViewModel(brain)
         // Wait until the repositories' live flows have the rows (the VM reads
-        // both `.value` snapshots when it builds the request).
+        // both `.value` snapshots when it builds the request). Row count alone
+        // can match the earlier insert emission before completion is observed.
         assertTrue(
             "task repository never observed the created tasks",
-            pumpUntil { taskRepo.tasks.value.size == 3 && subjectRepo.subjects.value.isNotEmpty() },
+            pumpUntil {
+                val tasks = taskRepo.tasks.value
+                tasks.size == 3 &&
+                    tasks.any { it.title == "Already done" && it.completed } &&
+                    subjectRepo.subjects.value.isNotEmpty()
+            },
         )
 
         vm.start(
