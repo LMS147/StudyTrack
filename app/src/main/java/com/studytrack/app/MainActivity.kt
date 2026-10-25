@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
         navController.setGraph(graph, null)
 
         binding.bottomNav.setupWithNavController(navController)
+        binding.bottomNav.setItemActiveIndicatorEnabled(false)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // Bottom nav is only visible on the six top-level destinations

@@ -21,7 +21,8 @@ fun localProperty(name: String, fallback: String): String =
 
 // Values for BuildConfig fields, computed once (plain concatenation keeps the
 // buildConfigField arguments free of nested string templates).
-val apiBaseUrlProp: String = localProperty("api.baseUrl", "")
+val apiBaseUrlProp: String = localProperty("api.baseUrl", System.getenv("STUDYTRACK_API_BASE_URL").orEmpty())
+val aiBaseUrlProp: String = localProperty("ai.baseUrl", System.getenv("STUDYTRACK_AI_BASE_URL").orEmpty())
 // Blank by default. When grok.baseUrl / grok.model are left blank the app
 // infers the endpoint and a sensible model from the API key's prefix
 // (gsk_ -> Groq, otherwise xAI) via AiEndpoints.resolve(). Blank is what
@@ -47,6 +48,7 @@ android {
 
         // StudyTrack REST API base URL. Blank (the default) = LOCAL MODE:
         // subjects/tasks/progress live on-device and no backend is contacted.
+        buildConfigField("String", "AI_BASE_URL", "\"" + aiBaseUrlProp + "\"")
         buildConfigField("String", "API_BASE_URL", "\"" + apiBaseUrlProp + "\"")
 
         // Direct LLM ("AI brain") configuration. When GROK_API_KEY is blank

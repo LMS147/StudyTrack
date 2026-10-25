@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/spacing_md"
     android:paddingTop="@dimen/spacing_md">
 
     <!-- Purple accent bar before the section title, as in the design -->

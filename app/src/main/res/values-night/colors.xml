@@ -7,23 +7,23 @@
     -->
 
     <!-- Brand -->
-    <color name="brand_primary">#6C5CE7</color>
+    <color name="brand_primary">#7062F4</color>
     <color name="brand_primary_dark">#5B4BD6</color>
     <color name="brand_on_primary">#FFFFFF</color>
-    <color name="brand_container">#2A2550</color>
-    <color name="brand_on_container">#C7BFFF</color>
-    <color name="brand_secondary">#8B7CF6</color>
+    <color name="brand_container">#242244</color>
+    <color name="brand_on_container">#B6AFFF</color>
+    <color name="brand_secondary">#8C82FF</color>
 
     <!-- Surfaces & text -->
-    <color name="background">#0D0E1A</color>
-    <color name="surface_card">#171833</color>
-    <color name="surface_nav">#12132A</color>
-    <color name="surface_sunken">#1F2140</color>
-    <color name="surface_bubble_ai">#1C1E38</color>
-    <color name="text_primary">#F2F3FA</color>
-    <color name="text_secondary">#B7BDD4</color>
+    <color name="background">#080B12</color>
+    <color name="surface_card">#171D2D</color>
+    <color name="surface_nav">#080B12</color>
+    <color name="surface_sunken">#1D2435</color>
+    <color name="surface_bubble_ai">#171D2D</color>
+    <color name="text_primary">#F5F6FA</color>
+    <color name="text_secondary">#94A3BF</color>
     <color name="white">#FFFFFF</color>
-    <color name="divider">#2A2C48</color>
+    <color name="divider">#2A3141</color>
 
     <!-- Priority (bright foregrounds, deep tinted containers) -->
     <color name="priority_high">#FF6B81</color>
@@ -39,8 +39,8 @@
     <color name="overdue_red">#FF6B81</color>
 
     <!-- Level/XP banner gradient (Home + Progress) -->
-    <color name="level_gradient_start">#7C3AED</color>
-    <color name="level_gradient_end">#4C3FBF</color>
+    <color name="level_gradient_start">#25214F</color>
+    <color name="level_gradient_end">#1E2538</color>
 
     <!-- AI accents -->
     <color name="ai_gradient_start">#7C3AED</color>

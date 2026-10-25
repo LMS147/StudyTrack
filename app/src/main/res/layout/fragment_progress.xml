@@ -105,7 +105,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_md"
-                    app:indicatorColor="@color/white"
+                    app:indicatorColor="@color/brand_secondary"
                     app:trackColor="@color/on_level_gradient_track"
                     app:trackCornerRadius="4dp"
                     app:trackThickness="8dp" />
