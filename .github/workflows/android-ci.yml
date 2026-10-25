@@ -129,7 +129,7 @@ jobs:
           STUDYTRACK_KEYSTORE_PASSWORD: ${{ secrets.STUDYTRACK_KEYSTORE_PASSWORD }}
         run: |
           set -euo pipefail
-          signer=$(rg --files "$ANDROID_HOME/build-tools" | rg '/apksigner$' | sort -V | tail -n 1)
+          signer=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n 1)
           expected=$(keytool -exportcert -keystore "$STUDYTRACK_KEYSTORE_PATH" -alias studytrack -storepass:env STUDYTRACK_KEYSTORE_PASSWORD | sha256sum | cut -d ' ' -f 1)
           "$signer" verify --print-certs app/build/outputs/apk/debug/app-debug.apk > "$RUNNER_TEMP/studytrack-cert.txt"
           actual=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "$RUNNER_TEMP/studytrack-cert.txt")
