@@ -51,7 +51,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/titleField"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapSentences"
                     android:maxLines="2" />
@@ -67,7 +68,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/descriptionField"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine|textCapSentences"
                     android:minLines="2" />
@@ -114,7 +116,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/dueDateField"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
@@ -134,7 +137,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/dueTimeField"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
@@ -160,7 +164,8 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/priorityLow"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/priority_low" />
@@ -168,7 +173,8 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/priorityMedium"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/priority_medium" />
@@ -176,7 +182,8 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/priorityHigh"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/priority_high" />
@@ -208,7 +215,8 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/reminderDateField"
-                        android:layout_width="match_parent"
+                        android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:focusable="false"
@@ -228,7 +236,8 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/reminderTimeField"
-                        android:layout_width="match_parent"
+                        android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:focusable="false"

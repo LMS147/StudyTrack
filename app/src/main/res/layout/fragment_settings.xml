@@ -374,7 +374,8 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/aiPriorityLow"
                             style="?attr/materialButtonOutlinedStyle"
-                            android:layout_width="0dp"
+                            android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/priority_low" />
@@ -382,7 +383,8 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/aiPriorityMedium"
                             style="?attr/materialButtonOutlinedStyle"
-                            android:layout_width="0dp"
+                            android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/priority_medium" />
@@ -390,7 +392,8 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/aiPriorityHigh"
                             style="?attr/materialButtonOutlinedStyle"
-                            android:layout_width="0dp"
+                            android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/priority_high" />

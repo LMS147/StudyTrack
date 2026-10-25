@@ -224,7 +224,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/editButton"
                 style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
+                android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/action_edit" />
@@ -232,7 +233,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/deleteButton"
                 style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
+                android:fontFamily="@font/studytrack_regular"
+        android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_sm"
                 android:layout_weight="1"
@@ -265,7 +267,8 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/aiBreakDownButton"
                     style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
                     android:text="@string/ai_shortcut_break_down"
@@ -276,7 +279,8 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/aiStudyPlanButton"
                     style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
                     android:text="@string/ai_shortcut_study_plan"
@@ -287,7 +291,8 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/aiExplainButton"
                     style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
                     android:text="@string/ai_shortcut_explain"

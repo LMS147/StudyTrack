@@ -15,8 +15,8 @@
 
     <!--
       Shared task row (Dashboard / Tasks / Subject detail):
-        [✓]  Title                                  [High]
-             Subject  📄 Assignment                  Today
+        []  Title                                  [High]
+             Subject   Assignment                  Today
     -->
     <LinearLayout
         android:layout_width="match_parent"

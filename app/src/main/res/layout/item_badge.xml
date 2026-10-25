@@ -19,12 +19,13 @@
         android:paddingHorizontal="@dimen/spacing_xs"
         android:paddingVertical="@dimen/spacing_md">
 
-        <TextView
-            android:id="@+id/badgeEmoji"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="26sp"
-            tools:text="🔥" />
+        <ImageView
+            android:id="@+id/badgeIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_badge"
+            app:tint="@color/brand_secondary" />
 
         <TextView
             android:id="@+id/badgeLabel"

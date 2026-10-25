@@ -52,7 +52,7 @@ object TaskRowBinder {
 
         // Type is always shown (icon + label) so a row is readable even when
         // it belongs to no subject yet.
-        binding.taskTypeLabel.text = "${task.taskType.emoji} ${task.taskType.label}"
+        binding.taskTypeLabel.text = task.taskType.label
 
         binding.taskCompletedIcon.setImageResource(
             if (task.completed) R.drawable.ic_check_circle else R.drawable.ic_radio_unchecked

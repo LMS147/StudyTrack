@@ -54,7 +54,7 @@
                         android:layout_marginTop="2dp"
                         android:textAppearance="?attr/textAppearanceHeadlineSmall"
                         android:textColor="@color/text_primary"
-                        tools:text="Good morning, Lufuno 👋" />
+                        tools:text="Good morning, Lufuno " />
                 </LinearLayout>
 
                 <TextView
@@ -96,10 +96,13 @@
                         android:textColor="@color/white"
                         tools:text="LEVEL 4 SCHOLAR" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🏅"
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_badge"
+                        android:padding="4dp"
+                        android:contentDescription="@null"
+                        app:tint="@color/brand_secondary"
                         android:textSize="24sp" />
                 </LinearLayout>
 
@@ -174,10 +177,13 @@
                         android:orientation="vertical"
                         android:paddingVertical="@dimen/spacing_md">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="📋"
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_calendar"
+                        android:padding="4dp"
+                        android:contentDescription="@null"
+                        app:tint="@color/brand_secondary"
                             android:textSize="16sp" />
 
                         <TextView
@@ -217,10 +223,13 @@
                         android:orientation="vertical"
                         android:paddingVertical="@dimen/spacing_md">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="⚠️"
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_warning"
+                        android:padding="4dp"
+                        android:contentDescription="@null"
+                        app:tint="@color/brand_secondary"
                             android:textSize="16sp" />
 
                         <TextView
@@ -260,10 +269,13 @@
                         android:orientation="vertical"
                         android:paddingVertical="@dimen/spacing_md">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="✅"
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_check_circle"
+                        android:padding="4dp"
+                        android:contentDescription="@null"
+                        app:tint="@color/brand_secondary"
                             android:textSize="16sp" />
 
                         <TextView

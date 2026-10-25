@@ -7,8 +7,13 @@
     <style name="Theme.StudyTrack" parent="Theme.Material3.DayNight.NoActionBar">
 
         <!-- Use a readable app font even on devices with a decorative system font. -->
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="fontFamily">sans-serif</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.StudyTrack.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.StudyTrack.HeadlineMedium</item>
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.StudyTrack.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.StudyTrack.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.StudyTrack.DisplaySmall</item>
+        <item name="android:fontFamily">@font/studytrack_regular</item>
+        <item name="fontFamily">@font/studytrack_regular</item>
         <item name="textAppearanceHeadlineSmall">@style/TextAppearance.StudyTrack.HeadlineSmall</item>
         <item name="textAppearanceTitleLarge">@style/TextAppearance.StudyTrack.TitleLarge</item>
         <item name="textAppearanceTitleMedium">@style/TextAppearance.StudyTrack.TitleMedium</item>

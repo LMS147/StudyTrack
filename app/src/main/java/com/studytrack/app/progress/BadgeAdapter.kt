@@ -29,7 +29,7 @@ class BadgeAdapter : ListAdapter<BadgeUiModel, BadgeAdapter.ViewHolder>(DIFF) {
 
         fun bind(item: BadgeUiModel) {
             val context = binding.root.context
-            binding.badgeEmoji.text = item.emoji
+            binding.badgeIcon.setImageResource(item.iconRes)
             binding.badgeLabel.text = item.label
 
             val (surface, stroke, labelColor) = if (item.earned) {
@@ -41,7 +41,7 @@ class BadgeAdapter : ListAdapter<BadgeUiModel, BadgeAdapter.ViewHolder>(DIFF) {
                 ContextCompat.getColor(context, surface)
             )
             binding.badgeCard.strokeColor = ContextCompat.getColor(context, stroke)
-            binding.badgeEmoji.alpha = if (item.earned) 1f else 0.45f
+            binding.badgeIcon.alpha = if (item.earned) 1f else 0.45f
             binding.badgeLabel.setTextColor(ContextCompat.getColor(context, labelColor))
             binding.badgeLabel.alpha = if (item.earned) 1f else 0.7f
         }

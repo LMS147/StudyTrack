@@ -183,6 +183,8 @@ object ServiceLocator {
      * local.properties (BuildConfig.GROK_API_KEY), chat directly with the LLM;
      * otherwise use the StudyTrack backend endpoint.
      */
+    val isAiConfigured: Boolean get() = BuildConfig.GROK_API_KEY.isNotBlank() || !isLocalMode
+
     val aiBrain: AiBrain by lazy {
         when {
             // A Groq/xAI key is configured — talk to the LLM directly. The
@@ -236,9 +238,7 @@ object ServiceLocator {
             request: com.studytrack.app.data.model.TaskAssistanceRequest,
         ): com.studytrack.app.util.ApiResult<com.studytrack.app.data.model.TaskAssistanceResponse> =
             com.studytrack.app.util.ApiResult.Error(
-                "No AI configured. Add grok.apiKey to local.properties " +
-                    "(Groq/xAI key — see local.properties.example), or set " +
-                    "api.baseUrl to your StudyTrack backend."
+                "AI assistance is unavailable in this build. You can still manage tasks and use the calendar."
             )
     }
 }

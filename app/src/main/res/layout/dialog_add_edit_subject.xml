@@ -25,7 +25,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nameField"
-                android:layout_width="match_parent"
+                android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textCapSentences" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -40,7 +41,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/descriptionField"
-                android:layout_width="match_parent"
+                android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine|textCapSentences"
                 android:minLines="2" />
@@ -72,13 +74,15 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cancelButton"
                 style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
+                android:fontFamily="@font/studytrack_regular"
+        android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/action_cancel" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/saveButton"
-                android:layout_width="wrap_content"
+                android:fontFamily="@font/studytrack_regular"
+        android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_sm"
                 android:text="@string/action_save" />

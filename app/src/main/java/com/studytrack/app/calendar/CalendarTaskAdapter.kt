@@ -40,7 +40,7 @@ class CalendarTaskAdapter(
             val context = binding.root.context
             val task = item.task
 
-            binding.calendarTaskIcon.text = task.taskType.emoji
+            binding.calendarTaskIcon.contentDescription = task.taskType.label
             binding.calendarTaskTitle.text = task.title
             binding.calendarTaskSubject.isVisible = !item.subjectName.isNullOrBlank()
             binding.calendarTaskSubject.text = item.subjectName.orEmpty()

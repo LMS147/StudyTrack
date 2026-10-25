@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.studytrack.app.R
 import com.studytrack.app.ServiceLocator
 import com.studytrack.app.data.model.Progress
 import com.studytrack.app.data.model.Task
@@ -34,7 +35,7 @@ data class CategoryProgressUiModel(
 /** One tile in the BADGES grid; unearned tiles render greyed out. */
 data class BadgeUiModel(
     val id: String,
-    val emoji: String,
+    val iconRes: Int,
     val label: String,
     val earned: Boolean,
 )
@@ -108,7 +109,7 @@ class ProgressViewModel(
                 null
             } else {
                 CategoryProgressUiModel(
-                    label = "${type.emoji}  ${type.label}",
+                    label = type.label,
                     completed = ofType.count { it.completed },
                     total = ofType.size,
                 )
@@ -135,18 +136,18 @@ class ProgressViewModel(
         val hasOverdue = tasks.any { !it.completed && DateTimeUtils.isOverdue(it.dueDate) }
 
         return listOf(
-            BadgeUiModel("first_task", "🔥", "First Task", completed.isNotEmpty()),
-            BadgeUiModel("speed_runner", "⚡", "Speed Runner", finishedEarly > 0),
+            BadgeUiModel("first_task", R.drawable.ic_check_circle, "First Task", completed.isNotEmpty()),
+            BadgeUiModel("speed_runner", R.drawable.ic_clock, "Speed Runner", finishedEarly > 0),
             BadgeUiModel(
-                "bookworm", "📚", "Bookworm",
+                "bookworm", R.drawable.ic_book, "Bookworm",
                 completed.count { it.taskType == TaskType.STUDY } >= 3,
             ),
-            BadgeUiModel("high_achiever", "🏆", "High Achiever", completed.size >= 10),
+            BadgeUiModel("high_achiever", R.drawable.ic_badge, "High Achiever", completed.size >= 10),
             BadgeUiModel(
-                "on_target", "🎯", "On Target",
+                "on_target", R.drawable.ic_check, "On Target",
                 completed.size >= 5 && !hasOverdue,
             ),
-            BadgeUiModel("scholar_elite", "💎", "Scholar Elite", points >= 1000),
+            BadgeUiModel("scholar_elite", R.drawable.ic_school, "Scholar Elite", points >= 1000),
         )
     }
 

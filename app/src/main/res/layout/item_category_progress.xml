@@ -23,7 +23,7 @@
             android:maxLines="1"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="@color/text_primary"
-            tools:text="📄  Assignment" />
+            tools:text="  Assignment" />
 
         <TextView
             android:id="@+id/categoryCount"

@@ -31,6 +31,7 @@
             android:orientation="horizontal">
 
             <View
+                android:id="@+id/assistantStatusDot"
                 android:layout_width="8dp"
                 android:layout_height="8dp"
                 android:background="@drawable/bg_online_dot" />
@@ -39,7 +40,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:text="@string/ai_subtitle_online"
+                android:id="@+id/assistantStatus"
+                android:text="@string/ai_status_ready"
                 android:textAppearance="?attr/textAppearanceLabelMedium"
                 android:textColor="@color/text_secondary" />
         </LinearLayout>
@@ -65,6 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:id="@+id/welcomeTitle"
                     android:text="@string/ai_welcome_title"
                     android:textAppearance="?attr/textAppearanceTitleLarge"
                     android:textColor="@color/text_primary" />
@@ -74,27 +77,31 @@
                     android:layout_marginTop="@dimen/spacing_sm"
                     android:layout_marginBottom="@dimen/spacing_md"
                     android:gravity="center"
+                    android:id="@+id/welcomeDescription"
                     android:text="@string/ai_welcome_message"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="@color/text_secondary" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/suggestionDueWeek"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:text="@string/ai_suggestion_due_this_week" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/suggestionPrioritise"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:text="@string/ai_suggestion_prioritise" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/suggestionBreakDown"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="match_parent"
+                    android:fontFamily="@font/studytrack_regular"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:text="@string/ai_suggestion_break_down" />
@@ -115,6 +122,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/messageComposer"
         android:background="@color/surface_card"
         android:elevation="8dp"
         android:gravity="center_vertical"
