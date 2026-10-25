@@ -125,36 +125,48 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
     }
 
     private fun updateConnectionStatus() {
-        binding.assistantStatus.setText(if (ServiceLocator.isAiConfigured) R.string.ai_status_ready else R.string.ai_connection_required)
+        binding.assistantStatus.setText(if (ServiceLocator.isAiConfigured) R.string.groq_status_ready else R.string.groq_status_required)
     }
 
     private fun showConnectionDialog() {
         val input = EditText(requireContext()).apply {
-            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_URI
-            setText(ServiceLocator.aiBackendBaseUrl)
-            hint = "https://your-backend.example/"
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+            hint = getString(R.string.groq_key_hint)
+            importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
             setPadding(32, 16, 32, 16)
         }
         val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.ai_connection)
-            .setMessage(R.string.ai_connection_help)
+            .setTitle(R.string.groq_settings_title)
+            .setMessage(if (ServiceLocator.isAiConfigured) R.string.groq_key_saved_help else R.string.groq_key_help)
             .setView(input)
             .setNegativeButton(R.string.action_cancel, null)
+            .setNeutralButton(R.string.groq_remove_key) { _, _ ->
+                ServiceLocator.groqKeyStore.save("")
+                updateConnectionStatus()
+            }
             .setPositiveButton(R.string.action_save, null)
             .create()
         dialog.setOnShowListener {
             dialog.getButton(android.content.DialogInterface.BUTTON_POSITIVE).setOnClickListener {
-                val raw = input.text.toString().trim()
-                val normalized = com.studytrack.app.data.remote.AiBackendConfig.normalize(raw)
-                if (raw.isNotBlank() && normalized == null) {
-                    input.error = getString(R.string.ai_connection_invalid)
-                } else {
-                    ServiceLocator.settingsRepository.aiBackendBaseUrl = normalized.orEmpty()
-                    updateConnectionStatus()
+                val key = input.text.toString().trim()
+                if (key.isBlank()) {
                     dialog.dismiss()
+                } else if (!com.studytrack.app.data.remote.GroqConnectionConfig.validDeviceKey(key)) {
+                    input.error = getString(R.string.groq_key_invalid)
+                } else {
+                    try {
+                        ServiceLocator.groqKeyStore.save(key)
+                        input.text.clear()
+                        updateConnectionStatus()
+                        dialog.dismiss()
+                    } catch (_: Exception) {
+                        input.error = getString(R.string.groq_key_save_error)
+                    }
                 }
             }
         }
+        // Prevent the credential input from appearing in screenshots/recents while open.
+        dialog.window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
         dialog.show()
     }
 
