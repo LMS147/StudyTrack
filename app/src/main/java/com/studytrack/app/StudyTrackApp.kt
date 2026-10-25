@@ -89,7 +89,7 @@ class StudyTrackApp : Application() {
             when (ServiceLocator.settingsRepository.darkMode) {
                 SettingsRepository.DARK_MODE_DARK -> AppCompatDelegate.MODE_NIGHT_YES
                 SettingsRepository.DARK_MODE_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
-                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                else -> AppCompatDelegate.MODE_NIGHT_YES
             }
         )
     }

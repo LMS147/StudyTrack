@@ -12,6 +12,11 @@ class SettingsRepository(context: Context) {
     private val prefs =
         context.getSharedPreferences("studytrack_settings", Context.MODE_PRIVATE)
 
+    /** Optional hosted AI endpoint; Firebase authentication stays in the API client. */
+    var aiBackendBaseUrl: String
+        get() = prefs.getString("ai_backend_base_url", "").orEmpty()
+        set(value) = prefs.edit().putString("ai_backend_base_url", value).apply()
+
     var taskRemindersEnabled: Boolean
         get() = prefs.getBoolean(KEY_TASK_REMINDERS, true)
         set(value) {

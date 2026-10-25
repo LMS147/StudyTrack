@@ -12,6 +12,9 @@ jobs:
   build:
     name: Assemble debug APK
     runs-on: ubuntu-latest
+    env:
+      STUDYTRACK_API_BASE_URL: ${{ vars.STUDYTRACK_API_BASE_URL }}
+      STUDYTRACK_AI_BASE_URL: ${{ vars.STUDYTRACK_AI_BASE_URL || secrets.STUDYTRACK_AI_BASE_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

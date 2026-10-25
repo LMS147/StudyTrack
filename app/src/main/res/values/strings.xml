@@ -38,7 +38,7 @@
     <string name="error_password_mismatch">Passwords do not match</string>
 
     <!-- Bottom navigation -->
-    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_dashboard">Home</string>
     <string name="nav_subjects">Subjects</string>
     <string name="nav_tasks">Tasks</string>
     <string name="nav_calendar">Calendar</string>
@@ -258,7 +258,7 @@
     <string name="help_support_body">StudyTrack is a student project built for OPSC6312.\n\nIf something looks wrong, or you have an idea for the app, send us a mail and we will get back to you.</string>
     <string name="help_support_subject">StudyTrack support</string>
     <string name="privacy_policy_body">StudyTrack stores your subjects, tasks and preferences on this device. If you sign in, your account email and password are handled by Firebase Authentication — the app never sees your password.\n\nSubjects and tasks are only sent to the StudyTrack backend when an API endpoint is configured in the build, and AI messages are sent to the configured AI provider so it can answer you. Use Export My Data to see everything the app has stored.</string>
-    <string name="profile_title">Profile</string>
+    <string name="profile_title">Profile &amp; Settings</string>
     <string name="section_notifications">Notifications</string>
     <string name="section_ai_preferences">AI preferences</string>
     <string name="section_app_preferences">App preferences</string>
@@ -357,4 +357,8 @@
     <string name="ai_status_unavailable">Unavailable in this build</string>
     <string name="ai_unavailable_title">Assistant unavailable</string>
     <string name="ai_unavailable_message">AI assistance is not connected in this version. You can still create tasks and plan your studies in Tasks and Calendar.</string>
+    <string name="ai_connection">Connection</string>
+    <string name="ai_connection_required">Connect your study assistant</string>
+    <string name="ai_connection_help">Enter your StudyTrack backend HTTPS base address. It must support the authenticated study assistant API. Leave blank to use the build default.</string>
+    <string name="ai_connection_invalid">Enter the HTTPS site root, without an API path, credentials, query or fragment.</string>
 </resources>

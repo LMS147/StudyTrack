@@ -183,36 +183,36 @@ object ServiceLocator {
      * local.properties (BuildConfig.GROK_API_KEY), chat directly with the LLM;
      * otherwise use the StudyTrack backend endpoint.
      */
-    val isAiConfigured: Boolean get() = BuildConfig.GROK_API_KEY.isNotBlank() || !isLocalMode
+    val aiBackendBaseUrl: String get() = com.studytrack.app.data.remote.AiBackendConfig.resolve(
+        settingsRepository.aiBackendBaseUrl, BuildConfig.AI_BASE_URL, RetrofitClient.BASE_URL,
+    )
 
-    val aiBrain: AiBrain by lazy {
-        when {
-            // A Groq/xAI key is configured — talk to the LLM directly. The
-            // endpoint and default model are inferred from the key's prefix
-            // (gsk_ -> Groq) unless pinned in local.properties.
-            BuildConfig.GROK_API_KEY.isNotBlank() -> {
-                val endpoint = AiEndpoints.resolve(
-                    apiKey = BuildConfig.GROK_API_KEY,
-                    explicitBaseUrl = BuildConfig.GROK_BASE_URL,
-                    explicitModel = BuildConfig.GROK_MODEL,
-                )
-                GrokAiRepository(
-                    GrokClient.apiService(BuildConfig.GROK_API_KEY, endpoint.baseUrl),
-                    endpoint.model,
-                )
+    val isAiConfigured: Boolean get() = aiBackendBaseUrl.isNotBlank() || BuildConfig.GROK_API_KEY.isNotBlank()
+
+    private var cachedAiUrl: String? = null
+    private var cachedBackendBrain: AiBrain? = null
+
+    private fun resolveAiBrain(): AiBrain {
+        val url = aiBackendBaseUrl
+        if (url.isNotBlank()) {
+            if (url != cachedAiUrl) {
+                cachedBackendBrain = AiRepository(RetrofitClient.createApiService(url))
+                cachedAiUrl = url
             }
-
-            // No key, but a backend is configured — use its AI endpoint.
-            !isLocalMode -> AiRepository(apiService)
-
-            // Neither. Returning a brain that reaches for apiService here would
-            // throw "apiService requested in local mode" the moment the AI tab
-            // is opened, so hand back the explanatory stub instead. This branch
-            // existed as dead code (NoBrainConfigured was declared but never
-            // referenced), which is why opening the AI Assistant crashed in
-            // local mode.
-            else -> NoBrainConfigured
+            return requireNotNull(cachedBackendBrain)
         }
+        if (BuildConfig.GROK_API_KEY.isNotBlank()) {
+            val endpoint = AiEndpoints.resolve(BuildConfig.GROK_API_KEY, BuildConfig.GROK_BASE_URL, BuildConfig.GROK_MODEL)
+            return GrokAiRepository(GrokClient.apiService(BuildConfig.GROK_API_KEY, endpoint.baseUrl), endpoint.model)
+        }
+        return NoBrainConfigured
+    }
+
+    val aiBrain: AiBrain = object : AiBrain {
+        override suspend fun taskAssistance(
+            request: com.studytrack.app.data.model.TaskAssistanceRequest,
+        ): com.studytrack.app.util.ApiResult<com.studytrack.app.data.model.TaskAssistanceResponse> =
+            resolveAiBrain().taskAssistance(request)
     }
 
     val settingsRepository: SettingsRepository by lazy {
@@ -238,7 +238,7 @@ object ServiceLocator {
             request: com.studytrack.app.data.model.TaskAssistanceRequest,
         ): com.studytrack.app.util.ApiResult<com.studytrack.app.data.model.TaskAssistanceResponse> =
             com.studytrack.app.util.ApiResult.Error(
-                "AI assistance is unavailable in this build. You can still manage tasks and use the calendar."
+                "Connect your study assistant using the Connection button above, then try again."
             )
     }
 }

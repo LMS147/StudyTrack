@@ -57,16 +57,8 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
         binding.chatList.adapter = adapter
         (binding.chatList.layoutManager as LinearLayoutManager).stackFromEnd = false
 
-        val aiAvailable = ServiceLocator.isAiConfigured
-        binding.assistantStatus.setText(if (aiAvailable) R.string.ai_status_ready else R.string.ai_status_unavailable)
-        binding.assistantStatusDot.isVisible = false
-        binding.messageComposer.isVisible = aiAvailable
-        listOf(binding.suggestionDueWeek, binding.suggestionPrioritise, binding.suggestionBreakDown)
-            .forEach { it.isVisible = aiAvailable }
-        if (!aiAvailable) {
-            binding.welcomeTitle.setText(R.string.ai_unavailable_title)
-            binding.welcomeDescription.setText(R.string.ai_unavailable_message)
-        }
+        updateConnectionStatus()
+        binding.connectionButton.setOnClickListener { showConnectionDialog() }
 
         binding.sendButton.setOnClickListener { sendCurrentInput() }
 
@@ -95,9 +87,7 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
                     viewModel.messages.collect { items ->
                         // The quick prompts are a starting point: once the
                         // conversation has begun they stop taking up space.
-                        val hasConversation = aiAvailable && items.any { it is ChatItem.UserMessage }
-                        binding.welcomePanel.isVisible = !hasConversation
-                        binding.chatList.isVisible = hasConversation
+                        binding.suggestionsScroll.isVisible = items.none { it is ChatItem.UserMessage }
                         adapter.submitList(items) {
                             if (items.isNotEmpty()) {
                                 binding.chatList.scrollToPosition(items.lastIndex)
@@ -122,7 +112,7 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
                 savedStateHandle.remove<Any>(NavResultKeys.AI_SUGGESTION_CREATED)
             }
 
-        if (aiAvailable) viewModel.start(
+        viewModel.start(
             welcomeText = getString(R.string.ai_welcome_message),
             emptyReplyText = getString(R.string.ai_empty_reply),
             addedViaEditorText = getString(R.string.chat_added_via_editor),
@@ -132,6 +122,40 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
             initialPrompt = args.initialPrompt,
             contextTaskId = args.contextTaskId,
         )
+    }
+
+    private fun updateConnectionStatus() {
+        binding.assistantStatus.setText(if (ServiceLocator.isAiConfigured) R.string.ai_status_ready else R.string.ai_connection_required)
+    }
+
+    private fun showConnectionDialog() {
+        val input = EditText(requireContext()).apply {
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_URI
+            setText(ServiceLocator.aiBackendBaseUrl)
+            hint = "https://your-backend.example/"
+            setPadding(32, 16, 32, 16)
+        }
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.ai_connection)
+            .setMessage(R.string.ai_connection_help)
+            .setView(input)
+            .setNegativeButton(R.string.action_cancel, null)
+            .setPositiveButton(R.string.action_save, null)
+            .create()
+        dialog.setOnShowListener {
+            dialog.getButton(android.content.DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+                val raw = input.text.toString().trim()
+                val normalized = com.studytrack.app.data.remote.AiBackendConfig.normalize(raw)
+                if (raw.isNotBlank() && normalized == null) {
+                    input.error = getString(R.string.ai_connection_invalid)
+                } else {
+                    ServiceLocator.settingsRepository.aiBackendBaseUrl = normalized.orEmpty()
+                    updateConnectionStatus()
+                    dialog.dismiss()
+                }
+            }
+        }
+        dialog.show()
     }
 
     private fun sendText(text: String) {

@@ -58,12 +58,13 @@ object RetrofitClient {
             .build()
     }
 
-    val apiService: ApiService by lazy {
+    val apiService: ApiService by lazy { createApiService(BASE_URL) }
+
+    fun createApiService(baseUrl: String): ApiService =
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
             .create(ApiService::class.java)
-    }
 }

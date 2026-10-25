@@ -78,7 +78,7 @@
                 android:layout_marginTop="@dimen/spacing_md"
                 android:background="@drawable/bg_level_banner"
                 android:orientation="vertical"
-                android:padding="@dimen/spacing_lg">
+                android:padding="20dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -97,8 +97,8 @@
                         tools:text="LEVEL 4 SCHOLAR" />
 
                     <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:src="@drawable/ic_badge"
                         android:padding="4dp"
                         android:contentDescription="@null"
@@ -137,7 +137,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_sm"
-                    app:indicatorColor="@color/white"
+                    app:indicatorColor="@color/brand_secondary"
                     app:trackColor="@color/on_level_gradient_track"
                     app:trackCornerRadius="4dp"
                     app:trackThickness="6dp" />
@@ -178,8 +178,8 @@
                         android:paddingVertical="@dimen/spacing_md">
 
                         <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:src="@drawable/ic_calendar"
                         android:padding="4dp"
                         android:contentDescription="@null"
@@ -224,8 +224,8 @@
                         android:paddingVertical="@dimen/spacing_md">
 
                         <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:src="@drawable/ic_warning"
                         android:padding="4dp"
                         android:contentDescription="@null"
@@ -270,8 +270,8 @@
                         android:paddingVertical="@dimen/spacing_md">
 
                         <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:src="@drawable/ic_check_circle"
                         android:padding="4dp"
                         android:contentDescription="@null"
