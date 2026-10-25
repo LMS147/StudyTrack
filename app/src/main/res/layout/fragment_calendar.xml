@@ -12,14 +12,10 @@
         android:orientation="vertical"
         android:paddingBottom="96dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/spacing_md"
-            android:layout_marginTop="@dimen/spacing_md"
-            android:text="@string/title_calendar"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall"
-            android:textColor="@color/text_primary" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingTop="8dp" android:orientation="horizontal">
+            <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/title_calendar" android:textAppearance="?attr/textAppearanceHeadlineSmall" android:textColor="@color/text_primary" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/timetableButton" style="?attr/materialButtonOutlinedStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/timetable_title" />
+        </LinearLayout>
 
         <!-- Month subtitle with the month stepper -->
         <LinearLayout
