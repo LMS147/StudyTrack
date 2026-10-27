@@ -1,0 +1,14 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/background" android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="8dp" android:orientation="horizontal">
+        <ImageButton android:id="@+id/backButton" android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/ic_chevron_left" android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/cd_back" app:tint="@color/text_primary" />
+        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/flashcards_title" android:textAppearance="?attr/textAppearanceTitleLarge" android:textColor="@color/text_primary" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/addCardButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/flashcards_add" />
+    </LinearLayout>
+    <TextView android:id="@+id/summaryText" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="16dp" android:textAppearance="?attr/textAppearanceBodyMedium" android:textColor="@color/text_secondary" />
+    <Spinner android:id="@+id/subjectFilter" android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginHorizontal="16dp" android:contentDescription="@string/flashcards_filter" />
+    <com.google.android.material.button.MaterialButton android:id="@+id/reviewButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="16dp" android:text="@string/flashcards_review_due" />
+    <TextView android:id="@+id/emptyText" android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="24dp" android:textAppearance="?attr/textAppearanceBodyMedium" android:textColor="@color/text_secondary" />
+    <com.google.android.material.button.MaterialButton android:id="@+id/subjectsButton" style="?attr/materialButtonOutlinedStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="@string/flashcards_create_subject" />
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/cardList" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" android:paddingBottom="24dp" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+</LinearLayout>
