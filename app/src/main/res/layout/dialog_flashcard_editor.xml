@@ -1,0 +1,13 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/flashcards_subject" android:textAppearance="?attr/textAppearanceLabelMedium" />
+        <Spinner android:id="@+id/subjectSpinner" android:layout_width="match_parent" android:layout_height="48dp" />
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:hint="@string/flashcards_question">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/questionInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textCapSentences|textMultiLine" android:minLines="2" android:maxLines="5" android:maxLength="1000" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:hint="@string/flashcards_answer">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/answerInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textCapSentences|textMultiLine" android:minLines="3" android:maxLines="8" android:maxLength="4000" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <TextView android:id="@+id/errorText" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:textColor="@color/overdue_red" android:textAppearance="?attr/textAppearanceBodyMedium" android:accessibilityLiveRegion="polite" />
+    </LinearLayout>
+</ScrollView>

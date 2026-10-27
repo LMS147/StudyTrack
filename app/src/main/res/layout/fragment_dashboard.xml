@@ -71,6 +71,16 @@
                     tools:text="LM" />
             </LinearLayout>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/flashcardsButton"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:text="@string/flashcards_title"
+                app:icon="@drawable/ic_book"
+                app:iconGravity="textStart" />
+
             <!-- Level / XP banner -->
             <LinearLayout
                 android:layout_width="match_parent"

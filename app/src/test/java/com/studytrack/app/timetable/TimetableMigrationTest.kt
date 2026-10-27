@@ -44,7 +44,7 @@ class TimetableMigrationTest {
         val db = Room.databaseBuilder(context, StudyTrackDatabase::class.java, name)
             .addMigrations(*StudyTrackDatabase.MIGRATIONS).allowMainThreadQueries().build()
         try {
-            assertEquals(2, db.openHelper.writableDatabase.version)
+            assertEquals(3, db.openHelper.writableDatabase.version)
             assertEquals("Preserved task", db.taskDao().getById("alice", "old-task")!!.title)
             db.timetableDao().upsert(TimetableEntry("alice", "new-class", "Lecture", null, 1, 540, 600, "", "", "2026-10-01", null))
             assertEquals(1, db.timetableDao().all("alice").size)

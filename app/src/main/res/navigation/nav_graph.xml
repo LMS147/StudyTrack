@@ -34,6 +34,7 @@
         android:name="com.studytrack.app.dashboard.DashboardFragment"
         android:label="@string/nav_dashboard">
 
+        <action android:id="@+id/action_dashboardFragment_to_flashcardsFragment" app:destination="@id/flashcardsFragment" />
         <action
             android:id="@+id/action_dashboardFragment_to_addEditTaskFragment"
             app:destination="@id/addEditTaskFragment" />
@@ -156,6 +157,14 @@
         android:label="@string/settings_title" />
 
     <fragment android:id="@+id/timetableFragment" android:name="com.studytrack.app.timetable.TimetableFragment" android:label="@string/timetable_title" />
+
+    <fragment android:id="@+id/flashcardsFragment" android:name="com.studytrack.app.flashcards.FlashcardsFragment" android:label="@string/flashcards_title">
+        <action android:id="@+id/action_flashcardsFragment_to_subjectsFragment" app:destination="@id/subjectsFragment" />
+        <action android:id="@+id/action_flashcardsFragment_to_flashcardReviewFragment" app:destination="@id/flashcardReviewFragment" />
+    </fragment>
+    <fragment android:id="@+id/flashcardReviewFragment" android:name="com.studytrack.app.flashcards.FlashcardReviewFragment" android:label="@string/flashcards_review_title">
+        <argument android:name="subjectId" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+    </fragment>
 
     <!-- ====================================================== Task flows -->
 

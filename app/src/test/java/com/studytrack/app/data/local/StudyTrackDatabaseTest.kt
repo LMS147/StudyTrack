@@ -68,7 +68,7 @@ class StudyTrackDatabaseTest {
 
     @Test
     fun `every scoped table has a non-nullable ownerUid column`() {
-        for (table in listOf("tasks", "subjects", "progress", "study_sessions", "timetable_entries")) {
+        for (table in listOf("tasks", "subjects", "progress", "study_sessions", "timetable_entries", "flashcards")) {
             val ownerUid = columnsOf(table).firstOrNull { it.name == "ownerUid" }
             assertTrue("$table is missing ownerUid", ownerUid != null)
             assertTrue("$table.ownerUid must be NOT NULL", ownerUid!!.notNull)
@@ -79,7 +79,7 @@ class StudyTrackDatabaseTest {
     fun `ownerUid is part of the primary key on the multi-row tables`() {
         // This is what makes a cross-account row collision impossible, rather
         // than merely unlikely.
-        for (table in listOf("tasks", "subjects", "study_sessions", "timetable_entries")) {
+        for (table in listOf("tasks", "subjects", "study_sessions", "timetable_entries", "flashcards")) {
             val ownerUid = columnsOf(table).first { it.name == "ownerUid" }
             assertTrue("$table.ownerUid must be part of the primary key", ownerUid.partOfPk)
         }
@@ -117,8 +117,8 @@ class StudyTrackDatabaseTest {
 
     @Test
     fun `the shipped migration set only contains paths that end at the current version`() {
-        // The additive timetable migration ships with version 2.
-        assertEquals(2, StudyTrackDatabase.VERSION)
+        // Timetable and flashcard migrations are both shipped.
+        assertEquals(3, StudyTrackDatabase.VERSION)
         assertTrue(
             "MIGRATION_1_2 must exist for installed version 1 databases",
             StudyTrackDatabase.ALL_MIGRATIONS.any { it.startVersion == 1 && it.endVersion == 2 },
@@ -127,7 +127,7 @@ class StudyTrackDatabaseTest {
             "no migration may target a version above the current schema",
             StudyTrackDatabase.MIGRATIONS.all { it.endVersion <= StudyTrackDatabase.VERSION },
         )
-        assertEquals(1, StudyTrackDatabase.MIGRATIONS.size)
+        assertEquals(2, StudyTrackDatabase.MIGRATIONS.size)
     }
 
     @Test

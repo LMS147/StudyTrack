@@ -48,6 +48,7 @@ import com.studytrack.app.data.local.entity.TaskEntity
         StudySessionEntity::class,
         AccountRecordEntity::class,
         com.studytrack.app.data.local.entity.TimetableEntry::class,
+        com.studytrack.app.data.local.entity.FlashcardEntity::class,
     ],
     version = StudyTrackDatabase.VERSION,
     exportSchema = true,
@@ -61,10 +62,11 @@ abstract class StudyTrackDatabase : RoomDatabase() {
     abstract fun studySessionDao(): StudySessionDao
     abstract fun accountDao(): AccountDao
     abstract fun timetableDao(): com.studytrack.app.data.local.dao.TimetableDao
+    abstract fun flashcardDao(): com.studytrack.app.data.local.dao.FlashcardDao
 
     companion object {
 
-        const val VERSION = 2
+        const val VERSION = 3
         private const val DATABASE_NAME = "studytrack.db"
 
         @Volatile
@@ -82,12 +84,27 @@ abstract class StudyTrackDatabase : RoomDatabase() {
             }
         }
 
+        /** Add flashcards and indexes without modifying existing classes or tasks. */
+        val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""CREATE TABLE IF NOT EXISTS `flashcards` (
+                    `ownerUid` TEXT NOT NULL, `cardId` TEXT NOT NULL, `subjectId` TEXT NOT NULL,
+                    `question` TEXT NOT NULL, `answer` TEXT NOT NULL, `dueDate` TEXT NOT NULL,
+                    `intervalDays` INTEGER NOT NULL, `reviewCount` INTEGER NOT NULL,
+                    `lastReviewedOn` TEXT, PRIMARY KEY(`ownerUid`, `cardId`)
+                )""")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_flashcards_ownerUid_subjectId` ON `flashcards` (`ownerUid`, `subjectId`)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_flashcards_ownerUid_dueDate` ON `flashcards` (`ownerUid`, `dueDate`)")
+            }
+        }
+
         /**
          * Every migration written so far, including ones targeting versions
          * above [VERSION] (those stay dormant — see the class docs).
          */
         val ALL_MIGRATIONS: List<Migration> = listOf(
             MIGRATION_1_2,
+            MIGRATION_2_3,
         )
 
         /** Migrations applicable to the schema this build actually ships. */
