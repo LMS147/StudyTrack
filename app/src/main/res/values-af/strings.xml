@@ -382,6 +382,11 @@
     <string name="language_system">Gebruik toestel se taal</string>
     <string name="language_english">English</string>
     <string name="language_afrikaans">Afrikaans</string>
+    <string name="language_japanese">日本語 · gedeeltelik</string>
+    <string name="language_sepedi">Sepedi · gedeeltelik</string>
+    <string name="language_setswana">Setswana · gedeeltelik</string>
+    <string name="language_spanish">Español · gedeeltelik</string>
+    <string name="language_french">Français · gedeeltelik</string>
     <string name="ai_connection_help">Voer jou StudyTrack-bediener se HTTPS-basisadres in. Dit moet die geverifieerde studieassistent-API ondersteun. Laat leeg om die verstek van die weergawe te gebruik.</string>
     <string name="ai_connection_invalid">Voer die HTTPS-werfwortel in, sonder ’n API-pad, aanmeldbesonderhede, navraag of fragment.</string>
     <string name="ai_unavailable_message">KI-bystand is nie in hierdie weergawe gekoppel nie. Jy kan steeds take skep en jou studies in Take en Kalender beplan.</string>

@@ -425,4 +425,9 @@
     <string name="language_system">Use device language</string>
     <string name="language_english">English</string>
     <string name="language_afrikaans">Afrikaans</string>
+    <string name="language_japanese">日本語 · partial</string>
+    <string name="language_sepedi">Sepedi · partial</string>
+    <string name="language_setswana">Setswana · partial</string>
+    <string name="language_spanish">Español · partial</string>
+    <string name="language_french">Français · partial</string>
 </resources>
