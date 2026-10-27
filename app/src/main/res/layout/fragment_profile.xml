@@ -50,6 +50,14 @@
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/spacing_md">
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/languageButton"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:text="@string/language_title" />
+
             <!-- Hero: avatar, name, student number and Level/XP pills in one card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"

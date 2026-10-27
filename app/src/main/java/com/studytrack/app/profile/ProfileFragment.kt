@@ -47,6 +47,7 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
+        binding.languageButton.setOnClickListener { AppLanguagePicker.show(requireContext()) }
 
         // The Subjects tab was replaced by Tasks in the design, so the
         // subject count is the way into the subject list.
