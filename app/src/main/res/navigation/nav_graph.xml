@@ -4,6 +4,8 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/dashboardFragment">
 
+    <fragment android:id="@+id/translationFragment" android:name="com.studytrack.app.translation.TranslationFragment" android:label="@string/translation_title" />
+
     <!-- ============================================================ Auth -->
 
     <fragment
@@ -34,6 +36,7 @@
         android:name="com.studytrack.app.dashboard.DashboardFragment"
         android:label="@string/nav_dashboard">
 
+        <action android:id="@+id/action_dashboardFragment_to_translationFragment" app:destination="@id/translationFragment" />
         <action android:id="@+id/action_dashboardFragment_to_flashcardsFragment" app:destination="@id/flashcardsFragment" />
         <action
             android:id="@+id/action_dashboardFragment_to_addEditTaskFragment"

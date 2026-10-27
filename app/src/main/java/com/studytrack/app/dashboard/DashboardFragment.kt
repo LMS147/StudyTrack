@@ -55,6 +55,10 @@ class DashboardFragment : Fragment() {
         binding.dashboardList.adapter = adapter
         binding.dashboardList.layoutManager = LinearLayoutManager(requireContext())
 
+        binding.translationButton.setOnClickListener {
+            findNavController().navigate(R.id.action_dashboardFragment_to_translationFragment)
+        }
+
         binding.flashcardsButton.setOnClickListener {
             findNavController().navigate(R.id.action_dashboardFragment_to_flashcardsFragment)
         }
