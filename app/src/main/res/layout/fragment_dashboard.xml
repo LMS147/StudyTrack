@@ -81,13 +81,7 @@
                 app:icon="@drawable/ic_book"
                 app:iconGravity="textStart" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/translationButton"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_sm"
-                android:text="@string/translation_title" />
+
 
             <!-- Level / XP banner -->
             <LinearLayout

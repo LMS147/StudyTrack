@@ -38,6 +38,39 @@
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/spacing_md"
             android:paddingBottom="@dimen/spacing_lg">
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                app:cardBackgroundColor="@color/surface_card"
+                app:cardCornerRadius="@dimen/corner_lg"
+                app:strokeColor="@color/divider"
+                app:strokeWidth="1dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_md">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/language_title"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textColor="@color/text_primary" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/language_description"
+                        android:textColor="@color/text_secondary" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/languageButton"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:text="@string/language_title" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
             <!-- Notifications -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"

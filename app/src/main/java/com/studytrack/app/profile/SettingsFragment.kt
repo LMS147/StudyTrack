@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -32,11 +34,27 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
         wireSwitches()
+        binding.languageButton.setOnClickListener { showLanguagePicker() }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collect { renderState(it) }
             }
         }
+    }
+
+    private fun showLanguagePicker() {
+        val tags = listOf("", "en", "af")
+        val names = arrayOf(getString(R.string.language_system), getString(R.string.language_english), getString(R.string.language_afrikaans))
+        val current = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+        val selected = tags.indexOf(current).coerceAtLeast(0)
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.language_title)
+            .setSingleChoiceItems(names, selected) { dialog, which ->
+                dialog.dismiss()
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tags[which]))
+            }
+            .setNegativeButton(R.string.action_cancel, null)
+            .show()
     }
 
     private fun wireSwitches() {
