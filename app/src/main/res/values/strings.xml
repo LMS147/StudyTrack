@@ -420,5 +420,9 @@
     <string name="flashcards_delete_title">Delete flashcard?</string>
     <string name="flashcards_delete_message">This removes the card and its review progress from this device.</string>
     <string name="flashcards_save_error">Could not save the flashcard. Please try again.</string>
-    <string name="translation_title">Translate study text</string>
+    <string name="language_title">App language</string>
+    <string name="language_description">Choose the language used for the app interface. Some messages may still appear in English.</string>
+    <string name="language_system">Use device language</string>
+    <string name="language_english">English</string>
+    <string name="language_afrikaans">Afrikaans</string>
 </resources>
