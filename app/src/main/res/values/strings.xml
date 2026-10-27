@@ -420,4 +420,5 @@
     <string name="flashcards_delete_title">Delete flashcard?</string>
     <string name="flashcards_delete_message">This removes the card and its review progress from this device.</string>
     <string name="flashcards_save_error">Could not save the flashcard. Please try again.</string>
+    <string name="translation_title">Translate study text</string>
 </resources>
