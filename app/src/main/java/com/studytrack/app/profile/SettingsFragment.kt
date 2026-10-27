@@ -43,9 +43,14 @@ class SettingsFragment : Fragment() {
     }
 
     private fun showLanguagePicker() {
-        val tags = listOf("", "en", "af")
-        val names = arrayOf(getString(R.string.language_system), getString(R.string.language_english), getString(R.string.language_afrikaans))
-        val current = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+        val tags = listOf("", "en", "af", "ja", "nso", "tn", "es", "fr")
+        val names = arrayOf(
+            getString(R.string.language_system), getString(R.string.language_english),
+            getString(R.string.language_afrikaans), getString(R.string.language_japanese),
+            getString(R.string.language_sepedi), getString(R.string.language_setswana),
+            getString(R.string.language_spanish), getString(R.string.language_french),
+        )
+        val current = AppCompatDelegate.getApplicationLocales().get(0)?.language.orEmpty()
         val selected = tags.indexOf(current).coerceAtLeast(0)
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.language_title)
