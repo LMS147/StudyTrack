@@ -1,5 +1,6 @@
 package com.studytrack.app.tasks
 
+import com.studytrack.app.language.labelResource
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Paint
@@ -52,7 +53,7 @@ object TaskRowBinder {
 
         // Type is always shown (icon + label) so a row is readable even when
         // it belongs to no subject yet.
-        binding.taskTypeLabel.text = "· ${task.taskType.label}"
+        binding.taskTypeLabel.text = "· ${context.getString(task.taskType.labelResource())}"
 
         binding.taskCompletedIcon.setImageResource(
             if (task.completed) R.drawable.ic_check_circle else R.drawable.ic_radio_unchecked
@@ -91,7 +92,7 @@ object TaskRowBinder {
             Priority.MEDIUM -> R.color.priority_medium_container to R.color.priority_medium
             Priority.HIGH -> R.color.priority_high_container to R.color.priority_high
         }
-        binding.taskPriorityChip.text = priority.label
+        binding.taskPriorityChip.text = context.getString(priority.labelResource())
         binding.taskPriorityChip.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(context, containerColor))
         binding.taskPriorityChip.setTextColor(ContextCompat.getColor(context, foregroundColor))

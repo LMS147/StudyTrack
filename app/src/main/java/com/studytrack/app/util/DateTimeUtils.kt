@@ -21,9 +21,9 @@ import java.time.format.DateTimeParseException
 object DateTimeUtils {
 
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-    private val shortDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE, d MMM")
-    private val fullDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM")
-    private val monthYearFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
+    private val shortDateFormatter: DateTimeFormatter get() = DateTimeFormatter.ofPattern("EEE, d MMM")
+    private val fullDateFormatter: DateTimeFormatter get() = DateTimeFormatter.ofPattern("EEEE, d MMMM")
+    private val monthYearFormatter: DateTimeFormatter get() = DateTimeFormatter.ofPattern("MMMM yyyy")
 
     // ------------------------------------------------------------- now & basics
 

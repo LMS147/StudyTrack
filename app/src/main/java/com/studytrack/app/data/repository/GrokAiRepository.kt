@@ -84,6 +84,9 @@ class GrokAiRepository(
 
     private fun systemPrompt(request: TaskAssistanceRequest): String = buildString {
         append("You are StudyTrack's AI study assistant, running inside an Android app.\n")
+        append("Write all user-visible replies, task titles, descriptions and subtasks in ${com.studytrack.app.language.AppLanguage.name(request.languageTag)}. ")
+        append("Keep JSON keys, kind, taskType, priority and dates in their required canonical formats. ")
+        append("Preserve existing subject names exactly as provided. Follow the selected language even if previous messages use another language.\n")
         append("Current date: ${request.today ?: "unknown"} (timezone ${request.timezone ?: "unknown"}).\n")
         if (request.subjects.isNotEmpty()) {
             append("The student's existing subjects are: ")

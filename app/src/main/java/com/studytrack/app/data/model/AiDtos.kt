@@ -70,6 +70,8 @@ data class TaskAssistanceRequest(
      * (older builds omit it) and include it in the prompt when present.
      */
     val upcomingTasks: List<AiUpcomingTask> = emptyList(),
+    /** Requested language for user-visible AI text; backend support is optional. */
+    val languageTag: String = "en",
 )
 
 /** Response for POST /api/ai/task-assistance. */

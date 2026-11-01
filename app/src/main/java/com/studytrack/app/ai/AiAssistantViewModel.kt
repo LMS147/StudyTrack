@@ -66,6 +66,12 @@ class AiAssistantViewModel(
 
     private var taskContext: AiTaskContext? = null
 
+    private var responseLanguageTag = "en"
+
+    fun setResponseLanguage(tag: String) {
+        responseLanguageTag = com.studytrack.app.language.AppLanguage.supportedTag(tag)
+    }
+
     private var started = false
     private var initialPromptSent = false
 
@@ -95,15 +101,14 @@ class AiAssistantViewModel(
         initialPrompt: String?,
         contextTaskId: String?,
     ) {
-        if (started) return
-        started = true
-
         this.emptyReplyText = emptyReplyText
         this.addedViaEditorText = addedViaEditorText
         this.confirmationTemplate = confirmationTemplate
         this.confirmationWithSubtasksTemplate = confirmationWithSubtasksTemplate
         this.confirmationSubjectSuffix = confirmationSubjectSuffix
 
+        if (started) return
+        started = true
         if (_messages.value.isEmpty()) {
             _messages.value = listOf(ChatItem.AiText(nextId("ai"), welcomeText))
         }
@@ -161,6 +166,7 @@ class AiAssistantViewModel(
 
             val request = com.studytrack.app.data.model.TaskAssistanceRequest(
                 message = trimmed,
+                languageTag = responseLanguageTag,
                 conversationHistory = history,
                 today = DateTimeUtils.todayIsoDate(),
                 timezone = DateTimeUtils.timezoneId(),

@@ -112,6 +112,7 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
                 savedStateHandle.remove<Any>(NavResultKeys.AI_SUGGESTION_CREATED)
             }
 
+        viewModel.setResponseLanguage(resources.configuration.locales[0].toLanguageTag())
         viewModel.start(
             welcomeText = getString(R.string.ai_welcome_message),
             emptyReplyText = getString(R.string.ai_empty_reply),
@@ -172,6 +173,7 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
 
     private fun sendText(text: String) {
         hideKeyboard()
+        viewModel.setResponseLanguage(resources.configuration.locales[0].toLanguageTag())
         viewModel.sendMessage(text)
         binding.messageInput.setText("")
     }
@@ -180,6 +182,7 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
         val text = binding.messageInput.text.toString()
         if (text.isNotBlank()) {
             hideKeyboard()
+            viewModel.setResponseLanguage(resources.configuration.locales[0].toLanguageTag())
             viewModel.sendMessage(text)
             binding.messageInput.setText("")
         }

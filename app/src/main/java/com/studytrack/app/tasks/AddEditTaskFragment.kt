@@ -1,5 +1,6 @@
 package com.studytrack.app.tasks
 
+import com.studytrack.app.language.labelResource
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.LayoutInflater
@@ -113,7 +114,7 @@ class AddEditTaskFragment : Fragment() {
     }
 
     private fun setupTaskTypeDropdown() {
-        val labels = TaskType.entries.map { it.label }
+        val labels = TaskType.entries.map { getString(it.labelResource()) }
         binding.taskTypeField.setAdapter(
             ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, labels)
         )
@@ -125,7 +126,7 @@ class AddEditTaskFragment : Fragment() {
 
     private fun selectTaskType(type: TaskType) {
         selectedTaskType = type
-        binding.taskTypeField.setText(type.label, false)
+        binding.taskTypeField.setText(getString(type.labelResource()), false)
     }
 
     // --------------------------------------------------------------- pickers

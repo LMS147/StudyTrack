@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.studytrack.app.R
+import com.studytrack.app.data.model.TaskType
+import com.studytrack.app.language.labelResource
 import com.studytrack.app.databinding.ItemCategoryProgressBinding
 
 /** "BY CATEGORY" rows: one labelled progress bar per task type. */
@@ -26,7 +28,7 @@ class CategoryProgressAdapter :
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: CategoryProgressUiModel) {
-            binding.categoryLabel.text = item.label
+            binding.categoryLabel.text = binding.root.context.getString(TaskType.fromRaw(item.label).labelResource())
             binding.categoryCount.text = binding.root.context.getString(
                 R.string.progress_completed_of, item.completed, item.total
             )
