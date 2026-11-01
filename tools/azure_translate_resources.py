@@ -42,6 +42,10 @@ def android_text(translated, parts):
     return escape(result)
 
 
+class RateLimited(Exception):
+    pass
+
+
 def translate_batch(texts, language, key, region):
     query = urllib.parse.urlencode({'api-version': '3.0', 'from': 'en', 'to': language})
     request = urllib.request.Request(
@@ -54,6 +58,8 @@ def translate_batch(texts, language, key, region):
             data = json.load(response)
     except urllib.error.HTTPError as error:
         # Do not log request headers, keys, or provider response bodies.
+        if error.code == 429:
+            raise RateLimited('Azure temporarily limited requests; saved batches can be resumed later.') from None
         raise RuntimeError(f'Azure Translator returned HTTP {error.code} for {language}') from None
     if len(data) != len(texts):
         raise ValueError(f'Azure Translator returned an unexpected response count for {language}')
@@ -78,29 +84,33 @@ def run(key, region, sender=translate_batch):
         print(f'{language}: {len(missing)} missing strings', flush=True)
         if not missing:
             continue
-        generated = []
         for index in range(0, len(missing), 50):
             batch = missing[index:index + 50]
             protected = [protect(text) for _, text in batch]
-            result = sender([text for text, _ in protected], language, key, region)
-            for (name, _), (_, parts), text in zip(batch, protected, result, strict=True):
+            try:
+                result = sender([text for text, _ in protected], language, key, region)
+            except RateLimited as error:
+                print(str(error), flush=True)
+                return
+            generated = []
+            for (name, _), (protected_text, parts), text in zip(batch, protected, result, strict=True):
                 try:
                     safe_text = android_text(text, parts)
                 except ValueError:
-                    # Retry separately; never insert a translation with damaged placeholders.
-                    retry = sender([dict(batch)[name] if not parts else protect(dict(batch)[name])[0]], language, key, region)
                     try:
+                        retry = sender([protected_text], language, key, region)
                         safe_text = android_text(retry[0], parts)
-                    except ValueError:
+                    except (ValueError, RateLimited):
                         print(f'{language}: skipped {name}; formatting needs manual review', flush=True)
                         continue
                 generated.append(f'    <string name="{name}">{safe_text}</string>')
-        # Append text without rewriting existing translations or their Android escapes.
-        original = path.read_text(encoding='utf-8')
-        if original.count('</resources>') != 1:
-            raise ValueError(f'Unexpected resources document in {path}')
-        path.write_text(original.replace('</resources>', '\n'.join(generated) + '\n</resources>'), encoding='utf-8')
-        total += len(generated)
+            # Save each batch so the workflow can commit progress even if Azure throttles.
+            original = path.read_text(encoding='utf-8')
+            if original.count('</resources>') != 1:
+                raise ValueError(f'Unexpected resources document in {path}')
+            if generated:
+                path.write_text(original.replace('</resources>', '\n'.join(generated) + '\n</resources>'), encoding='utf-8')
+                total += len(generated)
     print(f'Generated {total} missing strings. Review translations before release.')
 
 

@@ -44,5 +44,28 @@ class TranslationTests(unittest.TestCase):
             finally:
                 translate.ROOT, translate.BASE, translate.TARGETS = old_root, old_base, old_targets
 
+    def test_rate_limit_saves_completed_batches_for_resume(self):
+        old_root, old_base, old_targets = translate.ROOT, translate.BASE, translate.TARGETS
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            base = root / 'app/src/main/res/values/strings.xml'
+            base.parent.mkdir(parents=True)
+            base.write_text('<resources>' + ''.join(f'<string name="s{i}">Text {i}</string>' for i in range(51)) + '</resources>')
+            target = root / 'app/src/main/res/values-fr/strings.xml'
+            target.parent.mkdir(parents=True)
+            target.write_text('<resources>\n</resources>')
+            translate.ROOT, translate.BASE, translate.TARGETS = root, base, {'fr': 'fr'}
+            calls = []
+            def sender(texts, language, key, region):
+                calls.append(texts)
+                if len(calls) == 2:
+                    raise translate.RateLimited('rate limited')
+                return texts
+            try:
+                translate.run('private', 'uaenorth', sender)
+                self.assertEqual(target.read_text().count('<string name='), 50)
+            finally:
+                translate.ROOT, translate.BASE, translate.TARGETS = old_root, old_base, old_targets
+
 if __name__ == '__main__':
     unittest.main()
