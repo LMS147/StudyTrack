@@ -399,4 +399,5 @@
     <string name="language_setswana">Setswana · partiel</string>
     <string name="language_spanish">Espagnol · partiel</string>
     <string name="language_french">Français · partiel</string>
+    <string name="ai_empty_reply">Je ne trouve pas de réponse. Pourriez-vous reformuler ou ajouter des détails ?</string>
 </resources>
