@@ -76,7 +76,14 @@ class GrokAiRepository(
         request.conversationHistory.forEach { turn ->
             messages.add(GrokChatMessage(role = turn.role, content = turn.content))
         }
-        messages.add(GrokChatMessage(role = "user", content = request.message))
+        // Place the current setting after conversation history as well as in the
+        // system instructions, so earlier replies in another language cannot
+        // accidentally become the model's most recent language cue.
+        val language = com.studytrack.app.language.AppLanguage.name(request.languageTag)
+        messages.add(GrokChatMessage(role = "user", content = request.message +
+            "\n\n[StudyTrack language setting: Respond in $language. " +
+            "Use this setting even if earlier messages are in another language. " +
+            "Keep the required JSON keys, category values and dates unchanged.]"))
         return messages
     }
 

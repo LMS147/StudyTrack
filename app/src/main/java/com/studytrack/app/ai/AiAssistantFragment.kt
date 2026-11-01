@@ -112,7 +112,7 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
                 savedStateHandle.remove<Any>(NavResultKeys.AI_SUGGESTION_CREATED)
             }
 
-        viewModel.setResponseLanguage(resources.configuration.locales[0].toLanguageTag())
+        viewModel.setResponseLanguage(currentAppLanguage())
         viewModel.start(
             welcomeText = getString(R.string.ai_welcome_message),
             emptyReplyText = getString(R.string.ai_empty_reply),
@@ -171,9 +171,17 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
         dialog.show()
     }
 
+    private fun currentAppLanguage(): String {
+        val explicitLocale = androidx.appcompat.app.AppCompatDelegate.getApplicationLocales().get(0)
+        val systemLocale = android.content.res.Resources.getSystem().configuration.locales[0]
+        return com.studytrack.app.language.AppLanguage.effectiveTag(
+            explicitLocale?.toLanguageTag(), systemLocale?.toLanguageTag(),
+        )
+    }
+
     private fun sendText(text: String) {
         hideKeyboard()
-        viewModel.setResponseLanguage(resources.configuration.locales[0].toLanguageTag())
+        viewModel.setResponseLanguage(currentAppLanguage())
         viewModel.sendMessage(text)
         binding.messageInput.setText("")
     }
@@ -182,7 +190,7 @@ class AiAssistantFragment : Fragment(), ChatAdapter.Listener {
         val text = binding.messageInput.text.toString()
         if (text.isNotBlank()) {
             hideKeyboard()
-            viewModel.setResponseLanguage(resources.configuration.locales[0].toLanguageTag())
+            viewModel.setResponseLanguage(currentAppLanguage())
             viewModel.sendMessage(text)
             binding.messageInput.setText("")
         }

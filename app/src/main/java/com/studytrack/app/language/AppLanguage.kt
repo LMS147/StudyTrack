@@ -13,5 +13,9 @@ object AppLanguage {
         val language = Locale.forLanguageTag(tag.orEmpty()).language.lowercase(Locale.ROOT)
         return language.takeIf { it in names } ?: "en"
     }
+    /** The explicit app setting wins; an empty setting follows the device language. */
+    fun effectiveTag(appTag: String?, systemTag: String?): String =
+        supportedTag(appTag?.takeIf { it.isNotBlank() } ?: systemTag)
+
     fun name(tag: String?): String = names.getValue(supportedTag(tag))
 }
