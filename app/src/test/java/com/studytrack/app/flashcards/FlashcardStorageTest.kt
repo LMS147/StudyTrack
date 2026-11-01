@@ -82,6 +82,17 @@ class FlashcardStorageTest {
         } catch (_: IllegalArgumentException) { }
         assertEquals("Question", db.flashcardDao().get("alice", "same-id")!!.question)
     }
+    @Test fun `deleting a subject keeps its cards and allows reassignment to another subject`() = runBlocking {
+        repo.save(alice, true)
+        db.subjectDao().upsert(SubjectEntity("alice", "second", "Biology", null, localUpdatedAt = 2))
+        db.subjectDao().markDeleted("alice", "subject", 3)
+        assertNull(db.subjectDao().getById("alice", "subject"))
+        assertEquals("Question", db.flashcardDao().get("alice", "same-id")!!.question)
+        assertEquals("Biology", db.subjectDao().getById("alice", "second")!!.subjectName)
+        repo.save(alice.copy(subjectId = "second"), false)
+        assertEquals("second", db.flashcardDao().get("alice", "same-id")!!.subjectId)
+        assertNotNull(db.subjectDao().getById("bob", "subject"))
+    }
     @Test fun `cards require a question answer and a subject owned by the account`() = runBlocking {
         for (bad in listOf(alice.copy(question = " "), alice.copy(answer = " "), alice.copy(subjectId = "missing"))) {
             try { repo.save(bad, true); fail("invalid card accepted")

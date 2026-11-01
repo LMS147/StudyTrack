@@ -400,4 +400,5 @@
     <string name="language_spanish">Espagnol · partiel</string>
     <string name="language_french">Français · partiel</string>
     <string name="ai_empty_reply">Je ne trouve pas de réponse. Pourriez-vous reformuler ou ajouter des détails ?</string>
+    <string name="delete_subject_flashcards_note">Les fiches restent sur cet appareil. Elles indiquent Matière indisponible jusqu’à leur affectation à une autre matière.</string>
 </resources>

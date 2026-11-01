@@ -59,10 +59,12 @@ class FlashcardsFragment : Fragment() {
                 combine(ServiceLocator.flashcardRepository.cards, ServiceLocator.subjectRepository.subjects) { cards, subjects -> cards to subjects }
                     .collect { (cards, currentSubjects) ->
                         items = cards
-                        if (subjects != currentSubjects || filterIds.size == 1) {
+                        if (subjects != currentSubjects || binding.subjectFilter.adapter == null) {
                             subjects = currentSubjects
                             updatingFilter = true
                             filterIds = listOf(null) + subjects.map { it.subjectId }
+                            // A deleted selected subject must not leave a stale, invisible filter.
+                            filterId = validSubjectFilter(filterId, subjects.map { it.subjectId })
                             binding.subjectFilter.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item,
                                 listOf(getString(R.string.flashcards_all_subjects)) + subjects.map { it.subjectName })
                             binding.subjectFilter.setSelection(filterIds.indexOf(filterId).coerceAtLeast(0))
@@ -81,7 +83,6 @@ class FlashcardsFragment : Fragment() {
         binding.summaryText.text = getString(R.string.flashcards_summary, visible.size, due)
         binding.reviewButton.isEnabled = due > 0
         binding.addCardButton.isEnabled = subjects.isNotEmpty()
-        binding.subjectsButton.isVisible = subjects.isEmpty()
         binding.emptyText.isVisible = visible.isEmpty()
         binding.emptyText.text = getString(if (subjects.isEmpty()) R.string.flashcards_need_subject else R.string.flashcards_empty)
     }

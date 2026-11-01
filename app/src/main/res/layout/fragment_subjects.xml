@@ -1,45 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/emptyState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:drawablePadding="@dimen/spacing_sm"
-        android:gravity="center"
-        android:padding="@dimen/spacing_lg"
-        android:text="@string/empty_subjects"
-        android:textAppearance="?attr/textAppearanceBodyMedium"
-        android:textColor="@color/text_secondary"
-        android:visibility="gone" />
-
-    <ProgressBar
-        android:id="@+id/loadingProgress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/subjectsList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="96dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addSubjectFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/spacing_md"
-        android:contentDescription="@string/action_add_subject"
-        android:src="@drawable/ic_add"
-        app:tint="@color/white" />
-
-</FrameLayout>
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/background" android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:gravity="center_vertical" android:orientation="horizontal" android:padding="8dp">
+        <ImageButton android:id="@+id/backButton" android:layout_width="48dp" android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_chevron_left"
+            android:contentDescription="@string/cd_back" app:tint="@color/text_primary" />
+        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:text="@string/nav_subjects" android:textAppearance="?attr/textAppearanceTitleLarge"
+            android:textColor="@color/text_primary" />
+    </LinearLayout>
+    <com.google.android.material.button.MaterialButton android:id="@+id/addSubjectButton"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp" android:layout_marginBottom="8dp"
+        android:text="@string/action_add_subject" app:icon="@drawable/ic_add" app:iconGravity="textStart" />
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <androidx.recyclerview.widget.RecyclerView android:id="@+id/subjectsList"
+            android:layout_width="match_parent" android:layout_height="match_parent" android:clipToPadding="false"
+            android:paddingBottom="24dp" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        <TextView android:id="@+id/emptyState" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_gravity="center" android:gravity="center"
+            android:padding="@dimen/spacing_lg" android:text="@string/empty_subjects"
+            android:textAppearance="?attr/textAppearanceBodyMedium" android:textColor="@color/text_secondary"
+            android:visibility="gone" />
+        <ProgressBar android:id="@+id/loadingProgress" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_gravity="center" android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>
