@@ -1,5 +1,6 @@
 package com.studytrack.app.calendar
 
+import com.studytrack.app.language.labelResource
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -40,7 +41,7 @@ class CalendarTaskAdapter(
             val context = binding.root.context
             val task = item.task
 
-            binding.calendarTaskIcon.contentDescription = task.taskType.label
+            binding.calendarTaskIcon.contentDescription = context.getString(task.taskType.labelResource())
             binding.calendarTaskTitle.text = task.title
             binding.calendarTaskSubject.isVisible = !item.subjectName.isNullOrBlank()
             binding.calendarTaskSubject.text = item.subjectName.orEmpty()
@@ -50,7 +51,7 @@ class CalendarTaskAdapter(
                 Priority.MEDIUM -> R.color.priority_medium_container to R.color.priority_medium
                 Priority.HIGH -> R.color.priority_high_container to R.color.priority_high
             }
-            binding.calendarTaskPriority.text = task.priority.label
+            binding.calendarTaskPriority.text = context.getString(task.priority.labelResource())
             binding.calendarTaskPriority.backgroundTintList =
                 ColorStateList.valueOf(ContextCompat.getColor(context, containerColor))
             binding.calendarTaskPriority.setTextColor(

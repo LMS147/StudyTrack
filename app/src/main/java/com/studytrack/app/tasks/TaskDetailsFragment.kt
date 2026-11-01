@@ -1,5 +1,6 @@
 package com.studytrack.app.tasks
 
+import com.studytrack.app.language.labelResource
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -120,8 +121,8 @@ class TaskDetailsFragment : Fragment() {
 
         binding.taskTitle.text = task.title
 
-        binding.typeChip.text = task.taskType.label
-        binding.priorityChip.text = task.priority.label
+        binding.typeChip.text = getString(task.taskType.labelResource())
+        binding.priorityChip.text = getString(task.priority.labelResource())
         val (containerColor, foregroundColor) = when (task.priority) {
             Priority.LOW -> R.color.priority_low_container to R.color.priority_low
             Priority.MEDIUM -> R.color.priority_medium_container to R.color.priority_medium

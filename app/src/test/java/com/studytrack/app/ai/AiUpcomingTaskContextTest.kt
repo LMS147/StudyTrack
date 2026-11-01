@@ -189,6 +189,21 @@ class AiUpcomingTaskContextTest {
         assertTrue(request.upcomingTasks.isEmpty())
     }
 
+    @Test
+    fun `new AI requests use the currently selected language`() {
+        currentAccount.setSession(alice)
+        val brain = CapturingBrain()
+        val vm = newViewModel(brain)
+        vm.setResponseLanguage("tn-ZA")
+        vm.sendMessage("Hello")
+        assertEquals("tn", pumpUntilRequest(brain).languageTag)
+        assertTrue(pumpUntil { !vm.awaitingReply.value })
+        brain.lastRequest = null
+        vm.setResponseLanguage("ja-JP")
+        vm.sendMessage("Next")
+        assertEquals("ja", pumpUntilRequest(brain).languageTag)
+    }
+
     // -------------------------------------------------- builder, pure logic
 
     @Test

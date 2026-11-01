@@ -30,7 +30,14 @@ class BadgeAdapter : ListAdapter<BadgeUiModel, BadgeAdapter.ViewHolder>(DIFF) {
         fun bind(item: BadgeUiModel) {
             val context = binding.root.context
             binding.badgeIcon.setImageResource(item.iconRes)
-            binding.badgeLabel.text = item.label
+            binding.badgeLabel.setText(when (item.id) {
+                "first_task" -> R.string.badge_first_task
+                "speed_runner" -> R.string.badge_speed_runner
+                "bookworm" -> R.string.badge_bookworm
+                "high_achiever" -> R.string.badge_high_achiever
+                "on_target" -> R.string.badge_on_target
+                else -> R.string.badge_scholar_elite
+            })
 
             val (surface, stroke, labelColor) = if (item.earned) {
                 Triple(R.color.brand_container, R.color.brand_primary, R.color.brand_on_container)

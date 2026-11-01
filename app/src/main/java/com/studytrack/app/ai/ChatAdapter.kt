@@ -1,5 +1,6 @@
 package com.studytrack.app.ai
 
+import com.studytrack.app.language.labelResource
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -105,10 +106,10 @@ class ChatAdapter(
             binding.suggestionDescription.isVisible = description.isNotBlank()
             binding.suggestionDescription.text = description
 
-            binding.taskTypeChip.text = TaskType.fromRaw(suggestion.taskType).label
+            binding.taskTypeChip.text = context.getString(TaskType.fromRaw(suggestion.taskType).labelResource())
 
             val priority = Priority.fromRaw(suggestion.priority)
-            binding.priorityChip.text = priority.label
+            binding.priorityChip.text = context.getString(priority.labelResource())
             val (containerColor, foregroundColor) = when (priority) {
                 Priority.LOW -> R.color.priority_low_container to R.color.priority_low
                 Priority.MEDIUM -> R.color.priority_medium_container to R.color.priority_medium
