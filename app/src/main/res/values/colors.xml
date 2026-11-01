@@ -11,23 +11,23 @@
     -->
 
     <!-- Brand: one accent in both themes so the app keeps its identity -->
-    <color name="brand_primary">#6C5CE7</color>
-    <color name="brand_primary_dark">#5B4BD6</color>
+    <color name="brand_primary">#5947C9</color>
+    <color name="brand_primary_dark">#4634AB</color>
     <color name="brand_on_primary">#FFFFFF</color>
-    <color name="brand_container">#EDE9FE</color>
-    <color name="brand_on_container">#4C1D95</color>
-    <color name="brand_secondary">#7C3AED</color>
+    <color name="brand_container">#EEEBFA</color>
+    <color name="brand_on_container">#403095</color>
+    <color name="brand_secondary">#6555C8</color>
 
     <!-- Surfaces & text -->
-    <color name="background">#F6F7FB</color>
+    <color name="background">#F4F5FA</color>
     <color name="surface_card">#FFFFFF</color>
     <color name="surface_nav">#FFFFFF</color>
-    <color name="surface_sunken">#EEF1FA</color>
-    <color name="surface_bubble_ai">#EEF1FA</color>
-    <color name="text_primary">#111827</color>
-    <color name="text_secondary">#535D70</color>
+    <color name="surface_sunken">#EDEFF7</color>
+    <color name="surface_bubble_ai">#F0F1F8</color>
+    <color name="text_primary">#171A2C</color>
+    <color name="text_secondary">#555D73</color>
     <color name="white">#FFFFFF</color>
-    <color name="divider">#E5E7EB</color>
+    <color name="divider">#DEE1EC</color>
 
     <!-- Priority: High = red/pink, Medium = amber, Low = green (pills + chips) -->
     <color name="priority_high">#E11D48</color>
@@ -43,12 +43,12 @@
     <color name="overdue_red">#DC2626</color>
 
     <!-- Level/XP banner gradient (Home + Progress) -->
-    <color name="level_gradient_start">#7C3AED</color>
-    <color name="level_gradient_end">#5B4BD6</color>
+    <color name="level_gradient_start">#44348F</color>
+    <color name="level_gradient_end">#252C4B</color>
 
     <!-- AI accents (gradient banner, AI bubbles) -->
-    <color name="ai_gradient_start">#7C3AED</color>
-    <color name="ai_gradient_end">#6C5CE7</color>
+    <color name="ai_gradient_start">#5947C9</color>
+    <color name="ai_gradient_end">#343C76</color>
 
     <!-- Launcher -->
     <color name="ic_launcher_background">#6C5CE7</color>

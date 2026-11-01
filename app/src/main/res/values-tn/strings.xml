@@ -215,7 +215,7 @@
     <string name="profile_stat_streak">Streak</string>
     <string name="profile_streak_format">%1$d malatsi</string>
     <string name="profile_level_pill_format">Level %1$d Scholar</string>
-    <string name="profile_xp_pill_format">⭐ %1$d XP</string>
+    <string name="profile_xp_pill_format">%1$d XP</string>
     <string name="profile_value_empty">Not set</string>
     <string name="profile_footer_format">StudyTrack v%1$s · OPSC6312 Group Project</string>
     <string name="cd_edit_profile">Edit profile</string>

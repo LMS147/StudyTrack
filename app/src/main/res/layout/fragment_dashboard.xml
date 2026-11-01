@@ -71,15 +71,7 @@
                     tools:text="LM" />
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/flashcardsButton"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_sm"
-                android:text="@string/flashcards_title"
-                app:icon="@drawable/ic_book"
-                app:iconGravity="textStart" />
+
 
 
 
@@ -90,7 +82,7 @@
                 android:layout_marginTop="@dimen/spacing_md"
                 android:background="@drawable/bg_level_banner"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="@dimen/spacing_lg">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -187,6 +179,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/spacing_xs"
                         android:paddingVertical="@dimen/spacing_md">
 
                         <ImageView
@@ -204,7 +197,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                            android:textColor="@color/priority_medium"
+                            android:textColor="@color/text_primary"
                             tools:text="1" />
 
                         <TextView
@@ -212,6 +205,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:text="@string/home_stat_due_today"
+                            android:gravity="center"
                             android:textAppearance="?attr/textAppearanceLabelMedium"
                             android:textColor="@color/text_secondary" />
                     </LinearLayout>
@@ -233,6 +227,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/spacing_xs"
                         android:paddingVertical="@dimen/spacing_md">
 
                         <ImageView
@@ -250,7 +245,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                            android:textColor="@color/priority_high"
+                            android:textColor="@color/text_primary"
                             tools:text="0" />
 
                         <TextView
@@ -258,6 +253,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:text="@string/home_stat_overdue"
+                            android:gravity="center"
                             android:textAppearance="?attr/textAppearanceLabelMedium"
                             android:textColor="@color/text_secondary" />
                     </LinearLayout>
@@ -279,6 +275,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/spacing_xs"
                         android:paddingVertical="@dimen/spacing_md">
 
                         <ImageView
@@ -296,7 +293,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                            android:textColor="@color/success"
+                            android:textColor="@color/text_primary"
                             tools:text="2" />
 
                         <TextView
@@ -304,11 +301,22 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:text="@string/home_stat_completed"
+                            android:gravity="center"
                             android:textAppearance="?attr/textAppearanceLabelMedium"
                             android:textColor="@color/text_secondary" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/flashcardsButton"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:text="@string/flashcards_title"
+                app:icon="@drawable/ic_book"
+                app:iconGravity="textStart" />
 
             <!-- Task sections (headers + rows + empty states) -->
             <androidx.recyclerview.widget.RecyclerView

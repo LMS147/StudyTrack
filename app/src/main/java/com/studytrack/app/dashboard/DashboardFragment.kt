@@ -94,10 +94,10 @@ class DashboardFragment : Fragment() {
         binding.statCompleted.text = state.completedCount.toString()
 
         binding.levelTitle.text = getString(R.string.home_level_format, state.level)
+        binding.levelXpValue.text = state.points.toString()
         binding.levelXpText.text = getString(
             R.string.home_level_xp_format,
-            state.xpInLevel,
-            Levels.XP_PER_LEVEL,
+            Levels.XP_PER_LEVEL - state.xpInLevel,
             state.level + 1,
         )
         binding.levelProgress.max = Levels.XP_PER_LEVEL

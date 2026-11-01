@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/background" android:orientation="vertical">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:gravity="center_vertical" android:orientation="horizontal">
-        <ImageView android:layout_width="36dp" android:layout_height="36dp" android:src="@drawable/ic_ai" android:background="@drawable/bg_day_selected" android:padding="8dp" android:contentDescription="@null" app:tint="@color/white" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="20dp" android:paddingVertical="16dp" android:gravity="center_vertical" android:orientation="horizontal">
+        <ImageView android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/ic_ai" android:background="@drawable/bg_day_selected" android:padding="10dp" android:contentDescription="@null" app:tint="@color/white" />
         <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:orientation="vertical">
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/ai_title" android:textAppearance="?attr/textAppearanceTitleMedium" android:textColor="@color/text_primary" />
             <TextView android:id="@+id/assistantStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAppearance="?attr/textAppearanceLabelSmall" android:textColor="@color/text_secondary" />
@@ -19,6 +19,6 @@
     </HorizontalScrollView>
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="16dp" android:background="@drawable/bg_bubble_ai" android:gravity="center_vertical" android:padding="8dp" android:orientation="horizontal">
         <EditText android:id="@+id/messageInput" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="48dp" android:background="@android:color/transparent" android:paddingHorizontal="8dp" android:hint="@string/ai_hint" android:inputType="textCapSentences|textMultiLine" android:imeOptions="actionSend" android:maxLines="4" android:importantForAutofill="no" android:textAppearance="?attr/textAppearanceBodyMedium" android:textColor="@color/text_primary" android:textColorHint="@color/text_secondary" />
-        <com.google.android.material.floatingactionbutton.FloatingActionButton android:id="@+id/sendButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/ic_send" android:contentDescription="@string/cd_send_message" app:fabCustomSize="48dp" app:backgroundTint="@color/surface_sunken" app:tint="@color/text_primary" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton android:id="@+id/sendButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/ic_send" android:contentDescription="@string/cd_send_message" app:fabCustomSize="48dp" app:backgroundTint="@color/brand_primary" app:tint="@color/brand_on_primary" />
     </LinearLayout>
 </LinearLayout>
