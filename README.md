@@ -1,271 +1,94 @@
 # StudyTrack
 
-A native Android study-planning app: subjects, tasks, a calendar, progress
-tracking and an AI study assistant that turns plain-language requests into
-calendar-ready tasks.
+StudyTrack is a native Android app for organising coursework, planning study sessions and revising. Students can manage subjects and deadlines, follow a weekly timetable, review flashcards and ask an AI study assistant for help.
 
-Android client for the StudyTrack REST API (JWT-authenticated). Authentication
-uses Firebase Auth email/password; the app exchanges the Firebase ID token for
-an API session and attaches it to every request.
+## Features
 
-## Tech stack
+- **Subjects and tasks:** Create, edit and delete subjects; organise assignments, tests, exams and study tasks by subject, priority and due date. Mark tasks complete and track progress.
+- **Dashboard and progress:** See tasks due today, overdue and upcoming work, completion statistics, XP, levels and achievement badges.
+- **Calendar and recurring timetable:** View deadlines alongside recurring weekly classes. Add a class with its weekday, time, subject, dates, venue and lecturer; edit or remove the weekly series. Find it under **Calendar → Timetable**. [Timetable details](docs/TIMETABLE.md)
+- **Revision flashcards:** Create question-and-answer cards for a subject, filter by subject and review cards that are due. Reveal the answer, then rate your recall **Again**, **Hard** or **Easy** to schedule the next review. Open **Dashboard → Revision flashcards**. [Flashcard details](docs/FLASHCARDS.md)
+- **Subject management:** In Revision flashcards, use **Manage subjects** to see, add, edit or delete subjects. Deleting a subject keeps its flashcards on the device; they appear under **All subjects** as **Subject unavailable** until reassigned. Linked tasks may lose their subject.
+- **AI study assistant:** Chat with an assistant powered directly by Groq to get study help and task suggestions. Review, edit, accept or reject suggestions before creating tasks. The app requests new replies in the selected app language; model quality and language adherence can vary. An internet connection and a configured AI key are required. [AI connection](docs/AI_CONNECTION.md)
+- **App language:** Choose English, Afrikaans, Japanese, Sepedi, Setswana, Spanish, French or the device language from **Profile → App language**. Translated interface resources are stored in the app and work offline. Some messages can remain in English; machine-generated translations require review by fluent speakers. [Interface translations](docs/INTERFACE_TRANSLATIONS.md)
+- **Appearance and account:** Light and dark themes, profile information, and app preferences.
 
-- **Kotlin**, single-activity Navigation Component app (view-based UI with ViewBinding)
-- **Material 3** components (`com.google.android.material:material:1.11.0`)
-- **Room 2.6** (SQLite) as the offline cache and sync queue, keyed per Firebase UID
-- **WorkManager 2.9** for background sync with network-aware retry
-- **Retrofit 2.11 + OkHttp 4.12** with `kotlinx-serialization` converters
-- **Coroutines + Flow** (`StateFlow` in ViewModels, `combine` for screen state)
-- **Firebase Auth** (email/password) + `google-services` plugin
-- **ViewModel + manual DI** via a small `ServiceLocator` (no DI framework, by design)
-- Min SDK 26, target/compile SDK 34, AGP 8.4.2, Kotlin 1.9.24, JDK 17
+## Offline storage and accounts
 
-## Screens
+StudyTrack uses Room (SQLite) for account-scoped on-device data. Tasks and subjects can also synchronise with a compatible StudyTrack REST backend when one is configured; WorkManager handles queued sync attempts. Firebase Authentication manages sign-in. For setup and sync behaviour, see [Offline sync and account isolation](docs/OFFLINE_SYNC.md).
 
-| Screen | What it does |
+**Timetable entries and flashcards are currently stored on the device only.** They do not synchronise across devices and are not included in the existing JSON export. Uninstalling the app removes this local data. The JSON export is a backup/reference and does not currently offer an import/restore flow. See [timetable](docs/TIMETABLE.md) and [flashcards](docs/FLASHCARDS.md) for the details.
+
+## Install an APK from GitHub
+
+1. Open [Actions → Android CI](https://github.com/LMS147/StudyTrack/actions/workflows/android-ci.yml).
+2. Select a **successful** run for the branch you want, usually `main`.
+3. Under **Artifacts**, download **StudyTrack-debug-apk**, extract the ZIP and install the APK on your Android device.
+
+GitHub may require you to sign in to download an artifact. APKs are debug builds for testing. The CI workflow uses a permanent signing key and increasing version codes so compatible builds can update an existing installation. An APK signed with a different key may require a one-time uninstall, which removes local data. See [APK updates and signing](docs/APK_UPDATES.md) before changing signing keys or uninstalling.
+
+## Technology
+
+| Area | Technology |
 | --- | --- |
-| **Sign In** | Firebase email/password auth, password reset by email, Google sign-in, friendly error mapping |
-| **Dashboard** | Time-aware greeting, today's completion ring, AI assistant shortcut card, due-today / overdue / upcoming sections |
-| **Subjects** | Subject cards with task counts; create/edit/archive; subject detail with tasks grouped by status |
-| **Tasks** | Create/edit with type, priority, subject, due date (+ optional time), reminder; complete from any list |
-| **Calendar** | Month grid with locale-aware first-day-of-week, today ring, priority dots; tap a day to see and quick-add tasks |
-| **Progress** | Total XP and level ring, level endpoints, completed / pending / percent-done cards, per-category progress, achievement badges |
-| **AI Assistant** | Chat UI: text bubbles, structured suggestion cards with Accept / Edit / Reject, typing indicator, conversation history |
-| **Create Account** | Three-step wizard — personal details, academic details, password with a live strength checklist |
-| **Profile** | Level hero card, personal information rows with edit dialog, notifications, app preferences, account actions, About info, logout |
+| App | Kotlin, Android Views, ViewBinding, Navigation Component, Material 3 |
+| Architecture | ViewModels, coroutines, Flow and a manual `ServiceLocator` |
+| Local storage and sync | Room / SQLite, WorkManager |
+| Authentication | Firebase Authentication |
+| Networking | Retrofit, OkHttp and Kotlin serialization |
+| AI | Direct Groq-compatible chat-completions API |
+| Builds and tests | Gradle, GitHub Actions, JUnit and Robolectric |
 
-## Offline support & multi-account isolation
+The app uses **minimum Android API 26**, **compile/target SDK 34** and **JDK 17** in CI.
 
-The app is offline-first: reads come from a local Room (SQLite) cache and writes
-land there immediately, then queue for the REST API when connectivity returns.
-WorkManager retries failed syncs when the network comes back.
+## Build locally
 
-Every local row carries the Firebase UID of the account that owns it, and
-`ownerUid` is part of each table's primary key — so two accounts on one device
-cannot collide, and no DAO method exists that can read tasks without a UID
-filter. Signing out keeps every account's cache, so switching back restores it
-instantly; switching to an account this device has never seen requires a full
-fetch first, and is **refused outright while offline** rather than showing empty
-or wrong data:
+1. Clone the repository and open it in Android Studio.
+2. Install the Android SDK and select JDK 17 for Gradle. Set `ANDROID_HOME` or configure `sdk.dir` in your local `local.properties` if Android Studio has not done so.
+3. Use the included Firebase Android configuration or replace `app/google-services.json` with one from your Firebase project. Enable Email/Password authentication; Google sign-in also requires the correct signing fingerprints in Firebase.
+4. Sync Gradle, then build and test:
 
-> Can't switch accounts while offline — connect to the internet first
+   ```bash
+   ./gradlew testDebugUnitTest
+   ./gradlew assembleDebug
+   ```
 
-Full details — the schema, the sync and conflict rules, the migration strategy,
-and the four layers that enforce isolation — are in
-[`docs/OFFLINE_SYNC.md`](docs/OFFLINE_SYNC.md). Note that document also records
-why the remote source of truth here is the REST API rather than Firestore.
+   On Windows PowerShell use `.\\gradlew` instead of `./gradlew`. The APK is generated under `app/build/outputs/apk/debug/`.
 
-## Building
+If Gradle sync fails, check the Android SDK path, JDK version and your network connection to the Gradle and Google repositories. This project uses in-process Kotlin compilation; `tools/fix-kotlin-daemon.ps1` and `tools/set-gradle-jdk17.ps1` are available for Windows troubleshooting.
 
-```bash
-./gradlew assembleDebug
-```
+### Configure the AI assistant
 
-CI (GitHub Actions, `.github/workflows/android-ci.yml`) runs the same build on
-every push.
+The app can use a device-entered Groq key via **AI → AI settings**. The device key is stored encrypted using Android Keystore and takes precedence over a key bundled in a personal build. See [AI connection](docs/AI_CONNECTION.md).
 
-### Firebase setup
+For local development, `local.properties` can also contain `grok.apiKey`; it may additionally specify `grok.baseUrl` and `grok.model`. GitHub Actions can use the repository secret `GROQ_API_KEY` for a personal build. **A key bundled into an APK can be extracted**, so do not distribute such an APK publicly. Never commit keys, keystores or passwords, and do not paste them into issues or chats.
 
-`app/google-services.json` is the **real** file for the `studytrack-88a28`
-Firebase project and is committed to the repo. That is normal for Android: the
-values in it are app identifiers, and the API key is scoped to this package
-name and signing fingerprint rather than being a server secret.
+### Optional REST backend
 
-To point the app at your own Firebase project, replace it with the file from
-your Firebase console (Project settings → Your apps → `google-services.json`).
-Keep the package name `com.studytrack.app`, or update `applicationId` in
-`app/build.gradle.kts` to match.
+Without `api.baseUrl`, the app uses local mode for study data. Set `api.baseUrl` in the ignored `local.properties`, or the `STUDYTRACK_API_BASE_URL` GitHub Actions variable for CI, to use a compatible backend for supported data. The expected endpoints are described in [API contract](docs/API_CONTRACT.md). The direct Groq assistant does not require the StudyTrack backend.
 
-In the Firebase console, under **Authentication → Sign-in method**:
+## Project structure
 
-- **Email/Password** — enable it. Required for Sign In and the Create Account
-  wizard, including the "Forgot password?" reset email.
-- **Google** — enable it (pick a support email) if you want the Google button to
-  work. Google sign-in additionally needs this build's signing fingerprint
-  registered under **Project settings → Your apps → Add fingerprint**; get it
-  with `./gradlew signingReport` (the SHA-1 of the `debug` variant). Without it
-  the SDK fails with DEVELOPER_ERROR and the app explains what is missing
-  instead of failing silently.
-
-The **Microsoft** button is a visual placeholder: Microsoft sign-in needs an
-Azure app registration, which this project does not have, so tapping it reports
-that rather than pretending to sign in.
-
-The wizard's academic fields (student number, institution, course, year of
-study) have no Firebase equivalent and are stored locally on the device.
-
-### It won't run: "Edit configuration" or a failing Gradle sync
-
-Android Studio creates its run configuration during Gradle sync, so **if sync
-fails, the Run dialog comes up empty**. Fix the sync error and the
-configuration appears by itself. The three local causes, in the order they
-usually bite:
-
-| Symptom (Gradle / Build output) | Cause | Fix |
-| --- | --- | --- |
-| `SDK location not found. Define a valid SDK location ...` | A fresh clone has no `local.properties` (it is gitignored), so Gradle doesn't know where the Android SDK is | Create `local.properties` in the project root with `sdk.dir=C:/Users/<you>/AppData/Local/Android/Sdk` (see `local.properties.example`), or set the `ANDROID_HOME` environment variable |
-| `What went wrong:` followed by nothing but a version number, e.g. `25.0.1` | That number **is the JDK version** Gradle refuses to run on — not your code, and not the app's version. Gradle below 9.0.0 embeds a Kotlin version that cannot read a JVM 25 or newer (fixed in Kotlin 2.1.20). Java 25 is a common default download, so a recent JDK install triggers this on an otherwise healthy project | Use JDK 17 — see below |
-| `Android Gradle plugin requires Java 17` / `Unsupported class file major version` | Same root cause: Gradle is being run by the wrong JDK | Use JDK 17 — see below |
-| `Plugin [id: 'com.android.application', version: '8.4.2'] was not found` or a sync that stops with a version message | The installed Android Studio is older than the Android Gradle Plugin (8.4.2 needs **Jellyfish 2023.3.1 or newer**) or there is no network access to `google()` | Update Android Studio, or build from the terminal (`./gradlew assembleDebug`) |
-| `Could not connect to Kotlin compile daemon` | Reads like a network problem but is not one: Gradle cannot reach the separate Kotlin compile daemon — a dead daemon process, a stale registration from a crashed build, an IPv4/IPv6 `localhost` mismatch, or antivirus on the loopback port | The project now compiles **in-process**, so no daemon is started. Update your checkout, run `.\tools\fix-kotlin-daemon.ps1`, rebuild. See below |
-
-**The quickest fix needs no download.** Android Studio ships its own JDK (17 or
-21 depending on its version) and Gradle 8.7 runs on any Java 8–21, so the
-runtime you already have is enough:
-
-- **In the IDE:** Settings → Build, Execution, Deployment → Build Tools →
-  Gradle → *Gradle JDK* → choose the entry labelled **jbr-17 / jbr-21 /
-  Embedded JDK** → Apply → *File → Sync Project with Gradle Files*. The Run
-  configuration appears as soon as sync succeeds, and the terminal is not
-  needed at all: the Run button performs the Gradle build itself.
-- **From the terminal:** point Gradle at that same runtime by adding one line
-  to `C:\Users\<you>\.gradle\gradle.properties` (machine-local, never
-  committed):
-
-  ```properties
-  org.gradle.java.home=C:/Program Files/Android/Android Studio/jbr
-  ```
-
-  A Toolbox install keeps it at
-  `%LOCALAPPDATA%\Programs\Android Studio\jbr` instead. This is exactly what
-  `tools/set-gradle-jdk17.ps1` writes for you — it prefers JDK 17 to match CI
-  but accepts any JDK 8–21 rather than telling you to install one, prints the
-  JDKs it found, and takes `-JdkPath` to force a specific runtime.
-
-**`Could not connect to Kotlin compile daemon`.** Kotlin normally compiles in a
-separate long-lived daemon that Gradle reaches over a local socket. When that
-handshake fails the build dies with the message above, which reads like a
-networking problem but is not one — the causes are local and varied: the daemon
-process failing to start, a stale registration left by an earlier crashed build,
-an IPv4/IPv6 mismatch on `localhost`, or antivirus blocking the loopback port.
-
-**This project now sidesteps the problem by default.** `gradle.properties` sets:
-
-```properties
-kotlin.compiler.execution.strategy=in-process
-```
-
-so the Kotlin compiler runs inside the Gradle daemon. There is no second process
-and no socket, which removes the whole failure class rather than treating one
-cause of it. The trade is a slower build with no compiler state reused between
-builds — a deliberate choice, since a build that intermittently will not start is
-worse than one that takes longer.
-
-**If you are seeing this error, your checkout predates that change.** Update it,
-then:
-
-```powershell
-.\tools\fix-kotlin-daemon.ps1     # clears stale daemon state; does not touch the repo
-.\gradlew assembleDebug
-```
-
-If you want the daemon's speed back on a machine where it works reliably,
-override it in `C:\Users\<you>\.gradle\gradle.properties` (machine-local, never
-committed):
-
-```properties
-kotlin.compiler.execution.strategy=daemon
-```
-
-and give it enough heap when you do — KSP (the Room compiler) runs *inside* that
-daemon, so it needs materially more than the old default.
-
-**Running on JDK 17.** The app is compiled and run by JDK 17 (that is what CI
-pins, and it is the minimum the Android Gradle Plugin 8.4.2 accepts). A newer
-JDK on the machine will break the build even though the project is fine —
-Gradle's own compatibility matrix is the reference:
-<https://docs.gradle.org/current/userguide/compatibility.html> (`Support for
-running Gradle`: Java 25 requires Gradle 9.1.0+).
-
-- **If you would rather install a JDK anyway:** *Gradle JDK* →
-  **Download JDK…** → Version **17**, and pick **17 exactly, not "Latest"** —
-  "Latest" is 25, which is the thing that broke the build. Any 17.x patch
-  release is fine; Eclipse Temurin 17 is what CI installs.
-- **Terminal:** run `tools/set-gradle-jdk17.ps1`, which finds the installed
-  JDK 17 and writes the setting for you (it backs the file up first, and
-  touches nothing in the repository). If Windows reports that running scripts
-  is disabled, use
-  `powershell -ExecutionPolicy Bypass -File .\tools\set-gradle-jdk17.ps1`.
-  It scans `%USERPROFILE%\.jdks` (where Android Studio's *Download JDK* lands),
-  Android Studio's bundled runtime, and the usual vendor folders; finding no 17,
-  it lists the JDKs it did find and how to install 17. Point it at a specific
-  JDK with `-JdkPath`, or have it set `JAVA_HOME` as well with `-SetJavaHome`. To do it by hand instead, add this line to
-  `C:\Users\<you>\.gradle\gradle.properties` — machine-local, never
-  committed — replacing the path with your JDK 17:
-
-  ```properties
-  org.gradle.java.home=C:/Program Files/Java/jdk-17
-  ```
-
-  Check `java -version` and `$env:JAVA_HOME` if the build still fails.
-
-The command that separates "my project is broken" from "my IDE is misconfigured"
-is the one CI runs:
-
-```bash
-./gradlew assembleDebug      # Windows PowerShell: .\gradlew assembleDebug
-```
-
-`BUILD SUCCESSFUL` means the code is fine and only the IDE needs attention.
-
-### Local mode (default — no backend needed)
-
-With **no** `api.baseUrl` configured, the app runs fully self-contained:
-subjects, tasks, calendar and progress are stored **on-device** (SharedPreferences
-via `LocalStore`), and completing tasks awards points (High 20 / Medium 10 /
-Low 5) and builds a daily streak locally. Add `api.baseUrl` to `local.properties`
-when you deploy a backend and every repository switches to the REST API
-(`docs/API_CONTRACT.md`) — the Profile → About screen shows which mode you're in.
-
-### AI brain (optional — works without a backend)
-
-The assistant chat runs directly against any OpenAI-compatible LLM API
-(**Groq** or xAI Grok) so it works during development with no StudyTrack
-backend deployed. Copy `local.properties.example` to `local.properties`
-(it's gitignored) and set:
-
-```properties
-grok.apiKey=gsk-your-groq-key-here
-grok.baseUrl=https://api.groq.com/openai/v1/
-grok.model=openai/gpt-oss-120b
-```
-
-Get a Groq key at [console.groq.com](https://console.groq.com) (API Keys).
-`openai/gpt-oss-120b` is the quality pick, `openai/gpt-oss-20b` the cheap
-one; for xAI use `grok.baseUrl=https://api.x.ai/v1/` + `grok.model=grok-4`.
-Note the key is baked into your personal builds — fine for your own use,
-never publish such a build.
-
-### API endpoint
-
-`RetrofitClient.BASE_URL` (in
-`app/src/main/java/com/studytrack/app/data/remote/RetrofitClient.kt`) points to
-`https://api.studytrack.example.com/` and must be changed to your deployed
-StudyTrack backend. The full REST contract the app expects is documented in
-[docs/API_CONTRACT.md](docs/API_CONTRACT.md).
-
-## Project layout
-
-```
+```text
 app/src/main/java/com/studytrack/app/
-├── ai/                  # AI assistant chat (adapter, view model, fragment)
-├── auth/                # Login / register
-├── calendar/            # Month grid calendar
-├── dashboard/           # Home dashboard
-├── data/
-│   ├── model/           # @Serializable wire models (enums with lenient parsing)
-│   ├── remote/          # Retrofit ApiService, auth interceptor/authenticator, JSON config
-│   └── repository/      # Repositories + local SettingsRepository (SharedPreferences)
-├── progress/            # Progress screen
-├── profile/             # Profile & settings screen
-├── subjects/            # Subject list / detail / editor
-├── tasks/               # Task list, editor, details (+ shared TaskRowBinder)
-└── util/                # ApiResult, DateTimeUtils, TokenManager, extensions
+├── ai/            AI chat and suggestions
+├── auth/          Sign-in, registration and account sessions
+├── calendar/      Calendar and timetable display
+├── dashboard/     Home dashboard
+├── data/          Room entities and DAOs, networking and repositories
+├── flashcards/    Flashcard editing and spaced review
+├── language/      App language and translated task labels
+├── profile/       Profile and app preferences
+├── progress/      Progress and achievements
+├── subjects/      Subject list, details and editing
+├── tasks/         Task list, editing and details
+├── timetable/     Recurring class management
+└── util/          Shared helpers
 ```
 
-Architecture notes and the reasoning behind key decisions live in
-[docs/ARCHITECTURE_DECISIONS.md](docs/ARCHITECTURE_DECISIONS.md).
+Additional technical documentation is available in [docs/](docs/), including [architecture decisions](docs/ARCHITECTURE_DECISIONS.md).
 
-## Links
-  ## Video: https://advtechonline-my.sharepoint.com/:v:/g/personal/st10436200_rcconnect_edu_za/IQA4xewqoSBYRLH8nBW_NqshAbYLtYmEmdj6FjwkhLpuNY4?e=hEOk2X
-  ## GitHub: https://github.com/LMS147/StudyTrack
+## Project links
+
+- [GitHub repository](https://github.com/LMS147/StudyTrack)
+- [Project video](https://advtechonline-my.sharepoint.com/:v:/g/personal/st10436200_rcconnect_edu_za/IQA4xewqoSBYRLH8nBW_NqshAbYLtYmEmdj6FjwkhLpuNY4?e=hEOk2X)
