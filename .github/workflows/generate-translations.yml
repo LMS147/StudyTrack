@@ -1,0 +1,37 @@
+name: Generate interface translations
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["arena/azure-interface-translations"]
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    if: github.ref == 'refs/heads/arena/azure-interface-translations'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: arena/azure-interface-translations
+      - name: Test placeholder and merge handling
+        run: python3 -m unittest discover -s tools/tests -p 'test_azure*.py'
+      - name: Generate missing strings with Azure Translator
+        env:
+          AZURE_TRANSLATOR_KEY: ${{ secrets.AZURE_TRANSLATOR_KEY }}
+          AZURE_TRANSLATOR_REGION: uaenorth
+        run: python3 tools/azure_translate_resources.py
+      - name: Check Android resource references
+        run: python3 tools/check_references.py
+      - name: Commit translations to the review branch
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/src/main/res/values-af/strings.xml app/src/main/res/values-ja/strings.xml 'app/src/main/res/values-b+nso/strings.xml' app/src/main/res/values-tn/strings.xml app/src/main/res/values-es/strings.xml app/src/main/res/values-fr/strings.xml
+          if ! git diff --cached --quiet; then
+            git commit -m 'Generate missing interface translations'
+            git push
+          fi
