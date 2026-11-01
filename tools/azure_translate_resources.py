@@ -84,7 +84,17 @@ def run(key, region, sender=translate_batch):
             protected = [protect(text) for _, text in batch]
             result = sender([text for text, _ in protected], language, key, region)
             for (name, _), (_, parts), text in zip(batch, protected, result, strict=True):
-                generated.append(f'    <string name="{name}">{android_text(text, parts)}</string>')
+                try:
+                    safe_text = android_text(text, parts)
+                except ValueError:
+                    # Retry separately; never insert a translation with damaged placeholders.
+                    retry = sender([dict(batch)[name] if not parts else protect(dict(batch)[name])[0]], language, key, region)
+                    try:
+                        safe_text = android_text(retry[0], parts)
+                    except ValueError:
+                        print(f'{language}: skipped {name}; formatting needs manual review', flush=True)
+                        continue
+                generated.append(f'    <string name="{name}">{safe_text}</string>')
         # Append text without rewriting existing translations or their Android escapes.
         original = path.read_text(encoding='utf-8')
         if original.count('</resources>') != 1:
