@@ -11,9 +11,10 @@
 
         <TextView
             android:id="@+id/dialogTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+            android:textColor="@color/text_primary"
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nameLayout"
@@ -57,35 +58,28 @@
             android:textColor="@color/overdue_red"
             android:visibility="gone" />
 
-        <LinearLayout
+        <ProgressBar
+            android:id="@+id/saveProgress"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/saveButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_md"
-            android:gravity="center_vertical|end"
-            android:orientation="horizontal">
+            android:minHeight="48dp"
+            android:text="@string/action_save" />
 
-            <ProgressBar
-                android:id="@+id/saveProgress"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="@dimen/spacing_sm"
-                android:visibility="gone" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/cancelButton"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:fontFamily="@font/studytrack_regular"
-        android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/action_cancel" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/saveButton"
-                android:fontFamily="@font/studytrack_regular"
-        android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_sm"
-                android:text="@string/action_save" />
-        </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancelButton"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/action_cancel" />
     </LinearLayout>
 </ScrollView>

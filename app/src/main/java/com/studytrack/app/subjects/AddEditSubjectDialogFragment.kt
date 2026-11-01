@@ -77,6 +77,18 @@ class AddEditSubjectDialogFragment : DialogFragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        // DialogFragment otherwise sizes this form from its wrap-content buttons,
+        // leaving fields and the Save action squeezed on some phones.
+        val metrics = resources.displayMetrics
+        val sideMargins = (32 * metrics.density).toInt()
+        val maxWidth = (560 * metrics.density).toInt()
+        val width = (metrics.widthPixels - sideMargins).coerceAtLeast(1).coerceAtMost(maxWidth)
+        dialog?.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog?.window?.setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    }
+
     private fun save(subjectId: String?) {
         val name = binding.nameField.text.toString().trim()
         if (name.isEmpty()) {
