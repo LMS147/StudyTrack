@@ -162,7 +162,7 @@
                     android:paddingVertical="3dp"
                     android:textAppearance="?attr/textAppearanceLabelMedium"
                     android:textColor="@color/priority_medium"
-                    tools:text="⭐ 50 XP" />
+                    tools:text="50 XP" />
             </LinearLayout>
 
                 </LinearLayout>

@@ -238,7 +238,7 @@
     <string name="profile_stat_streak">Racha</string>
     <string name="profile_streak_format">%1$d días</string>
     <string name="profile_level_pill_format">Nivel %1$d Scholar</string>
-    <string name="profile_xp_pill_format">⭐ %1$d XP</string>
+    <string name="profile_xp_pill_format">%1$d XP</string>
     <string name="profile_value_empty">No fijado</string>
     <string name="profile_footer_format">StudyTrack v%1$s · OPSC6312 Proyecto en Grupo</string>
     <string name="cd_edit_profile">Editar perfil</string>
