@@ -430,4 +430,5 @@
     <string name="language_setswana">Setswana · partial</string>
     <string name="language_spanish">Español · partial</string>
     <string name="language_french">Français · partial</string>
+    <string name="delete_subject_flashcards_note">Flashcards are kept on this device. They will show Subject unavailable until you assign them to another subject.</string>
 </resources>

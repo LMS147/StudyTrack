@@ -54,7 +54,8 @@ class SubjectsFragment : Fragment() {
         binding.subjectsList.adapter = adapter
         binding.subjectsList.layoutManager = LinearLayoutManager(requireContext())
 
-        binding.addSubjectFab.setOnClickListener { showAddEditDialog(null) }
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
+        binding.addSubjectButton.setOnClickListener { showAddEditDialog(null) }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -82,7 +83,7 @@ class SubjectsFragment : Fragment() {
         val loading = state is ApiResult.Loading
         val isEmpty = adapter.itemCount == 0
         binding.loadingProgress.isVisible = loading && isEmpty
-        binding.addSubjectFab.isEnabled = !loading
+        binding.addSubjectButton.isEnabled = !loading
 
         when (state) {
             is ApiResult.Error -> {
@@ -120,7 +121,7 @@ class SubjectsFragment : Fragment() {
     private fun confirmDelete(subject: Subject) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.delete_subject_confirm_title))
-            .setMessage(getString(R.string.delete_subject_confirm_message))
+            .setMessage(getString(R.string.delete_subject_confirm_message) + "\n\n" + getString(R.string.delete_subject_flashcards_note))
             .setNegativeButton(R.string.action_cancel, null)
             .setPositiveButton(R.string.action_delete) { _, _ ->
                 viewModel.deleteSubject(subject.subjectId)

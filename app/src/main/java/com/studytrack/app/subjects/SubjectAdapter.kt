@@ -55,6 +55,8 @@ class SubjectAdapter(
 
             binding.root.setOnClickListener { onSubjectClick(item) }
 
+            binding.deleteSubjectButton.setOnClickListener { onDeleteSubject(subject) }
+
             binding.subjectOptions.setOnClickListener {
                 val popup = PopupMenu(binding.root.context, binding.subjectOptions)
                 popup.menuInflater.inflate(R.menu.menu_subject_actions, popup.menu)

@@ -400,4 +400,5 @@
     <string name="language_setswana">Setswana · parcial</string>
     <string name="language_spanish">Español · parcial</string>
     <string name="language_french">Francés · parcial</string>
+    <string name="delete_subject_flashcards_note">Las tarjetas se conservan en este dispositivo. Mostrarán Asignatura no disponible hasta que las asignes a otra asignatura.</string>
 </resources>

@@ -400,4 +400,5 @@
     <string name="hint_full_name">bv. Lufuno Makhado</string>
     <string name="hint_institution">bv. Walter Sisulu-universiteit</string>
     <string name="privacy_policy_body">StudyTrack stoor jou vakke, take en voorkeure op hierdie toestel. As jy aanmeld, word jou rekening se e-pos en wagwoord deur Firebase Authentication hanteer — die app sien nooit jou wagwoord nie.\n\nVakke en take word slegs na die StudyTrack-bediener gestuur wanneer ’n API-eindpunt in die weergawe opgestel is, en KI-boodskappe word na die opgestelde KI-verskaffer gestuur sodat dit jou kan antwoord. Gebruik Voer my data uit om alles te sien wat die app gestoor het.</string>
+    <string name="delete_subject_flashcards_note">Flitskaarte bly op hierdie toestel. Hulle wys Vak nie beskikbaar nie totdat jy hulle aan ’n ander vak koppel.</string>
 </resources>

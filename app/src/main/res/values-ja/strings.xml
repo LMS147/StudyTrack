@@ -400,4 +400,5 @@
     <string name="language_setswana">セツワナ語 ·部分的</string>
     <string name="language_spanish">スペイン語 ·部分的</string>
     <string name="language_french">フランス語・部分的</string>
+    <string name="delete_subject_flashcards_note">復習カードはこの端末に保存されます。別の科目に割り当てるまで「科目を利用できません」と表示されます。</string>
 </resources>
