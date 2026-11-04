@@ -88,6 +88,9 @@ class ProfileFragment : Fragment() {
     // ------------------------------------------------------------------ wiring
 
     private fun wireSwitches() {
+        binding.reminderSettingsButton.setOnClickListener {
+            (activity as? com.studytrack.app.MainActivity)?.showReminderSettings()
+        }
         // Dark Mode: the switch reflects what is on screen right now; flipping
         // it stores an explicit choice and re-themes the whole app (the Activity
         // recreates itself, so the new palette applies immediately).

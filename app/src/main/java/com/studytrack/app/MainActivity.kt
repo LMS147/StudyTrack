@@ -58,7 +58,49 @@ class MainActivity : AppCompatActivity() {
                 ServiceLocator.accountSessionManager.onSignedOut()
             }
             routeForAuthState()
+            if (user != null) requestReminderPermission()
         }
+    }
+
+    private val notificationPermission = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) { com.studytrack.app.notifications.ReminderEngine.refresh() }
+
+    override fun onResume() {
+        super.onResume()
+        com.studytrack.app.notifications.ReminderEngine.refresh()
+        requestReminderPermission()
+    }
+
+    private fun requestReminderPermission() {
+        if (!ServiceLocator.authRepository.isUserLoggedIn() || android.os.Build.VERSION.SDK_INT < 33) return
+        if (!ServiceLocator.settingsRepository.pushNotificationsEnabled) return
+        val prefs = getSharedPreferences("reminder_permission", MODE_PRIVATE)
+        if (!prefs.getBoolean("asked", false)) {
+            prefs.edit().putBoolean("asked", true).apply()
+            notificationPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    fun showReminderSettings() {
+        val alarms = getSystemService(android.app.AlarmManager::class.java)
+        val exact = android.os.Build.VERSION.SDK_INT < 31 || alarms.canScheduleExactAlarms()
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.reminder_settings_title)
+            .setMessage(if (exact) R.string.reminder_settings_enabled else R.string.reminder_settings_timing)
+            .setPositiveButton(R.string.reminder_notification_settings) { _, _ ->
+                startActivity(android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                    .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, packageName))
+            }
+            .apply {
+                if (!exact && android.os.Build.VERSION.SDK_INT >= 31) {
+                    setNeutralButton(R.string.reminder_precise_timing) { _, _ ->
+                        startActivity(android.content.Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                            android.net.Uri.parse("package:$packageName")))
+                    }
+                }
+            }
+            .setNegativeButton(R.string.action_cancel, null).show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

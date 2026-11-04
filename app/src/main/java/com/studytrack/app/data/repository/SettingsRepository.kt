@@ -4,8 +4,8 @@ import android.content.Context
 
 /**
  * Local app settings (SharedPreferences). Notification preferences and AI
- * preferences live entirely client-side for now; the reminder master switches
- * are ready to gate future WorkManager-based notifications.
+ * preferences live entirely client-side. ReminderEngine observes the notification
+ * master switches to schedule local task and class alerts.
  */
 class SettingsRepository(context: Context) {
 

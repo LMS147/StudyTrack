@@ -431,4 +431,9 @@
     <string name="language_spanish">Español · partial</string>
     <string name="language_french">Français · partial</string>
     <string name="delete_subject_flashcards_note">Flashcards are kept on this device. They will show Subject unavailable until you assign them to another subject.</string>
+    <string name="reminder_settings_title">Reminder delivery settings</string>
+    <string name="reminder_settings_enabled">Allow notifications in Android settings. Tasks use their reminder time, or one hour before the deadline. Classes remind you 15 minutes before they start. The Deadline Reminders switch controls both.</string>
+    <string name="reminder_settings_timing">Allow notifications to receive reminders. For precise timing, also allow Alarms &amp; reminders. Otherwise Android may delay alerts. Tasks default to one hour before their deadline; classes remind you 15 minutes before they start. The Deadline Reminders switch controls both.</string>
+    <string name="reminder_notification_settings">Notifications</string>
+    <string name="reminder_precise_timing">Precise timing</string>
 </resources>

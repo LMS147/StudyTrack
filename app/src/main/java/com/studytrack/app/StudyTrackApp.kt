@@ -37,6 +37,7 @@ class StudyTrackApp : Application() {
 
         ServiceLocator.connectivityMonitor.start()
         restorePersistedSession()
+        com.studytrack.app.notifications.ReminderEngine.start(this)
     }
 
     /**

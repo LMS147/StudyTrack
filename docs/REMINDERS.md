@@ -1,0 +1,11 @@
+# Task and class reminders
+
+Reminders are local Android notifications and work offline after sign-in. Tasks use their saved reminder date/time; without one, they default to one hour before the deadline. Completed/deleted tasks do not notify. Weekly timetable classes notify 15 minutes before each occurrence, respecting inclusive term dates and the device timezone. There are no holiday overrides.
+
+Profile → Reminder delivery settings opens Android notification settings and, when needed, Alarms & reminders access for precise timing. Android 13+ asks for notification permission after sign-in. If access is denied, enable it in these settings. Without precise alarm access, Android may delay alerts. Force-stopping the app prevents reminders until it is reopened. Powered-off devices cannot notify; alerts over an hour late are skipped, and class alerts after class starts and task alerts after their deadline are skipped.
+
+Both Push Notifications (the existing master switch) and Deadline Reminders must be enabled for task and class alerts. Daily Digest, Weekly Report and streak notifications remain outside this feature.
+
+A single PendingIntent alarm points to the next occurrence. On delivery, the receiver re-reads account-scoped Room data and preferences before posting and schedules the next occurrence. Room observers update the alarm on edits, completion, deletion and sync changes. Account changes clear posted notifications and recalculate the alarm. Boot, app updates, clock/timezone changes and exact-alarm permission grants restore the schedule. Notification taps open StudyTrack through its normal authentication routing. Delivered occurrence keys prevent repeated alerts across restarts; changing an occurrence's reminder time creates a new occurrence.
+
+No database migration, Firebase Cloud Messaging or backend is required. Regression tests cover reminder defaults, explicit/offset times, completed/expired tasks, term bounds, future terms, weekly recurrence and edited occurrence identities. Device verification: allow notifications, add a task reminder a few minutes ahead, close the app, and check delivery; repeat with edits, completion, deletion, account switching and a phone restart. Check precise timing access and permission denial as separate cases.

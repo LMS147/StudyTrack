@@ -11,6 +11,7 @@ StudyTrack is a native Android app for organising coursework, planning study ses
 - **Subject management:** In Revision flashcards, use **Manage subjects** to see, add, edit or delete subjects. Deleting a subject keeps its flashcards on the device; they appear under **All subjects** as **Subject unavailable** until reassigned. Linked tasks may lose their subject.
 - **AI study assistant:** Chat with an assistant powered directly by Groq to get study help and task suggestions. Review, edit, accept or reject suggestions before creating tasks. The app requests new replies in the selected app language; model quality and language adherence can vary. An internet connection and a configured AI key are required. [AI connection](docs/AI_CONNECTION.md)
 - **App language:** Choose English, Afrikaans, Japanese, Sepedi, Setswana, Spanish, French or the device language from **Profile → App language**. Translated interface resources are stored in the app and work offline. Some messages can remain in English; machine-generated translations require review by fluent speakers. [Interface translations](docs/INTERFACE_TRANSLATIONS.md)
+- **Task and class reminders:** Offline phone alerts at saved task reminder times (default: one hour before the deadline) and 15 minutes before weekly classes. Allow notifications and configure precise timing under Profile → Reminder delivery settings. [Reminder setup and limits](docs/REMINDERS.md)
 - **Appearance and account:** Light and dark themes, profile information, and app preferences.
 
 ## Offline storage and accounts

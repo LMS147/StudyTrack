@@ -612,6 +612,14 @@
                         android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:textColor="@color/text_secondary" />
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/reminderSettingsButton"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/reminder_settings_title" />
+
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
