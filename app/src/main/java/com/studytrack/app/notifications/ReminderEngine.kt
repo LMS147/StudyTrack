@@ -20,7 +20,10 @@ import kotlinx.coroutines.sync.withLock
 
 /** One next-alarm slot; every delivery re-reads current account data before posting. */
 object ReminderEngine {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val errorHandler = CoroutineExceptionHandler { _, error ->
+        android.util.Log.e("StudyTrackReminders", "Reminder refresh failed", error)
+    }
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO + errorHandler)
     private val mutex = Mutex()
     private const val CHANNEL = "study_reminders"
     private lateinit var appContext: Context
@@ -31,7 +34,6 @@ object ReminderEngine {
         refresh()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun start(context: Context) {
         if (started) return
         started = true
@@ -40,16 +42,25 @@ object ReminderEngine {
         preferences = app.getSharedPreferences("studytrack_settings", Context.MODE_PRIVATE)
         preferences.registerOnSharedPreferenceChangeListener(settingsListener)
         scope.launch {
-            ServiceLocator.currentAccount.activeUid.collectLatest { uid ->
-                if (observedUid != uid) {
-                    NotificationManagerCompat.from(app).cancelAll()
-                    observedUid = uid
+            while (isActive) {
+                try {
+                    ServiceLocator.currentAccount.activeUid.collectLatest { uid ->
+                        if (observedUid != uid) {
+                            NotificationManagerCompat.from(app).cancelAll()
+                            observedUid = uid
+                        }
+                        reconcile(app, false)
+                        if (uid != null) combine(
+                            ServiceLocator.database.taskDao().observeForOwner(uid),
+                            ServiceLocator.database.timetableDao().observe(uid)
+                        ) { _, _ -> Unit }.collect { reconcile(app, false) }
+                    }
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
+                } catch (error: Exception) {
+                    android.util.Log.e("StudyTrackReminders", "Retrying reminder observation", error)
+                    delay(5000)
                 }
-                reconcile(app, false)
-                if (uid != null) combine(
-                    ServiceLocator.database.taskDao().observeForOwner(uid),
-                    ServiceLocator.database.timetableDao().observe(uid)
-                ) { _, _ -> Unit }.collect { reconcile(app, false) }
             }
         }
     }
@@ -78,26 +89,35 @@ object ReminderEngine {
         manager.createNotificationChannel(NotificationChannel(CHANNEL, "Task and class reminders", NotificationManager.IMPORTANCE_HIGH))
         val allowed = Build.VERSION.SDK_INT < 33 || ContextCompat.checkSelfPermission(context,
             Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        // Remove posted alerts for tasks/classes that were completed, deleted or moved.
+        val validTags = candidates.map { "study_reminders:$uid:${it.key}" }.toSet()
+        context.getSystemService(NotificationManager::class.java).activeNotifications
+            .filter { it.tag?.startsWith("study_reminders:") == true && it.tag !in validTags }
+            .forEach { manager.cancel(it.tag, it.id) }
         if (deliver && allowed && manager.areNotificationsEnabled()) {
             for (item in candidates.filter { it.at <= now && "$uid:${it.key}" !in delivered }) {
                 // Sign-out/switch may have happened during the suspending database reads.
-                if (ServiceLocator.currentAccount.uidOrNull() != uid || FirebaseAuth.getInstance().currentUser?.uid != uid) return@withLock
+                if (ServiceLocator.currentAccount.uidOrNull() != uid || FirebaseAuth.getInstance().currentUser?.uid != uid ||
+                    !settings.pushNotificationsEnabled || !settings.taskRemindersEnabled) return@withLock
                 val open = PendingIntent.getActivity(context, 0,
                     Intent(context, MainActivity::class.java).setData(Uri.parse("studytrack://reminder"))
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP),
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                manager.notify("study_reminders", item.key.hashCode(), NotificationCompat.Builder(context, CHANNEL)
+                manager.notify("study_reminders:$uid:${item.key}", 0, NotificationCompat.Builder(context, CHANNEL)
                     .setSmallIcon(R.drawable.ic_notifications).setContentTitle(item.title)
                     .setContentText(item.message).setContentIntent(open).setAutoCancel(true)
                     .setVisibility(NotificationCompat.VISIBILITY_PRIVATE).setPriority(NotificationCompat.PRIORITY_HIGH).build())
                 delivered += "$uid:${item.key}"
             }
-            // Retain only keys still present in the current rolling plan.
-            val valid = candidates.map { "$uid:${it.key}" }.toSet()
-            sent.edit().putStringSet("keys", delivered.intersect(valid)).apply()
+            // Preserve other accounts' recent keys across quick account switches.
+            val recent = delivered.filter { key ->
+                (key.substringAfterLast(':').toLongOrNull() ?: 0) >= now - 60 * 60_000L
+            }.toSet()
+            sent.edit().putStringSet("keys", recent).apply()
         }
         if (!allowed || !manager.areNotificationsEnabled()) return@withLock
-        if (ServiceLocator.currentAccount.uidOrNull() != uid || FirebaseAuth.getInstance().currentUser?.uid != uid) return@withLock
+        if (ServiceLocator.currentAccount.uidOrNull() != uid || FirebaseAuth.getInstance().currentUser?.uid != uid ||
+                    !settings.pushNotificationsEnabled || !settings.taskRemindersEnabled) return@withLock
         val next = candidates.firstOrNull { "$uid:${it.key}" !in delivered } ?: return@withLock
         val at = maxOf(next.at, now + 1000)
         if (Build.VERSION.SDK_INT < 31 || alarms.canScheduleExactAlarms()) {
