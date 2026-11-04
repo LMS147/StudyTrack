@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "8223111233-qb3h87ris8l6n61i0i23nuo55c8j9lu1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.studytrack.app",
+            "certificate_hash": "d98dfedb5b7f2c9a015e1e7182b6ddf01146155e"
+          }
+        },
+        {
           "client_id": "8223111233-c74qlr75s0kaunl6751pgf4aktb27rdm.apps.googleusercontent.com",
           "client_type": 3
         }
