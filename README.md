@@ -92,4 +92,4 @@ Additional technical documentation is available in [docs/](docs/), including [ar
 ## Project links
 
 - [GitHub repository](https://github.com/LMS147/StudyTrack)
-- [Project video](https://advtechonline-my.sharepoint.com/:v:/g/personal/st10436200_rcconnect_edu_za/IQA4xewqoSBYRLH8nBW_NqshAbYLtYmEmdj6FjwkhLpuNY4?e=hEOk2X)
+- [Project video] (https://advtechonline-my.sharepoint.com/:v:/r/personal/st10436200_rcconnect_edu_za/_layouts/15/stream.aspx?id=%2Fpersonal%2Fst10436200_rcconnect_edu_za%2FDocuments%2FStudy-Track.mp4&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&share=cQpKqtRVRkroRaK86wHwsvE5EgUC8kDyn51i0m2Plz1aBxEZdQ)
