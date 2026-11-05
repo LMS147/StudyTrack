@@ -4,16 +4,22 @@ on:
   push:
     branches: [main, "arena/**"]
   workflow_dispatch:
+    inputs:
+      release:
+        description: Build a signed release APK
+        type: boolean
+        default: false
 
 permissions:
   contents: write
 
 jobs:
   build:
-    name: Assemble debug APK
+    name: Assemble ${{ inputs.release && 'release' || 'debug' }} APK
     runs-on: ubuntu-latest
     env:
-      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      APK_VARIANT: ${{ inputs.release && 'release' || 'debug' }}
+      GROQ_API_KEY: ${{ !inputs.release && secrets.GROQ_API_KEY || '' }}
       STUDYTRACK_API_BASE_URL: ${{ vars.STUDYTRACK_API_BASE_URL }}
     steps:
       - name: Checkout
@@ -107,14 +113,18 @@ jobs:
                 f"classes — {failed} failed, {skipped} skipped")
           PYEOF
 
-      - name: Assemble debug APK
+      - name: Assemble APK
         env:
           STUDYTRACK_KEYSTORE_PASSWORD: ${{ secrets.STUDYTRACK_KEYSTORE_PASSWORD }}
         run: |
           # Same errexit handling as the test step — without `set +e` the
           # diagnostic block below was unreachable on failure.
           set +e
-          ./gradlew assembleDebug --stacktrace 2>&1 | tee build-output.log
+          build_task=assembleDebug
+          if [ "$APK_VARIANT" = release ]; then
+            build_task=assembleRelease
+          fi
+          ./gradlew "$build_task" --stacktrace 2>&1 | tee build-output.log
           status=${PIPESTATUS[0]}
           echo "BUILD_EXIT=$status" >> "$GITHUB_ENV"
           if [ "$status" -ne 0 ]; then
@@ -143,7 +153,7 @@ jobs:
           expected = hashlib.sha256(certificate).hexdigest()
           result = subprocess.run([
               os.environ["STUDYTRACK_APKSIGNER"], "verify", "--print-certs",
-              "app/build/outputs/apk/debug/app-debug.apk"
+              f"app/build/outputs/apk/{os.environ['APK_VARIANT']}/app-{os.environ['APK_VARIANT']}.apk"
           ], check=True, capture_output=True, text=True)
           actual = {value.lower() for value in re.findall(
               r"certificate SHA-256 digest:\s*([0-9a-fA-F]{64})", result.stdout
@@ -155,12 +165,12 @@ jobs:
               raise SystemExit("APK signing certificate does not match the permanent update key.")
           PYEOF
 
-      - name: Upload debug APK
-        if: success()
+      - name: Upload APK
+        if: success() && (!inputs.release || env.TEST_EXIT == '0')
         uses: actions/upload-artifact@v4
         with:
-          name: StudyTrack-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: StudyTrack-${{ env.APK_VARIANT }}-apk
+          path: app/build/outputs/apk/${{ env.APK_VARIANT }}/app-${{ env.APK_VARIANT }}.apk
           if-no-files-found: error
           retention-days: 14
 

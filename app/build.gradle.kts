@@ -72,6 +72,9 @@ android {
 
     buildTypes {
         release {
+            if (!providers.environmentVariable("STUDYTRACK_KEYSTORE_PATH").orNull.isNullOrBlank()) {
+                signingConfig = signingConfigs.getByName("debug")
+            }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
